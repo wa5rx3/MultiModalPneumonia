@@ -3,10 +3,12 @@
 PYTHON ?= python
 SEED   := 42
 
-# ─── Data prerequisites ──────────────────────────────────────────────────────
-# Assumes MIMIC-CXR-JPG and MIMIC-IV-ED have been downloaded and the
-# cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet manifest
-# has been built via scripts/build_training_table.py.
+# ─── Data pipeline ───────────────────────────────────────────────────────────
+preprocess:
+	bash scripts/run_data_pipeline.sh
+
+preprocess_labs:
+	bash scripts/run_lab_pipeline.sh
 
 # ─── Pretraining ─────────────────────────────────────────────────────────────
 pretrain:
@@ -64,5 +66,6 @@ test:
 # ─── Full pipeline ────────────────────────────────────────────────────────────
 all: pretrain finetune_image finetune_multimodal train_clinical evaluate shap report
 
-.PHONY: pretrain finetune_image finetune_multimodal train_clinical_lr train_clinical_xgb \
-        train_clinical bootstrap_delta calibration feature_ablation evaluate shap report all test
+.PHONY: preprocess preprocess_labs pretrain finetune_image finetune_multimodal \
+        train_clinical_lr train_clinical_xgb train_clinical bootstrap_delta \
+        calibration feature_ablation evaluate shap report all test
