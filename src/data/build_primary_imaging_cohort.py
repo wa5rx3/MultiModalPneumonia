@@ -28,8 +28,11 @@ def main() -> None:
 
     df = pd.read_parquet(args.input_manifest).copy()
 
-    # Keep only rows with valid paths
-    if "exists" in df.columns:
+    # Keep only rows with valid paths.
+    # exists=True  → verified present, keep.
+    # exists=False → verified missing, drop.
+    # exists=NA   → not checked, assume present.
+    if "exists" in df.columns and not df["exists"].isna().all():
         df = df[df["exists"] == True].copy()
 
     # Keep only frontal rows

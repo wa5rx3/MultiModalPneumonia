@@ -71,7 +71,8 @@ $PYTHON -m src.data.build_triage_model_table
 
 echo "[9/19] build_pneumonia_labels_from_chexpert"
 $PYTHON -m src.data.build_pneumonia_labels_from_chexpert \
-    --metadata-root "$CXR_ROOT"
+    --metadata-root "$CXR_ROOT" \
+    --allow-fallback-study-merge
 
 echo "[10/19] build_pneumonia_training_table (u_ignore)"
 $PYTHON -m src.data.build_pneumonia_training_table \
@@ -120,7 +121,8 @@ $PYTHON -m src.data.build_image_pretraining_split
 
 echo "[18/19] build_image_multilabel_pretrain_table"
 $PYTHON -m src.data.build_image_multilabel_pretrain_table \
-    --metadata-root "$CXR_ROOT"
+    --metadata-root "$CXR_ROOT" \
+    --allow-fallback-study-merge
 
 echo "[19/19] build_nonED_image_eval_table"
 $PYTHON -m src.data.build_nonED_image_eval_table \
