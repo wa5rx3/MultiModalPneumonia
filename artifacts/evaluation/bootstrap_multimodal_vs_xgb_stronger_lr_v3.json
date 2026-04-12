@@ -1,0 +1,77 @@
+{
+  "model_a_path": "artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv",
+  "n_bootstrap": 2000,
+  "seed": 42,
+  "model_a": {
+    "point_metrics": {
+      "auroc": 0.7362059813658524,
+      "auprc": 0.7143120481776486
+    },
+    "bootstrap_summary": {
+      "auroc": {
+        "mean": 0.7364351444219996,
+        "std": 0.015146941632119595,
+        "ci_low": 0.7065890704127689,
+        "ci_high": 0.76594769536147,
+        "median": 0.7368122463210759
+      },
+      "auprc": {
+        "mean": 0.7150370580562102,
+        "std": 0.02113293647871202,
+        "ci_low": 0.6716565894447272,
+        "ci_high": 0.7554011752255904,
+        "median": 0.7158050895879469
+      }
+    },
+    "skipped_bootstraps": 0,
+    "n_rows": 1075,
+    "n_subjects": 887
+  },
+  "model_b_path": "artifacts/models/clinical_xgb_u_ignore_temporal_strong_v2/test_predictions.csv",
+  "model_b": {
+    "point_metrics": {
+      "auroc": 0.6105424716087667,
+      "auprc": 0.5665216593505178
+    },
+    "bootstrap_summary": {
+      "auroc": {
+        "mean": 0.6100432624332095,
+        "std": 0.017156293812978493,
+        "ci_low": 0.5762399317836522,
+        "ci_high": 0.6440893652175902,
+        "median": 0.6100675154560706
+      },
+      "auprc": {
+        "mean": 0.5679128237528218,
+        "std": 0.024988584956358136,
+        "ci_low": 0.5173207288991772,
+        "ci_high": 0.6156130712303912,
+        "median": 0.5682293371632161
+      }
+    },
+    "skipped_bootstraps": 0,
+    "n_rows": 1075,
+    "n_subjects": 887
+  },
+  "delta_a_minus_b": {
+    "bootstrap_summary": {
+      "delta_auroc": {
+        "mean": 0.1263918819887901,
+        "std": 0.01863782559788021,
+        "ci_low": 0.09023339836665846,
+        "ci_high": 0.16382058669459781,
+        "median": 0.1264992135666867,
+        "p_positive": 1.0
+      },
+      "delta_auprc": {
+        "mean": 0.14712423430338833,
+        "std": 0.021717192857384715,
+        "ci_low": 0.1040407655512205,
+        "ci_high": 0.18944631779430735,
+        "median": 0.1472000657063619,
+        "p_positive": 1.0
+      }
+    },
+    "skipped_bootstraps": 0
+  }
+}

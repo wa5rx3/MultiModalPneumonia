@@ -1,0 +1,38 @@
+[
+  {
+    "run_id": "clinical_baseline_u_ignore_temporal_strong_v2",
+    "stage": "clinical",
+    "description": "Canonical triage-only logistic, temporal u_ignore (strong training profile)",
+    "output_dir": "artifacts/models/clinical_baseline_u_ignore_temporal_strong_v2",
+    "metrics_file": "artifacts/models/clinical_baseline_u_ignore_temporal_strong_v2/metrics.json"
+  },
+  {
+    "run_id": "clinical_xgb_u_ignore_temporal_strong_v2",
+    "stage": "clinical",
+    "description": "Canonical triage-only XGBoost, temporal u_ignore (strong training profile)",
+    "output_dir": "artifacts/models/clinical_xgb_u_ignore_temporal_strong_v2",
+    "metrics_file": "artifacts/models/clinical_xgb_u_ignore_temporal_strong_v2/metrics.json"
+  },
+  {
+    "run_id": "image_multilabel_pretrain_densenet121_strong_v2",
+    "stage": "image_pretrain",
+    "description": "Upstream CheXpert multilabel pretrain checkpoint used by canonical image + multimodal fine-tunes",
+    "output_dir": "artifacts/models/image_multilabel_pretrain_densenet121_strong_v2",
+    "summary_file": "artifacts/models/image_multilabel_pretrain_densenet121_strong_v2/summary.json",
+    "config_file": "artifacts/models/image_multilabel_pretrain_densenet121_strong_v2/config.json"
+  },
+  {
+    "run_id": "image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3",
+    "stage": "image_finetune",
+    "description": "Canonical binary pneumonia fine-tune (multilabel-init from strong_v2 pretrain)",
+    "output_dir": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3",
+    "summary_file": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/summary.json"
+  },
+  {
+    "run_id": "multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3",
+    "stage": "multimodal",
+    "description": "Canonical early-fusion triage + image (stronger_lr_v3)",
+    "output_dir": "artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3",
+    "summary_file": "artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/summary.json"
+  }
+]

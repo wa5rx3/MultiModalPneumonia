@@ -1,0 +1,47 @@
+{
+  "predictions_csv": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3\\test_predictions.csv",
+  "chexpert_csv": "D:\\mimic-cxr-2.0.0-chexpert.csv.gz",
+  "merge_keys": [
+    "subject_id",
+    "study_id"
+  ],
+  "abnormal_cols": [
+    "Atelectasis",
+    "Edema",
+    "Pleural Effusion",
+    "Consolidation",
+    "Lung Opacity"
+  ],
+  "initial_rows_after_merge": 1075,
+  "rows_after_drop_all_nan_abnormal_cols": 686,
+  "counts": {
+    "positives": 392,
+    "negatives_total": 294,
+    "normal_negatives": 132,
+    "abnormal_negatives": 162
+  },
+  "results": {
+    "pneumonia_vs_normal_negatives": {
+      "name": "pneumonia_vs_normal_negatives",
+      "n": 524,
+      "positives": 392,
+      "negatives": 132,
+      "positive_rate": 0.7480916030534351,
+      "auroc": 0.7548508039579469,
+      "auprc": 0.9062869614349611
+    },
+    "pneumonia_vs_abnormal_negatives": {
+      "name": "pneumonia_vs_abnormal_negatives",
+      "n": 554,
+      "positives": 392,
+      "negatives": 162,
+      "positive_rate": 0.7075812274368231,
+      "auroc": 0.5990803728898967,
+      "auprc": 0.7919396738961808
+    }
+  },
+  "delta_abnormal_minus_normal": {
+    "auroc": -0.15577043106805022,
+    "auprc": -0.11434728753878032
+  }
+}

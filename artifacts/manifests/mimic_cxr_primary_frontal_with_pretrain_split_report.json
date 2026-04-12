@@ -1,0 +1,40 @@
+{
+  "rows": 217922,
+  "studies": 217922,
+  "subjects": 63871,
+  "seed": 42,
+  "policy": "exclude_all_ed",
+  "internal_val_frac": 0.1,
+  "ed_subject_counts": {
+    "train": 37923,
+    "validate": 4740,
+    "test": 4741,
+    "total": 47404
+  },
+  "non_ed_subject_counts": {
+    "train": 14821,
+    "internal_val": 1646,
+    "total": 16467
+  },
+  "pretrain_split_row_counts": {
+    "exclude_ed_train": 136625,
+    "pretrain_train": 41214,
+    "exclude_ed_test": 18341,
+    "exclude_ed_validate": 17119,
+    "pretrain_internal_val": 4623
+  },
+  "pretrain_split_subject_counts": {
+    "exclude_ed_test": 4741,
+    "exclude_ed_train": 37923,
+    "exclude_ed_validate": 4740,
+    "pretrain_internal_val": 1646,
+    "pretrain_train": 14821
+  },
+  "excluded_from_pretraining_rows": 172085,
+  "excluded_from_pretraining_subjects": 47404,
+  "notes": [
+    "ED validate/test subjects are always excluded from supervised pretraining.",
+    "Policy controls whether ED train subjects are allowed or excluded.",
+    "Non-ED subjects are split by subject into pretrain_train and pretrain_internal_val."
+  ]
+}

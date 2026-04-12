@@ -1,0 +1,9 @@
+{
+  "input_rows": 9137,
+  "overlap_rows": 867,
+  "subjects": 839,
+  "studies": 867,
+  "positives": 348,
+  "negatives": 519,
+  "positive_rate": 0.4013840830449827
+}

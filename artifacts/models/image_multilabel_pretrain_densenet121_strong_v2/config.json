@@ -1,0 +1,210 @@
+{
+  "input_table": "artifacts/manifests/mimic_cxr_multilabel_pretrain_table.parquet",
+  "output_dir": "artifacts\\models\\image_multilabel_pretrain_densenet121_strong_v2",
+  "epochs": 30,
+  "patience": 5,
+  "batch_size": 16,
+  "lr": null,
+  "lr_head": 0.0001,
+  "lr_backbone": 3e-05,
+  "weight_decay": 0.0001,
+  "image_size": 224,
+  "num_workers": 4,
+  "seed": 42,
+  "max_grad_norm": 1.0,
+  "use_amp": true,
+  "device": "cuda",
+  "model_name": "densenet121",
+  "selection_metric": "val_loss",
+  "num_labels": 14,
+  "label_cols": [
+    "Atelectasis",
+    "Cardiomegaly",
+    "Consolidation",
+    "Edema",
+    "Enlarged Cardiomediastinum",
+    "Fracture",
+    "Lung Lesion",
+    "Lung Opacity",
+    "No Finding",
+    "Pleural Effusion",
+    "Pleural Other",
+    "Pneumonia",
+    "Pneumothorax",
+    "Support Devices"
+  ],
+  "train_rows": 41214,
+  "val_rows": 4623,
+  "train_label_stats": {
+    "Atelectasis": {
+      "non_missing": 12181,
+      "positive": 9949,
+      "uncertain": 1841,
+      "negative": 391
+    },
+    "Cardiomegaly": {
+      "non_missing": 15049,
+      "positive": 9037,
+      "uncertain": 1370,
+      "negative": 4642
+    },
+    "Consolidation": {
+      "non_missing": 4195,
+      "positive": 2152,
+      "uncertain": 776,
+      "negative": 1267
+    },
+    "Edema": {
+      "non_missing": 13822,
+      "positive": 5008,
+      "uncertain": 2311,
+      "negative": 6503
+    },
+    "Enlarged Cardiomediastinum": {
+      "non_missing": 5450,
+      "positive": 1770,
+      "uncertain": 2185,
+      "negative": 1495
+    },
+    "Fracture": {
+      "non_missing": 1257,
+      "positive": 1049,
+      "uncertain": 71,
+      "negative": 137
+    },
+    "Lung Lesion": {
+      "non_missing": 1629,
+      "positive": 1187,
+      "uncertain": 205,
+      "negative": 237
+    },
+    "Lung Opacity": {
+      "non_missing": 11146,
+      "positive": 9729,
+      "uncertain": 720,
+      "negative": 697
+    },
+    "No Finding": {
+      "non_missing": 11417,
+      "positive": 11417,
+      "uncertain": 0,
+      "negative": 0
+    },
+    "Pleural Effusion": {
+      "non_missing": 19347,
+      "positive": 11056,
+      "uncertain": 1078,
+      "negative": 7213
+    },
+    "Pleural Other": {
+      "non_missing": 588,
+      "positive": 404,
+      "uncertain": 140,
+      "negative": 44
+    },
+    "Pneumonia": {
+      "non_missing": 11462,
+      "positive": 2938,
+      "uncertain": 2868,
+      "negative": 5656
+    },
+    "Pneumothorax": {
+      "non_missing": 13134,
+      "positive": 2629,
+      "uncertain": 279,
+      "negative": 10226
+    },
+    "Support Devices": {
+      "non_missing": 16283,
+      "positive": 15279,
+      "uncertain": 54,
+      "negative": 950
+    }
+  },
+  "val_label_stats": {
+    "Atelectasis": {
+      "non_missing": 1376,
+      "positive": 1123,
+      "uncertain": 210,
+      "negative": 43
+    },
+    "Cardiomegaly": {
+      "non_missing": 1717,
+      "positive": 1073,
+      "uncertain": 143,
+      "negative": 501
+    },
+    "Consolidation": {
+      "non_missing": 463,
+      "positive": 238,
+      "uncertain": 88,
+      "negative": 137
+    },
+    "Edema": {
+      "non_missing": 1509,
+      "positive": 505,
+      "uncertain": 250,
+      "negative": 754
+    },
+    "Enlarged Cardiomediastinum": {
+      "non_missing": 647,
+      "positive": 200,
+      "uncertain": 244,
+      "negative": 203
+    },
+    "Fracture": {
+      "non_missing": 182,
+      "positive": 155,
+      "uncertain": 9,
+      "negative": 18
+    },
+    "Lung Lesion": {
+      "non_missing": 174,
+      "positive": 126,
+      "uncertain": 20,
+      "negative": 28
+    },
+    "Lung Opacity": {
+      "non_missing": 1313,
+      "positive": 1150,
+      "uncertain": 84,
+      "negative": 79
+    },
+    "No Finding": {
+      "non_missing": 1284,
+      "positive": 1284,
+      "uncertain": 0,
+      "negative": 0
+    },
+    "Pleural Effusion": {
+      "non_missing": 2115,
+      "positive": 1183,
+      "uncertain": 121,
+      "negative": 811
+    },
+    "Pleural Other": {
+      "non_missing": 76,
+      "positive": 51,
+      "uncertain": 23,
+      "negative": 2
+    },
+    "Pneumonia": {
+      "non_missing": 1305,
+      "positive": 366,
+      "uncertain": 310,
+      "negative": 629
+    },
+    "Pneumothorax": {
+      "non_missing": 1425,
+      "positive": 265,
+      "uncertain": 36,
+      "negative": 1124
+    },
+    "Support Devices": {
+      "non_missing": 1904,
+      "positive": 1782,
+      "uncertain": 6,
+      "negative": 116
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "rows": 9137,
+  "subjects": 7710,
+  "studies": 9137,
+  "positives": 4281,
+  "negatives": 4856,
+  "positive_rate": 0.46853452993323846,
+  "temporal_split_row_counts": {
+    "train": 7132,
+    "test": 1075,
+    "validate": 930
+  },
+  "temporal_split_subject_counts": {
+    "test": 887,
+    "train": 6036,
+    "validate": 787
+  },
+  "notes": [
+    "Image fine-tuning table is built from the ED temporal cohort plus current binary pneumonia label-policy table.",
+    "One frontal image per study is inherited from the upstream ED cohort.",
+    "Temporal split is the sacred evaluation split."
+  ]
+}

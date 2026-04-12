@@ -1,0 +1,55 @@
+{
+  "rows": 81385,
+  "columns": [
+    "subject_id",
+    "study_id",
+    "dicom_id",
+    "hadm_id",
+    "stay_id",
+    "split",
+    "t0",
+    "image_path",
+    "ViewPosition",
+    "is_pa",
+    "is_ap",
+    "temperature",
+    "heartrate",
+    "resprate",
+    "o2sat",
+    "sbp",
+    "dbp",
+    "pain",
+    "acuity",
+    "gender",
+    "race",
+    "arrival_transport",
+    "temperature_missing",
+    "heartrate_missing",
+    "resprate_missing",
+    "o2sat_missing",
+    "sbp_missing",
+    "dbp_missing",
+    "pain_missing",
+    "acuity_missing"
+  ],
+  "numeric_missing_counts": {
+    "temperature": 6818,
+    "heartrate": 4837,
+    "resprate": 5971,
+    "o2sat": 5769,
+    "sbp": 5024,
+    "dbp": 5232,
+    "pain": 7732,
+    "acuity": 2604
+  },
+  "categorical_missing_counts": {
+    "gender": 0,
+    "race": 0,
+    "arrival_transport": 0
+  },
+  "notes": [
+    "Numeric values are not imputed in this table.",
+    "Imputation must be fit on train only inside model pipelines.",
+    "Disposition removed pending time-safety verification."
+  ]
+}

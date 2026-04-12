@@ -1,0 +1,24 @@
+{
+  "match_mode": "hadm_only",
+  "lookback_hours": 24,
+  "num_files": 300,
+  "final_rows": 100662,
+  "final_subjects": 5661,
+  "final_studies": 6605,
+  "final_itemids": 28,
+  "stats": {
+    "rows_read": 158374764,
+    "after_subject": 52168925,
+    "after_itemid": 21818919,
+    "after_clean": 21785955,
+    "after_hadm_merge": 4492594,
+    "after_fallback_merge": 0,
+    "after_time_hadm": 100666,
+    "after_time_fallback": 0
+  },
+  "notes": [
+    "Primary matching uses subject_id + hadm_id.",
+    "Fallback only enabled when explicitly requested.",
+    "Time window strictly before t0."
+  ]
+}

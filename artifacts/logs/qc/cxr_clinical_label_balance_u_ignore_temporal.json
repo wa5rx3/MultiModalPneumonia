@@ -1,0 +1,20 @@
+{
+  "test": {
+    "rows": 1075,
+    "positives": 487,
+    "negatives": 588,
+    "positive_rate": 0.4530232558139535
+  },
+  "train": {
+    "rows": 7132,
+    "positives": 3340,
+    "negatives": 3792,
+    "positive_rate": 0.46831183398766124
+  },
+  "validate": {
+    "rows": 930,
+    "positives": 454,
+    "negatives": 476,
+    "positive_rate": 0.4881720430107527
+  }
+}

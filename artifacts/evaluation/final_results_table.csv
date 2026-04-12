@@ -1,0 +1,5 @@
+model,auroc,auprc,accuracy,precision,recall,f1,auroc_normal,auroc_abnormal
+clinical_logistic,0.606,0.548,0.577,0.535,0.507,0.521,,
+clinical_xgb,0.611,0.567,0.579,0.535,0.528,0.532,,
+image_densenet121,0.746,0.724,0.678,0.641,0.659,0.650,0.769,0.632
+multimodal,0.736,0.714,0.670,0.644,0.606,0.624,0.755,0.599

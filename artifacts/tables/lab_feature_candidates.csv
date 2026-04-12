@@ -1,0 +1,391 @@
+itemid,label,fluid,category
+50802,Base Excess,Blood,Blood Gas
+50803,"Calculated Bicarbonate, Whole Blood",Blood,Blood Gas
+50804,Calculated Total CO2,Blood,Blood Gas
+50805,Carboxyhemoglobin,Blood,Blood Gas
+50806,"Chloride, Whole Blood",Blood,Blood Gas
+50808,Free Calcium,Blood,Blood Gas
+50809,Glucose,Blood,Blood Gas
+50810,"Hematocrit, Calculated",Blood,Blood Gas
+50811,Hemoglobin,Blood,Blood Gas
+50813,Lactate,Blood,Blood Gas
+50814,Methemoglobin,Blood,Blood Gas
+50818,pCO2,Blood,Blood Gas
+50820,pH,Blood,Blood Gas
+50821,pO2,Blood,Blood Gas
+50822,"Potassium, Whole Blood",Blood,Blood Gas
+50824,"Sodium, Whole Blood",Blood,Blood Gas
+50830,"pCO2, Body Fluid",Other Body Fluid,Blood Gas
+50831,pH,Other Body Fluid,Blood Gas
+50832,"pO2, Body Fluid",Other Body Fluid,Blood Gas
+50833,Potassium,Other Body Fluid,Blood Gas
+50834,"Sodium, Body Fluid",Other Body Fluid,Blood Gas
+50835,"Albumin, Ascites",Ascites,Chemistry
+50837,"Bicarbonate, Ascites",Ascites,Chemistry
+50838,"Bilirubin, Total, Ascites",Ascites,Chemistry
+50839,"Chloride, Ascites",Ascites,Chemistry
+50841,"Creatinine, Ascites",Ascites,Chemistry
+50842,"Glucose, Ascites",Ascites,Chemistry
+50843,"Lactate Dehydrogenase, Ascites",Ascites,Chemistry
+50847,"Potassium, Ascites",Ascites,Chemistry
+50848,"Sodium, Ascites",Ascites,Chemistry
+50849,"Total Protein, Ascites",Ascites,Chemistry
+50851,"Urea Nitrogen, Ascites",Ascites,Chemistry
+50852,% Hemoglobin A1c,Blood,Chemistry
+50855,Absolute Hemoglobin,Blood,Chemistry
+50856,Acetaminophen,Blood,Chemistry
+50858,Acid Phosphatase,Blood,Chemistry
+50859,"Acid Phosphatase, Non-Prostatic",Blood,Chemistry
+50861,Alanine Aminotransferase (ALT),Blood,Chemistry
+50862,Albumin,Blood,Chemistry
+50863,Alkaline Phosphatase,Blood,Chemistry
+50864,Alpha-Fetoprotein,Blood,Chemistry
+50868,Anion Gap,Blood,Chemistry
+50872,Anti-Neutrophil Cytoplasmic Antibody,Blood,Chemistry
+50878,Asparate Aminotransferase (AST),Blood,Chemistry
+50882,Bicarbonate,Blood,Chemistry
+50883,"Bilirubin, Direct",Blood,Chemistry
+50884,"Bilirubin, Indirect",Blood,Chemistry
+50885,"Bilirubin, Total",Blood,Chemistry
+50893,"Calcium, Total",Blood,Chemistry
+50902,Chloride,Blood,Chemistry
+50912,Creatinine,Blood,Chemistry
+50928,Gastrin,Blood,Chemistry
+50931,Glucose,Blood,Chemistry
+50954,Lactate Dehydrogenase (LD),Blood,Chemistry
+50966,Phenobarbital,Blood,Chemistry
+50967,Phenytoin,Blood,Chemistry
+50968,"Phenytoin, Free",Blood,Chemistry
+50969,"Phenytoin, Percent Free",Blood,Chemistry
+50970,Phosphate,Blood,Chemistry
+50971,Potassium,Blood,Chemistry
+50975,Protein Electrophoresis,Blood,Chemistry
+50983,Sodium,Blood,Chemistry
+50990,Theophylline,Blood,Chemistry
+51006,Urea Nitrogen,Blood,Chemistry
+51019,"Albumin, Joint Fluid",Joint Fluid,Chemistry
+51021,"Creatinine, Joint Fluid",Joint Fluid,Chemistry
+51022,"Glucose, Joint Fluid",Joint Fluid,Chemistry
+51024,"Total Protein, Joint Fluid",Joint Fluid,Chemistry
+51025,"Albumin, Body Fluid",Other Body Fluid,Chemistry
+51027,"Bicarbonate, Other Fluid",Other Body Fluid,Chemistry
+51028,"Bilirubin, Total, Body Fluid",Other Body Fluid,Chemistry
+51029,"Calcium, Body Fluid",Other Body Fluid,Chemistry
+51030,"Chloride, Body Fluid",Other Body Fluid,Chemistry
+51032,"Creatinine, Body Fluid",Other Body Fluid,Chemistry
+51034,"Glucose, Body Fluid",Other Body Fluid,Chemistry
+51040,"Phosphate, Body Fluid",Other Body Fluid,Chemistry
+51041,"Potassium, Body Fluid",Other Body Fluid,Chemistry
+51042,"Sodium, Body Fluid",Other Body Fluid,Chemistry
+51043,"Total Protein, Body Fluid",Other Body Fluid,Chemistry
+51045,"Urea Nitrogen, Body Fluid",Other Body Fluid,Chemistry
+51046,"Albumin, Pleural",Pleural,Chemistry
+51048,"Bicarbonate, Pleural",Pleural,Chemistry
+51049,"Bilirubin, Total, Pleural",Pleural,Chemistry
+51050,"Chloride, Pleural",Pleural,Chemistry
+51052,"Creatinine, Pleural",Pleural,Chemistry
+51053,"Glucose, Pleural",Pleural,Chemistry
+51054,"Lactate Dehydrogenase, Pleural",Pleural,Chemistry
+51057,"Potassium, Pleural",Pleural,Chemistry
+51058,"Sodium, Pleural",Pleural,Chemistry
+51059,"Total Protein, Pleural",Pleural,Chemistry
+51061,"Bicarbonate, Stool",Stool,Chemistry
+51062,"Chloride, Stool",Stool,Chemistry
+51064,"Potassium, Stool",Stool,Chemistry
+51065,"Sodium, Stool",Stool,Chemistry
+51066,24 hr Calcium,Urine,Chemistry
+51067,24 hr Creatinine,Urine,Chemistry
+51069,"Albumin, Urine",Urine,Chemistry
+51070,"Albumin/Creatinine, Urine",Urine,Chemistry
+51071,"Amphetamine Screen, Urine",Urine,Chemistry
+51073,"Amylase/Creatinine Ratio, Urine",Urine,Chemistry
+51076,"Bicarbonate, Urine",Urine,Chemistry
+51077,"Calcium, Urine",Urine,Chemistry
+51078,"Chloride, Urine",Urine,Chemistry
+51080,Creatinine Clearance,Urine,Chemistry
+51081,"Creatinine, Serum",Urine,Chemistry
+51082,"Creatinine, Urine",Urine,Chemistry
+51084,"Glucose, Urine",Urine,Chemistry
+51094,pH,Urine,Chemistry
+51095,"Phosphate, Urine",Urine,Chemistry
+51096,Porphobilinogen Screen,Urine,Chemistry
+51097,"Potassium, Urine",Urine,Chemistry
+51098,"Prot. Electrophoresis, Urine",Urine,Chemistry
+51099,Protein/Creatinine Ratio,Urine,Chemistry
+51100,"Sodium, Urine",Urine,Chemistry
+51102,"Total Protein, Urine",Urine,Chemistry
+51104,"Urea Nitrogen, Urine",Urine,Chemistry
+51106,Urine Creatinine,Urine,Chemistry
+51110,Atypical Lymphocytes,Ascites,Hematology
+51112,Basophils,Ascites,Hematology
+51113,Blasts,Ascites,Hematology
+51114,Eosinophils,Ascites,Hematology
+51115,"Hematocrit, Ascites",Ascites,Hematology
+51116,Lymphocytes,Ascites,Hematology
+51117,Macrophage,Ascites,Hematology
+51133,Absolute Lymphocyte Count,Blood,Hematology
+51136,Alpha Antiplasmin,Blood,Hematology
+51143,Atypical Lymphocytes,Blood,Hematology
+51145,Basophilic Stippling,Blood,Hematology
+51146,Basophils,Blood,Hematology
+51148,Blasts,Blood,Hematology
+51199,Eosinophil Count,Blood,Hematology
+51200,Eosinophils,Blood,Hematology
+51201,Epinepherine,Blood,Hematology
+51212,Fetal Hemoglobin,Blood,Hematology
+51221,Hematocrit,Blood,Hematology
+51222,Hemoglobin,Blood,Hematology
+51223,Hemoglobin A2,Blood,Hematology
+51224,Hemoglobin C,Blood,Hematology
+51225,Hemoglobin F,Blood,Hematology
+51232,Hypersegmented Neutrophils,Blood,Hematology
+51234,Immunophenotyping,Blood,Hematology
+51240,Large Platelets,Blood,Hematology
+51241,Leukocyte Alkaline Phosphatase,Blood,Hematology
+51244,Lymphocytes,Blood,Hematology
+51245,"Lymphocytes, Percent",Blood,Hematology
+51256,Neutrophils,Blood,Hematology
+51264,Platelet Clumps,Blood,Hematology
+51265,Platelet Count,Blood,Hematology
+51266,Platelet Smear,Blood,Hematology
+51285,"Reticulocyte, Cellular Hemoglobin",Blood,Hematology
+51292,Spherocytes,Blood,Hematology
+51300,WBC Count,Blood,Hematology
+51301,White Blood Cells,Blood,Hematology
+51338,Immunophenotyping,Bone Marrow,Hematology
+51365,Atypical Lymphocytes,Joint Fluid,Hematology
+51367,Basophils,Joint Fluid,Hematology
+51368,Eosinophils,Joint Fluid,Hematology
+51369,"Hematocrit, Joint Fluid",Joint Fluid,Hematology
+51375,Lymphocytes,Joint Fluid,Hematology
+51376,Macrophage,Joint Fluid,Hematology
+51385,Atypical Lymphocytes,Other Body Fluid,Hematology
+51387,Basophils,Other Body Fluid,Hematology
+51419,Eosinophils,Other Body Fluid,Hematology
+51422,"Hematocrit, Other Fluid",Other Body Fluid,Hematology
+51424,Immunophenotyping,Other Body Fluid,Hematology
+51427,Lymphocytes,Other Body Fluid,Hematology
+51428,Macrophage,Other Body Fluid,Hematology
+51440,Atypical Lymphocytes,Pleural,Hematology
+51442,Basophils,Pleural,Hematology
+51443,Blasts,Pleural,Hematology
+51444,Eosinophils,Pleural,Hematology
+51445,"Hematocrit, Pleural",Pleural,Hematology
+51446,Lymphocytes,Pleural,Hematology
+51447,Macrophages,Pleural,Hematology
+51462,Amorphous Crystals,Urine,Hematology
+51464,Bilirubin,Urine,Hematology
+51465,Bilirubin Crystals,Urine,Hematology
+51467,Broad Casts,Urine,Hematology
+51468,Calcium Carbonate Crystals,Urine,Hematology
+51469,Calcium Oxalate Crystals,Urine,Hematology
+51470,Calcium Phosphate Crystals,Urine,Hematology
+51471,Cellular Cast,Urine,Hematology
+51474,Eosinophils,Urine,Hematology
+51475,Epithelial Casts,Urine,Hematology
+51478,Glucose,Urine,Hematology
+51479,Granular Casts,Urine,Hematology
+51480,Hematocrit,Urine,Hematology
+51482,Hyaline Casts,Urine,Hematology
+51483,Hyphenated Yeast,Urine,Hematology
+51491,pH,Urine,Hematology
+51494,RBC Casts,Urine,Hematology
+51503,Triple Phosphate Crystals,Urine,Hematology
+51507,"Urine Casts, Other",Urine,Hematology
+51515,Waxy Casts,Urine,Hematology
+51516,WBC,Urine,Hematology
+51517,WBC Casts,Urine,Hematology
+51518,WBC Clumps,Urine,Hematology
+51519,Yeast,Urine,Hematology
+51568,"Bilirubin, Neonatal",Blood,Chemistry
+51569,"Bilirubin, Neonatal, Direct",Blood,Chemistry
+51570,"Bilirubin, Neonatal, Indirect",Blood,Chemistry
+51624,Free Calcium,Blood,Chemistry
+51631,Glycated Hemoglobin,Blood,Chemistry
+51638,Hematocrit,Blood,Chemistry
+51639,Hematocrit,Blood,Chemistry
+51640,Hemoglobin,Blood,Chemistry
+51641,Hemoglobin  A,Blood,Chemistry
+51642,Hemoglobin  A1,Blood,Chemistry
+51643,Hemoglobin  A2,Blood,Chemistry
+51644,Hemoglobin  C,Blood,Chemistry
+51645,"Hemoglobin, Calculated",Blood,Chemistry
+51646,Hemoglobin  F,Blood,Chemistry
+51647,Hemoglobin  S,Blood,Chemistry
+51652,High-Sensitivity CRP,Blood,Chemistry
+51673,Immunoelectrophoresis,Blood,Chemistry
+51687,Lipo Electrophoresis,Blood,Chemistry
+51739,Total CO2,Blood,Chemistry
+51748,Treponema pallidum (Syphilis) Ab,Blood,Chemistry
+51749,Treponema pallidum (syphilis) value,Blood,Chemistry
+51755,White Blood Cells,Blood,Chemistry
+51756,White Blood Cells,Blood,Chemistry
+51775,(Albumin),Cerebrospinal Fluid,Chemistry
+51776,<Albumin>,Cerebrospinal Fluid,Chemistry
+51777,"Albumin, CSF",Cerebrospinal Fluid,Chemistry
+51778,Alpha-1,Cerebrospinal Fluid,Chemistry
+51779,Alpha-2,Cerebrospinal Fluid,Chemistry
+51782,"Bicarbonate, CSF",Cerebrospinal Fluid,Chemistry
+51783,"Bilirubin, Total, CSF",Cerebrospinal Fluid,Chemistry
+51784,"Chloride, CSF",Cerebrospinal Fluid,Chemistry
+51787,"Creatinine, CSF",Cerebrospinal Fluid,Chemistry
+51790,"Glucose, CSF",Cerebrospinal Fluid,Chemistry
+51792,"Immunoelectrophoresis, CSF",Cerebrospinal Fluid,Chemistry
+51795,"Lactate Dehydrogenase, CSF",Cerebrospinal Fluid,Chemistry
+51800,"Potassium, CSF",Cerebrospinal Fluid,Chemistry
+51801,"Sodium, CSF",Cerebrospinal Fluid,Chemistry
+51802,"Total Protein, CSF",Cerebrospinal Fluid,Chemistry
+51804,"Urea Nitrogen, CSF",Cerebrospinal Fluid,Chemistry
+51807,(Albumin),Joint Fluid,Chemistry
+51808,Alpha-1,Joint Fluid,Chemistry
+51809,Alpha-2,Joint Fluid,Chemistry
+51811,"Bicarbonate,Joint Fluid",Joint Fluid,Chemistry
+51812,"Bilirubin, Total, Joint Fluid",Joint Fluid,Chemistry
+51813,"Chloride, Joint Fluid",Joint Fluid,Chemistry
+51819,"Immunoelectrophoresis, Joint Fluid",Joint Fluid,Chemistry
+51822,"Potassium, Joint Fluid",Joint Fluid,Chemistry
+51823,"Sodium, Joint Fluid",Joint Fluid,Chemistry
+51825,"Urea Nitrogen, Joint Fluid",Joint Fluid,Chemistry
+51836,<Albumin>,Other Body Fluid,Chemistry
+51837,Alpha-1,Other Body Fluid,Chemistry
+51838,Alpha-2,Other Body Fluid,Chemistry
+51842,Bun,Other Body Fluid,Chemistry
+51861,"Immunoelectrophoresis, Fluid",Other Body Fluid,Chemistry
+51889,Phosphatidylglycerol,Other Body Fluid,Chemistry
+51893,Staph aureus PCR,Other Body Fluid,Chemistry
+51897,Surfactant/Albumin,Other Body Fluid,Chemistry
+51910,(Albumin),Pleural,Chemistry
+51911,Alpha-1,Pleural,Chemistry
+51912,Alpha-2,Pleural,Chemistry
+51917,"Immunoelectrophoresis, Pleural",Pleural,Chemistry
+51922,"Urea Nitrogen, Pleural",Pleural,Chemistry
+51926,(Albumin),Stool,Chemistry
+51927,"Albumin, Stool",Stool,Chemistry
+51928,Alpha-1,Stool,Chemistry
+51929,Alpha-2,Stool,Chemistry
+51932,"Bilirubin, Total, Stool",Stool,Chemistry
+51937,"Creatinine, Stool",Stool,Chemistry
+51941,"Glucose, Stool",Stool,Chemistry
+51943,"Immunoelectrophoresis, Stool",Stool,Chemistry
+51944,"Lactate Dehydrogenase, Stool",Stool,Chemistry
+51949,"Total Protein, Stool",Stool,Chemistry
+51951,"Urea Nitrogen, Stool",Stool,Chemistry
+51961,Alpha-1,Urine,Chemistry
+51962,Alpha-2,Urine,Chemistry
+51963,Amylase/Creatinine Clearance,Urine,Chemistry
+51966,Bilirubin,Urine,Chemistry
+51975,Coproporphyrins,Urine,Chemistry
+51977,"Creatinine, Blood",Urine,Chemistry
+51981,Glucose,Urine,Chemistry
+51982,"Immunoelectrophoresis, Urine",Urine,Chemistry
+51990,"Phenothiazine Screen, Urine",Urine,Chemistry
+51991,"Propoxyphene, Urine",Urine,Chemistry
+52000,Urine  Creatinine,Urine,Chemistry
+52003,Uroporphyrins,Urine,Chemistry
+52022,"Albumin, Blood",Blood,Blood Gas
+52024,"Creatinine, Whole Blood",Blood,Blood Gas
+52027,"Glucose, Whole Blood",Blood,Blood Gas
+52028,Hematocrit,Blood,Blood Gas
+52029,% Ionized Calcium,Blood,Blood Gas
+52032,P50 of Hemoglobin,Blood,Blood Gas
+52034,Total Calcium,Blood,Blood Gas
+52035,Total Calcium,Blood,Blood Gas
+52037,WB tCO2,Blood,Blood Gas
+52038,Base Excess,Fluid,Blood Gas
+52039,Calculated Bicarbonate,Fluid,Blood Gas
+52040,pCO2,Fluid,Blood Gas
+52041,pH,Fluid,Blood Gas
+52042,pO2,Fluid,Blood Gas
+52045,"pH, Urine",Urine,Blood Gas
+52046,"Potassium, Urine",Urine,Blood Gas
+52047,"Sodium, Urine",Urine,Blood Gas
+52051,Blasts#,Ascites,Hematology
+52057,Lymphs#,Ascites,Hematology
+52069,Absolute Basophil Count,Blood,Hematology
+52073,Absolute Eosinophil Count,Blood,Hematology
+52075,Absolute Neutrophil Count,Blood,Hematology
+52076,Acid Phosphatase Stain,Blood,Hematology
+52105,Direct Antiplatelet Antibodies,Blood,Hematology
+52126,Heinz Aph,Blood,Hematology
+52128,Hemoglobin H Inclusion,Blood,Hematology
+52129,Hemoglobin Other,Blood,Hematology
+52142,Mean Platelet Volume,Blood,Hematology
+52144,Methemoglobin,Blood,Hematology
+52146,Naphtol Acetate Stain,Blood,Hematology
+52157,Plasma Hemoglobin,Blood,Hematology
+52159,Platelet Aggregation,Blood,Hematology
+52171,RBC Morphology,Blood,Hematology
+52184,TCR Alpha-Beta,Blood,Hematology
+52190,Tissue Thromboplastin Inhibitor,Blood,Hematology
+52219,WBCScat,Blood,Hematology
+52220,wbcp,Blood,Hematology
+52221,Atypical Lymphocytes,Cerebrospinal Fluid,Hematology
+52225,Basophils,Cerebrospinal Fluid,Hematology
+52227,Blasts,Cerebrospinal Fluid,Hematology
+52228,Blasts#,Cerebrospinal Fluid,Hematology
+52256,Eosinophils,Cerebrospinal Fluid,Hematology
+52257,"Hematocrit, CSF",Cerebrospinal Fluid,Hematology
+52260,Hypersegmented Neutrophils,Cerebrospinal Fluid,Hematology
+52261,Hypersegmented Neutrophils #,Cerebrospinal Fluid,Hematology
+52262,Immunophenotyping,Cerebrospinal Fluid,Hematology
+52264,Lymphs,Cerebrospinal Fluid,Hematology
+52265,Lymphs#,Cerebrospinal Fluid,Hematology
+52266,Macrophage,Cerebrospinal Fluid,Hematology
+52267,Macrophage#,Cerebrospinal Fluid,Hematology
+52294,Blasts,Joint Fluid,Hematology
+52295,Blasts#,Joint Fluid,Hematology
+52299,Hypersegmented Neutrophils,Joint Fluid,Hematology
+52300,Hypersegmented Neutrophils #,Joint Fluid,Hematology
+52302,Lymphs#,Joint Fluid,Hematology
+52316,Acid Phosphatase Stain,Bone Marrow,Hematology
+52326,Naphthol Acetate Stain,Bone Marrow,Hematology
+52327,Naphthol Butryrate,Bone Marrow,Hematology
+52331,TCR Alpha-Beta,Bone Marrow,Hematology
+52339,Blasts,Other Body Fluid,Hematology
+52340,Blasts#,Other Body Fluid,Hematology
+52355,Hypersegmented Neutrophils,Other Body Fluid,Hematology
+52356,Hypersegmented Neutrophils#,Other Body Fluid,Hematology
+52359,Lymphs#,Other Body Fluid,Hematology
+52367,TCR Alpha-Beta,Other Body Fluid,Hematology
+52378,Blasts#,Pleural,Hematology
+52382,Hypersegmented  Neutrophils#,Pleural,Hematology
+52383,Hypersegmented Neutrophils,Pleural,Hematology
+52384,Lymphs#,Pleural,Hematology
+52407,WBC,Stool,Hematology
+52409,Budding Yeast,Urine,Hematology
+52410,Fatty Casts,Urine,Hematology
+52434,"Chloride, Whole Blood",Blood,Blood Gas
+52442,Lactate,Blood,Blood Gas
+52452,"Potassium, Whole Blood",Blood,Blood Gas
+52455,"Sodium, Whole Blood",Blood,Blood Gas
+52500,Anion Gap,Blood,Chemistry
+52535,Chloride,Blood,Chemistry
+52546,Creatinine,Blood,Chemistry
+52569,Glucose,Blood,Chemistry
+52610,Potassium,Blood,Chemistry
+52623,Sodium,Blood,Chemistry
+52647,Urea Nitrogen,Blood,Chemistry
+52703,"Albumin, Urine",Urine,Chemistry
+52730,pH,Urine,Chemistry
+52769,Absolute Lymphocyte Count,Blood,Hematology
+53085,Albumin,Blood,Chemistry
+53086,Alkaline Phosphatase,Blood,Chemistry
+53089,"Bilirubin, Total",Blood,Chemistry
+53116,(Albumin),Ascites,Chemistry
+53117,Alpha-1,Ascites,Chemistry
+53118,Alpha-2,Ascites,Chemistry
+53123,"Immunoelectrophoresis, Ascites",Ascites,Chemistry
+53135,"Acid Phosphatase, Prostatic Fraction",Blood,Chemistry
+53136,Adrenocorticotrophic Hormone,Blood,Chemistry
+53138,(Albumin),Blood,Chemistry
+53141,Alpha-1,Blood,Chemistry
+53142,Alpha-1-antitrypsin,Blood,Chemistry
+53143,Alpha-2,Blood,Chemistry
+53154,Lactate,Blood,Chemistry
+53157,Absolute Lymphocyte Count,Blood,Chemistry
+53159,Absolute Neutrophil Count,Blood,Chemistry
+53164,Neutrophils,Blood,Chemistry
+53169,Ceph-IC,Other Body Fluid,Chemistry
+53170,CephIC Endpt,Other Body Fluid,Chemistry
+53188,Lymphocytes,Blood,Chemistry
+53189,Platelet Count,Blood,Chemistry

@@ -1,0 +1,8 @@
+{
+  "rows": 9589,
+  "subjects": 6661,
+  "positives": 3304,
+  "negatives": 6285,
+  "positive_rate": 0.34456147669204296,
+  "note": "Non-ED MIMIC-CXR internal generalization. DenseNet backbone was pretrained on this population \u2014 label this accordingly in the thesis."
+}

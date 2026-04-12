@@ -1,0 +1,10 @@
+{
+  "input_rows": 9137,
+  "output_rows": 9137,
+  "missing_temporal_split": 0,
+  "split_counts": {
+    "train": 7132,
+    "test": 1075,
+    "validate": 930
+  }
+}

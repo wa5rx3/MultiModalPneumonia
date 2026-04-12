@@ -1,0 +1,22 @@
+{
+  "lookback_hours": 24,
+  "num_shard_files": 300,
+  "chunks_processed": 300,
+  "rows_read_total": 158374764,
+  "rows_after_subject_filter": 52168925,
+  "rows_after_itemid_filter": 21818919,
+  "rows_after_nonnull_filter": 21785955,
+  "rows_after_hadm_merge": 4492594,
+  "rows_after_subject_only_fallback_merge": 6578923,
+  "rows_after_time_filter_hadm": 100666,
+  "rows_after_time_filter_fallback": 212842,
+  "final_rows": 313494,
+  "final_subjects": 17612,
+  "final_studies": 22009,
+  "final_itemids": 28,
+  "notes": [
+    "Primary matching uses subject_id + hadm_id.",
+    "Fallback subject-only matching is used only when both cohort row and lab row lack hadm_id.",
+    "Labs are restricted to the lookback window before t0."
+  ]
+}

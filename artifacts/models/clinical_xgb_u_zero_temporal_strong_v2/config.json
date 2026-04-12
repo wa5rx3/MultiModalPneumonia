@@ -1,0 +1,14 @@
+{
+  "input": "artifacts/manifests/cxr_clinical_pneumonia_training_table_u_zero_temporal.parquet",
+  "output_dir": "artifacts\\models\\clinical_xgb_u_zero_temporal_strong_v2",
+  "model_name": "clinical_xgb",
+  "feature_groups": "all",
+  "train_rows": 13342,
+  "validate_rows": 1677,
+  "test_rows": 1944,
+  "train_positives": 3340,
+  "train_negatives": 10002,
+  "scale_pos_weight": 2.9946107784431137,
+  "early_stopping_rounds": 40,
+  "selection_metric": "validation_aucpr"
+}

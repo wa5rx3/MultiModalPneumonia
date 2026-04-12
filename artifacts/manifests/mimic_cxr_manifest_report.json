@@ -1,0 +1,14 @@
+{
+  "rows": 377110,
+  "subjects": 65379,
+  "studies": 227835,
+  "frontal_rows": 243334,
+  "pa_rows": 96161,
+  "ap_rows": 147173,
+  "lateral_rows": 117986,
+  "single_image_rows": 102675,
+  "multi_image_rows": 274435,
+  "missing_t0": 0,
+  "existing": 376447,
+  "missing": 663
+}

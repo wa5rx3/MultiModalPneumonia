@@ -1,0 +1,33 @@
+{
+  "checkpoint": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/checkpoints/best.pt",
+  "eval_table": "artifacts/manifests/nonED_image_eval_table.parquet",
+  "n_total": 9589,
+  "n_subjects": 6661,
+  "n_positive": 3304,
+  "n_negative": 6285,
+  "positive_rate": 0.34456147669204296,
+  "point_estimate": {
+    "auroc": 0.5342680504910997,
+    "auprc": 0.36600610687647955
+  },
+  "bootstrap": {
+    "n_replicates": 2000,
+    "n_skipped": 0,
+    "seed": 42,
+    "auroc": {
+      "mean": 0.5343186536748663,
+      "std": 0.007038471500578623,
+      "ci_low": 0.5204362292058671,
+      "ci_high": 0.5482303476966884,
+      "median": 0.5344397991265712
+    },
+    "auprc": {
+      "mean": 0.36616277130148367,
+      "std": 0.008607684692815231,
+      "ci_low": 0.34904117785822275,
+      "ci_high": 0.38312341622275936,
+      "median": 0.36620894414599997
+    }
+  },
+  "note": "Non-ED MIMIC-CXR internal generalization. DenseNet backbone was pretrained on this population during multilabel pretraining. Label as internal generalization check, not external validation."
+}

@@ -1,0 +1,53 @@
+{
+  "row_flow": {
+    "manifest": 377110,
+    "primary_frontal": 217922,
+    "final_ed": 81385,
+    "labels": 81385,
+    "u_ignore": 9137,
+    "clinical": 9137,
+    "clinical_temporal": 9137,
+    "lab_events_hadm_only": 100662,
+    "lab_features_hadm_only": 6605,
+    "clinical_labs_full": 9137,
+    "clinical_labs_full_temporal": 9137,
+    "clinical_labs_overlap": 867,
+    "clinical_labs_overlap_temporal": 867,
+    "pretrain_split_manifest": 217922,
+    "multilabel_pretrain_table": 45837
+  },
+  "uniqueness": {
+    "primary_study_unique_dups": 0,
+    "final_ed_study_unique_dups": 0,
+    "triage_model_study_unique_dups": 0,
+    "labels_study_unique_dups": 0,
+    "clinical_temporal_study_unique_dups": 0,
+    "lab_features_study_unique_dups": 0,
+    "pretrain_table_dicom_dups": 0
+  },
+  "patient_split_leak": {
+    "ed_temporal": 0,
+    "clinical_temporal": 0,
+    "lab_full_temporal": 0,
+    "lab_overlap_temporal": 0
+  },
+  "lab_time_safety": {
+    "missing_t0_after_join": 0,
+    "post_t0_rows": 0,
+    "older_than_24h_rows": 0
+  },
+  "lab_hadm_sanity": {
+    "null_hadm_in_hadm_only": 0
+  },
+  "label_counts": {
+    "positive": 4281,
+    "negative": 4856,
+    "uncertain": 7826,
+    "missing": 64422
+  },
+  "lab_coverage": {
+    "rows_any_lab": 867,
+    "rows_no_lab": 8270,
+    "any_lab_rate": 0.09488891321002517
+  }
+}

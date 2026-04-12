@@ -1,0 +1,24 @@
+{
+  "best_val_auprc": 0.8813187967044813,
+  "best_epoch": 1,
+  "epochs_completed": 11,
+  "val_metrics": {
+    "n": 1677,
+    "positive_rate": 0.7161598205566406,
+    "auroc": 0.7525381509806255,
+    "auprc": 0.8813187967044813,
+    "accuracy": 0.6869409660107334,
+    "f1": 0.7566063977746871,
+    "loss": 0.34359230945507685
+  },
+  "test_metrics": {
+    "n": 1944,
+    "positive_rate": 0.6975308656692505,
+    "auroc": 0.7582224630265084,
+    "auprc": 0.8745886709717411,
+    "accuracy": 0.6959876543209876,
+    "f1": 0.7598537180008127,
+    "loss": 0.34945266907576655
+  },
+  "output_dir": "artifacts\\models\\image_pneumonia_finetune_densenet121_u_one_temporal_stronger_lr_v3"
+}

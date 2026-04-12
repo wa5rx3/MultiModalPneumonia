@@ -1,0 +1,31 @@
+{
+  "model_dir": "artifacts\\models\\clinical_xgb_u_ignore_vitals_plus_acuity_temporal_strong_v2",
+  "feature_groups": "vitals_plus_acuity",
+  "split": "test",
+  "n_samples": 1075,
+  "feature_names": [
+    "temperature",
+    "heartrate",
+    "resprate",
+    "o2sat",
+    "sbp",
+    "dbp",
+    "pain",
+    "acuity",
+    "is_pa",
+    "is_ap"
+  ],
+  "mean_abs_shap": {
+    "temperature": 0.07819567620754242,
+    "heartrate": 0.09906252473592758,
+    "resprate": 0.06213950365781784,
+    "o2sat": 0.1482275128364563,
+    "sbp": 0.04341570660471916,
+    "dbp": 0.04164867848157883,
+    "pain": 0.012001708149909973,
+    "acuity": 0.031396716833114624,
+    "is_pa": 0.05271654203534126,
+    "is_ap": 0.009423463605344296
+  },
+  "note": "XGBoost SHAP values are in original clinical units. No StandardScaler applied \u2014 tree-based model is scale-invariant. The tabular_preprocessor.joblib belongs to the multimodal model's tabular branch and must NOT be applied here."
+}

@@ -1,0 +1,29 @@
+{
+  "rows": 81385,
+  "merge_keys_used": [
+    "subject_id",
+    "study_id"
+  ],
+  "fallback_study_merge_allowed": true,
+  "chexpert_row_found": 81384,
+  "chexpert_row_missing": 1,
+  "positive": 4281,
+  "negative": 4856,
+  "uncertain": 7826,
+  "missing": 64422,
+  "chexpert_qc": {
+    "pre_qc": {
+      "group_keys": [
+        "subject_id",
+        "study_id"
+      ],
+      "groups_total": 59185,
+      "groups_with_duplicate_rows": 0,
+      "groups_with_conflicting_pneumonia_labels": 0
+    },
+    "post_qc": {
+      "rows_after_drop_duplicates": 227827,
+      "unique_merge_key_rows": 227827
+    }
+  }
+}

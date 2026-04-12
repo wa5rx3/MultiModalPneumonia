@@ -1,0 +1,4 @@
+mimic_cxr_root: "/path/to/mimic-cxr-jpg"
+mimic_iv_root: "/path/to/mimic-iv"
+mimic_iv_ed_root: "/path/to/mimic-iv-ed"
+labevents_dir: "/path/to/mimic-iv/labevents"

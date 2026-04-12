@@ -1,0 +1,12 @@
+{
+  "policy": "u_one",
+  "rows": 16963,
+  "positives": 12107,
+  "negatives": 4856,
+  "positive_rate": 0.7137298826858457,
+  "split_counts": {
+    "train": 16532,
+    "test": 306,
+    "validate": 125
+  }
+}

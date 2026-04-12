@@ -1,0 +1,36 @@
+{
+    "wbc": [51300, 51301],
+    "hemoglobin": [51222, 50811, 51640],
+    "hematocrit": [51221],
+    "platelets": [51265, 53189],
+  
+    "sodium": [50983, 52623],
+    "potassium": [50971, 52610],
+    "chloride": [50902, 52535],
+    "bicarbonate": [50882],
+    "total_co2": [51739],
+  
+    "bun": [51006, 52647],
+    "creatinine": [50912, 52546],
+    "glucose": [50931, 52569],
+    "calcium": [50893],
+  
+    "ph": [50820, 52469],
+    "pco2": [50818, 52468],
+    "po2": [50821, 52470],
+    "base_excess": [50802],
+  
+    "lactate": [50813, 52442, 53154],
+    "anion_gap": [50868, 52500],
+  
+    "albumin": [50862, 53085],
+    "total_protein": [50976],
+  
+    "ast": [50878],
+    "alt": [50861],
+    "bilirubin_total": [50885, 53089],
+    "alkaline_phosphatase": [50863, 53086],
+  
+    "crp": [50889],
+    "procalcitonin": [50954]
+  }

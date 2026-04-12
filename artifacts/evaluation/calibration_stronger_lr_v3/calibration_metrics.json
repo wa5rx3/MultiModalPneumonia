@@ -1,0 +1,88 @@
+{
+  "n_bins": 10,
+  "bootstrap": true,
+  "n_bootstrap": 2000,
+  "bootstrap_seed": 42,
+  "models": {
+    "Clinical Logistic strong_v2": {
+      "predictions_file": "artifacts\\models\\clinical_baseline_u_ignore_temporal_strong_v2\\test_predictions.csv",
+      "n": 1075,
+      "positive_rate": 0.4530232558139535,
+      "mean_pred_prob": 0.49049101122161404,
+      "brier_score": 0.2422399144852579,
+      "ece": 0.03746775540766057,
+      "mce": 0.4888774142933826,
+      "n_bins": 10,
+      "brier_score_bootstrap": {
+        "mean": 0.2422255463204997,
+        "ci_low": 0.2356938230698796,
+        "ci_high": 0.24912445502239938
+      },
+      "ece_bootstrap": {
+        "mean": 0.04418678929110395,
+        "ci_low": 0.022935921341670655,
+        "ci_high": 0.06865093539911815
+      }
+    },
+    "Clinical XGB strong_v2": {
+      "predictions_file": "artifacts\\models\\clinical_xgb_u_ignore_temporal_strong_v2\\test_predictions.csv",
+      "n": 1075,
+      "positive_rate": 0.4530232558139535,
+      "mean_pred_prob": 0.4924128443162791,
+      "brier_score": 0.2405105491123096,
+      "ece": 0.04602061266976742,
+      "mce": 0.28860111499999996,
+      "n_bins": 10,
+      "brier_score_bootstrap": {
+        "mean": 0.2405137050775333,
+        "ci_low": 0.23622433943144514,
+        "ci_high": 0.2449158713052029
+      },
+      "ece_bootstrap": {
+        "mean": 0.04789278154832094,
+        "ci_low": 0.02083843655697669,
+        "ci_high": 0.07495407097209297
+      }
+    },
+    "Image stronger_lr_v3": {
+      "predictions_file": "artifacts\\models\\image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3\\test_predictions.csv",
+      "n": 1075,
+      "positive_rate": 0.4530232558139535,
+      "mean_pred_prob": 0.5155365507062092,
+      "brier_score": 0.2063056283325257,
+      "ece": 0.06735261101362316,
+      "mce": 0.1651922317884736,
+      "n_bins": 10,
+      "brier_score_bootstrap": {
+        "mean": 0.20622863217725013,
+        "ci_low": 0.19484493342059997,
+        "ci_high": 0.21752672175509358
+      },
+      "ece_bootstrap": {
+        "mean": 0.072669709266542,
+        "ci_low": 0.050746011882847136,
+        "ci_high": 0.0962283274843249
+      }
+    },
+    "Multimodal stronger_lr_v3": {
+      "predictions_file": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3\\test_predictions.csv",
+      "n": 1075,
+      "positive_rate": 0.4530232558139535,
+      "mean_pred_prob": 0.4867857715071634,
+      "brier_score": 0.20686361636847,
+      "ece": 0.04034054008334182,
+      "mce": 0.13100612232851427,
+      "n_bins": 10,
+      "brier_score_bootstrap": {
+        "mean": 0.20680976679321328,
+        "ci_low": 0.1959735764158624,
+        "ci_high": 0.21757103591602542
+      },
+      "ece_bootstrap": {
+        "mean": 0.05165224819669024,
+        "ci_low": 0.03188740681744245,
+        "ci_high": 0.07387384917266493
+      }
+    }
+  }
+}

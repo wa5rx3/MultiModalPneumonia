@@ -1,0 +1,77 @@
+{
+  "model_a_path": "artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_vitals_plus_acuity_temporal_v1/test_predictions.csv",
+  "n_bootstrap": 2000,
+  "seed": 42,
+  "model_a": {
+    "point_metrics": {
+      "auroc": 0.7404489516545838,
+      "auprc": 0.7130020223759982
+    },
+    "bootstrap_summary": {
+      "auroc": {
+        "mean": 0.7402202852569465,
+        "std": 0.015211403825873392,
+        "ci_low": 0.7105548124866444,
+        "ci_high": 0.7685977157776389,
+        "median": 0.7406220902058269
+      },
+      "auprc": {
+        "mean": 0.7135303339665185,
+        "std": 0.022036100144781322,
+        "ci_low": 0.6682203722286892,
+        "ci_high": 0.7561318782462635,
+        "median": 0.7143362206828445
+      }
+    },
+    "skipped_bootstraps": 0,
+    "n_rows": 1075,
+    "n_subjects": 887
+  },
+  "model_b_path": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv",
+  "model_b": {
+    "point_metrics": {
+      "auroc": 0.7455824218804565,
+      "auprc": 0.7244680263101745
+    },
+    "bootstrap_summary": {
+      "auroc": {
+        "mean": 0.7455097047083068,
+        "std": 0.015116948640954385,
+        "ci_low": 0.7156213092517831,
+        "ci_high": 0.774388185181732,
+        "median": 0.7457842620833908
+      },
+      "auprc": {
+        "mean": 0.7249743845899983,
+        "std": 0.021290699558673947,
+        "ci_low": 0.682062495576212,
+        "ci_high": 0.7653995790508181,
+        "median": 0.7255399841464927
+      }
+    },
+    "skipped_bootstraps": 0,
+    "n_rows": 1075,
+    "n_subjects": 887
+  },
+  "delta_a_minus_b": {
+    "bootstrap_summary": {
+      "delta_auroc": {
+        "mean": -0.005289419451360472,
+        "std": 0.006704029954421578,
+        "ci_low": -0.018176263296838996,
+        "ci_high": 0.007929022587988912,
+        "median": -0.005631058027530056,
+        "p_positive": 0.2175
+      },
+      "delta_auprc": {
+        "mean": -0.011444050623479708,
+        "std": 0.009034983234436043,
+        "ci_low": -0.029581709906213508,
+        "ci_high": 0.0059915601457334764,
+        "median": -0.011381547472070264,
+        "p_positive": 0.1015
+      }
+    },
+    "skipped_bootstraps": 0
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "input_studies": 217922,
+  "linked_studies": 81386,
+  "unlinked_studies": 136536,
+  "studies_with_exactly_one_ed_match": 81385,
+  "studies_with_multiple_ed_matches": 1,
+  "unique_ed_stay_ids": 79348,
+  "ed_stays_with_multiple_linked_cxrs": 1820
+}

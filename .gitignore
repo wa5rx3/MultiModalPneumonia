@@ -1,0 +1,106 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+configs/paths.local.yaml
+
+# Model outputs
+checkpoints/
+/runs/
+wandb/
+
+# Large artifacts
+artifacts/tmp/
+artifacts/cache/
+artifacts/archive/
+
+# Data directories
+data/raw/
+data/interim/
+data/processed/
+
+# Raw data formats
+*.csv.gz
+*.h5
+*.pt
+*.pth
+*.ckpt
+
+# === MIMIC DUA — NEVER COMMIT ===
+# Parquet cohort tables contain MIMIC patient identifiers
+artifacts/manifests/*.parquet
+artifacts/manifests/*multi_match.csv
+
+# Patient-level prediction files (subject_id + probability scores)
+artifacts/models/**/test_predictions*.csv
+artifacts/models/**/val_predictions*.csv
+artifacts/models/**/test_predictions_with_ids.csv
+artifacts/evaluation/prediction_behavior_*/predictions_copy.csv
+artifacts/evaluation/prediction_behavior_*/top_false_negatives.csv
+artifacts/evaluation/prediction_behavior_*/top_false_positives.csv
+artifacts/evaluation/nonED_generalization_image_predictions.csv
+artifacts/evaluation/shap/shap_values.csv
+artifacts/logs/qc/mimic_cxr_missing_paths.csv
+fp_top50.csv
+
+# === LARGE MODEL BINARIES ===
+artifacts/models/**/*.joblib
+artifacts/models/**/*.sav
+artifacts/models/**/checkpoints/
+
+# === LATEX BUILD ARTIFACTS ===
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.nlo
+*.tdo
+*.run.xml
+*-blx.bib
+*.toc
+
+# === NOT FOR PUBLIC REPO ===
+thesis_documentation/
+thesis_new_docs/
+thesis_v2/
+thesis_summary.tex
+thesis_summary.pdf
+thesis_summary.out
+docs/
+sample_documentation/
+tools/
+tetttt.py
+professor_feedback.docx
+thesis_v2_overleaf.zip
+project_digest.py
+
+# === TOOL & EDITOR CONFIG ===
+.claude/
+.pytest_cache/
+_strict_cleanup.py

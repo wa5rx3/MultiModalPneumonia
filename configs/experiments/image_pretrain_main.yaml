@@ -1,0 +1,10 @@
+name: image_pretrain_main
+input_table: artifacts/manifests/mimic_cxr_multilabel_pretrain_table.parquet
+output_dir: artifacts/models/image_multilabel_pretrain_densenet121_strong_v2
+epochs: 30
+batch_size: 16
+lr: 1e-4
+weight_decay: 1e-4
+image_size: 224
+num_workers: 4
+seed: 42

@@ -1,0 +1,9 @@
+{
+  "input_studies": 217922,
+  "linked_studies": 106745,
+  "unlinked_studies": 111177,
+  "studies_with_exactly_one_hadm_match": 106745,
+  "studies_with_multiple_hadm_matches": 0,
+  "unique_hadm_ids": 38814,
+  "admissions_with_multiple_linked_cxrs": 16502
+}

@@ -1,0 +1,5 @@
+The image-only model achieved the strongest performance (AUROC ~0.75, AUPRC ~0.72), substantially outperforming clinical-only models.
+
+Multimodal fusion did not consistently improve performance over the image-only baseline, with slightly lower AUROC and AUPRC on the test set.
+
+These results suggest that image representations capture most of the predictive signal for pneumonia detection in this setting.

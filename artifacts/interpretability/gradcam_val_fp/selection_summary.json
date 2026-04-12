@@ -1,0 +1,12 @@
+{
+  "mode": "fp",
+  "threshold": 0.5,
+  "top_k_requested": 20,
+  "top_k_selected": 20,
+  "target_layer": "features.norm5",
+  "image_size": 224,
+  "alpha": 0.35,
+  "checkpoint": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/checkpoints/best.pt",
+  "predictions_csv": "artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/val_predictions.csv",
+  "device": "cuda"
+}

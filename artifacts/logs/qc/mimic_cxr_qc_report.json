@@ -1,0 +1,51 @@
+{
+  "raw": {
+    "rows": 377110,
+    "subjects": 65379,
+    "studies": 227835,
+    "split_counts": {
+      "train": 368960,
+      "test": 5159,
+      "validate": 2991
+    },
+    "view_counts": {
+      "AP": 147173,
+      "PA": 96161,
+      "LATERAL": 82853,
+      "LL": 35133,
+      "nan": 15769,
+      "PA LLD": 4,
+      "LAO": 3,
+      "RAO": 3,
+      "AP AXIAL": 2,
+      "AP LLD": 2,
+      "XTABLE LATERAL": 2,
+      "AP RLD": 2,
+      "SWIMMERS": 1,
+      "PA RLD": 1,
+      "LPO": 1
+    },
+    "frontal_rows": 243334,
+    "pa_rows": 96161,
+    "ap_rows": 147173,
+    "lateral_rows": 117986,
+    "single_image_rows": 102675,
+    "multi_image_rows": 274435,
+    "missing_t0": 0,
+    "existing_paths": 376447,
+    "missing_paths": 663
+  },
+  "primary_frontal": {
+    "rows": 217922,
+    "subjects": 63871,
+    "studies": 217922,
+    "split_counts": {
+      "train": 213151,
+      "test": 3039,
+      "validate": 1732
+    },
+    "pa_rows": 85733,
+    "ap_rows": 132189,
+    "missing_t0": 0
+  }
+}

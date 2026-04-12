@@ -1,0 +1,136 @@
+{
+  "rows": 45837,
+  "subjects": 16467,
+  "studies": 45837,
+  "dicoms": 45837,
+  "merge_keys_used": [
+    "subject_id",
+    "study_id"
+  ],
+  "fallback_study_merge_allowed": true,
+  "pretrain_split_row_counts": {
+    "pretrain_train": 41214,
+    "pretrain_internal_val": 4623
+  },
+  "chexpert_row_found": 45836,
+  "chexpert_row_missing": 1,
+  "label_non_missing_counts": {
+    "Atelectasis": 13557,
+    "Cardiomegaly": 16766,
+    "Consolidation": 4658,
+    "Edema": 15331,
+    "Enlarged Cardiomediastinum": 6097,
+    "Fracture": 1439,
+    "Lung Lesion": 1803,
+    "Lung Opacity": 12459,
+    "No Finding": 12701,
+    "Pleural Effusion": 21462,
+    "Pleural Other": 664,
+    "Pneumonia": 12767,
+    "Pneumothorax": 14559,
+    "Support Devices": 18187
+  },
+  "label_positive_counts": {
+    "Atelectasis": 11072,
+    "Cardiomegaly": 10110,
+    "Consolidation": 2390,
+    "Edema": 5513,
+    "Enlarged Cardiomediastinum": 1970,
+    "Fracture": 1204,
+    "Lung Lesion": 1313,
+    "Lung Opacity": 10879,
+    "No Finding": 12701,
+    "Pleural Effusion": 12239,
+    "Pleural Other": 455,
+    "Pneumonia": 3304,
+    "Pneumothorax": 2894,
+    "Support Devices": 17061
+  },
+  "label_uncertain_counts": {
+    "Atelectasis": 2051,
+    "Cardiomegaly": 1513,
+    "Consolidation": 864,
+    "Edema": 2561,
+    "Enlarged Cardiomediastinum": 2429,
+    "Fracture": 80,
+    "Lung Lesion": 225,
+    "Lung Opacity": 804,
+    "No Finding": 0,
+    "Pleural Effusion": 1199,
+    "Pleural Other": 163,
+    "Pneumonia": 3178,
+    "Pneumothorax": 315,
+    "Support Devices": 60
+  },
+  "label_supervised_counts": {
+    "Atelectasis": 11506,
+    "Cardiomegaly": 15253,
+    "Consolidation": 3794,
+    "Edema": 12770,
+    "Enlarged Cardiomediastinum": 3668,
+    "Fracture": 1359,
+    "Lung Lesion": 1578,
+    "Lung Opacity": 11655,
+    "No Finding": 12701,
+    "Pleural Effusion": 20263,
+    "Pleural Other": 501,
+    "Pneumonia": 9589,
+    "Pneumothorax": 14244,
+    "Support Devices": 18127
+  },
+  "label_value_qc": {
+    "bad_value_counts": {
+      "Atelectasis": 0,
+      "Cardiomegaly": 0,
+      "Consolidation": 0,
+      "Edema": 0,
+      "Enlarged Cardiomediastinum": 0,
+      "Fracture": 0,
+      "Lung Lesion": 0,
+      "Lung Opacity": 0,
+      "No Finding": 0,
+      "Pleural Effusion": 0,
+      "Pleural Other": 0,
+      "Pneumonia": 0,
+      "Pneumothorax": 0,
+      "Support Devices": 0
+    },
+    "columns_with_bad_values": []
+  },
+  "chexpert_qc": {
+    "pre_qc": {
+      "group_keys": [
+        "subject_id",
+        "study_id"
+      ],
+      "groups_total": 227827,
+      "groups_with_any_label_conflict": 0,
+      "per_label_conflict_groups": {
+        "Atelectasis": 0,
+        "Cardiomegaly": 0,
+        "Consolidation": 0,
+        "Edema": 0,
+        "Enlarged Cardiomediastinum": 0,
+        "Fracture": 0,
+        "Lung Lesion": 0,
+        "Lung Opacity": 0,
+        "No Finding": 0,
+        "Pleural Effusion": 0,
+        "Pleural Other": 0,
+        "Pneumonia": 0,
+        "Pneumothorax": 0,
+        "Support Devices": 0
+      }
+    },
+    "post_qc": {
+      "rows_after_drop_duplicates": 227827,
+      "unique_merge_key_rows": 227827
+    }
+  },
+  "notes": [
+    "Pretraining table uses rows selected from the upstream pretraining manifest.",
+    "CheXpert labels are merged with explicit preferred/fallback key logic.",
+    "Raw labels preserve 1 / 0 / -1 / NaN.",
+    "Supervised masks are TRUE only for 0/1 labels; uncertain (-1) and NaN are masked out."
+  ]
+}

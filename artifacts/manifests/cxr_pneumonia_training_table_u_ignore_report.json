@@ -1,0 +1,12 @@
+{
+  "policy": "u_ignore",
+  "rows": 9137,
+  "positives": 4281,
+  "negatives": 4856,
+  "positive_rate": 0.46853452993323846,
+  "split_counts": {
+    "train": 8921,
+    "test": 145,
+    "validate": 71
+  }
+}

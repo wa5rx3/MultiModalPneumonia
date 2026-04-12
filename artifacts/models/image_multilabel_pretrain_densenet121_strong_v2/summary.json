@@ -1,0 +1,7 @@
+{
+  "best_selection_metric": "val_loss",
+  "best_value": 0.30041792122550487,
+  "best_epoch": 3,
+  "epochs_completed": 8,
+  "output_dir": "artifacts\\models\\image_multilabel_pretrain_densenet121_strong_v2"
+}

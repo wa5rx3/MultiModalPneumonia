@@ -1,0 +1,25 @@
+{
+  "best_val_auprc": 0.7426972687488334,
+  "best_epoch": 1,
+  "epochs_completed": 9,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.4881720542907715,
+    "auroc": 0.7203429830081813,
+    "auprc": 0.7426972687488334,
+    "accuracy": 0.6580645161290323,
+    "f1": 0.6102941176470589,
+    "loss": 0.6548952131958331
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.4530232548713684,
+    "auroc": 0.7368066323038456,
+    "auprc": 0.7167024707437846,
+    "accuracy": 0.6874418604651162,
+    "f1": 0.6111111111111112,
+    "loss": 0.6402323912171757
+  },
+  "output_dir": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_ignore_vitals_only_temporal_v1",
+  "tabular_preprocessor_file": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_ignore_vitals_only_temporal_v1\\tabular_preprocessor.joblib"
+}

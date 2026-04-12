@@ -1,0 +1,19 @@
+{
+  "rows": 81385,
+  "subjects": 47404,
+  "studies": 81385,
+  "split_counts_rows": {
+    "train": 64378,
+    "test": 9006,
+    "validate": 8001
+  },
+  "split_counts_subjects": {
+    "train": 37923,
+    "test": 4741,
+    "validate": 4740
+  },
+  "date_range": {
+    "min_t0": "2110-01-11 22:01:11",
+    "max_t0": "2208-11-15 17:15:26"
+  }
+}

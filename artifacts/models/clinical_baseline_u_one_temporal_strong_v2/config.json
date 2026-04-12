@@ -1,0 +1,9 @@
+{
+  "input": "artifacts/manifests/cxr_clinical_pneumonia_training_table_u_one_temporal.parquet",
+  "output_dir": "artifacts\\models\\clinical_baseline_u_one_temporal_strong_v2",
+  "model_name": "clinical_logistic_regression",
+  "feature_groups": "all",
+  "train_rows": 13342,
+  "validate_rows": 1677,
+  "test_rows": 1944
+}

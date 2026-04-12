@@ -1,0 +1,25 @@
+{
+  "best_val_auprc": 0.3479167009952051,
+  "best_epoch": 5,
+  "epochs_completed": 13,
+  "val_metrics": {
+    "n": 1677,
+    "positive_rate": 0.27072152495384216,
+    "auroc": 0.5658028391224006,
+    "auprc": 0.3479167009952051,
+    "accuracy": 0.6422182468694096,
+    "f1": 0.33774834437086093,
+    "loss": 3.423689491975875
+  },
+  "test_metrics": {
+    "n": 1944,
+    "positive_rate": 0.250514417886734,
+    "auroc": 0.6001312082575233,
+    "auprc": 0.3323857980261954,
+    "accuracy": 0.6712962962962963,
+    "f1": 0.3432682425488181,
+    "loss": 3.086792220712685
+  },
+  "output_dir": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_zero_temporal_stronger_lr_v3",
+  "tabular_preprocessor_file": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_zero_temporal_stronger_lr_v3\\tabular_preprocessor.joblib"
+}

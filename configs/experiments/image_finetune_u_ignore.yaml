@@ -1,0 +1,11 @@
+name: image_finetune_u_ignore
+input_table: artifacts/manifests/cxr_image_pneumonia_finetune_table_u_ignore_temporal.parquet
+pretrained_checkpoint: artifacts/models/image_multilabel_pretrain_densenet121_strong_v2/checkpoints/best.pt
+output_dir: artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3
+epochs: 40
+batch_size: 16
+lr: 1e-4
+weight_decay: 1e-4
+image_size: 224
+num_workers: 4
+seed: 42

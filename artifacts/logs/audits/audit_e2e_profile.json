@@ -1,0 +1,292 @@
+{
+  "manifest": {
+    "exists": true,
+    "rows": 377110,
+    "cols": 17,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "split": "train",
+      "StudyDate": 21800506,
+      "StudyTime": 213014.531
+    },
+    "keys": {
+      "study_dup": 149275,
+      "dicom_dup": 0
+    }
+  },
+  "primary": {
+    "exists": true,
+    "rows": 217922,
+    "cols": 17,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "split": "train",
+      "StudyDate": 21800506,
+      "StudyTime": 213014.531
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "ed": {
+    "exists": true,
+    "rows": 81385,
+    "cols": 25,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "split": "train",
+      "StudyDate": 21800506,
+      "StudyTime": 213014.531
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "ed_temp": {
+    "exists": true,
+    "rows": 81385,
+    "cols": 27,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "split": "train",
+      "StudyDate": 21800506,
+      "StudyTime": 213014.531
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 64378,
+      "test": 9006,
+      "validate": 8001
+    }
+  },
+  "labels": {
+    "exists": true,
+    "rows": 81385,
+    "cols": 14,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "hadm_id": 22595853.0,
+      "stay_id": 33258284.0,
+      "split": "train"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "train_u": {
+    "exists": true,
+    "rows": 9137,
+    "cols": 15,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 51967283,
+      "dicom_id": "943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4",
+      "hadm_id": 26913865.0,
+      "stay_id": 30905710.0,
+      "split": "train"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "train_u_temp": {
+    "exists": true,
+    "rows": 9137,
+    "cols": 15,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 51967283,
+      "dicom_id": "943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4",
+      "hadm_id": 26913865.0,
+      "stay_id": 30905710.0,
+      "t0": "2189-06-27 06:43:48"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 7132,
+      "test": 1075,
+      "validate": 930
+    }
+  },
+  "clin_temp": {
+    "exists": true,
+    "rows": 9137,
+    "cols": 31,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 51967283,
+      "dicom_id": "943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4",
+      "hadm_id": 26913865.0,
+      "stay_id": 30905710.0,
+      "t0": "2189-06-27 06:43:48"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 7132,
+      "test": 1075,
+      "validate": 930
+    }
+  },
+  "img_ft": {
+    "exists": true,
+    "rows": 9137,
+    "cols": 10,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 51967283,
+      "dicom_id": "943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4",
+      "image_path": "D:\\mimic_data\\files_p10\\mimic-cxr-jpg\\2.1.0\\files\\p10\\p10000980\\s51967283\\943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4.jpg",
+      "t0": "2189-06-27 06:43:48",
+      "temporal_split": "validate"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 7132,
+      "test": 1075,
+      "validate": 930
+    }
+  },
+  "pre_split": {
+    "exists": true,
+    "rows": 217922,
+    "cols": 23,
+    "sample_head": {
+      "subject_id": 10000032,
+      "study_id": 50414267,
+      "dicom_id": "02aa804e-bde0afdd-112c0b34-7bc16630-4e384014",
+      "split": "train",
+      "StudyDate": 21800506,
+      "StudyTime": 213014.531
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "multi_tbl": {
+    "exists": true,
+    "rows": 45837,
+    "cols": 34,
+    "sample_head": {
+      "subject_id": 10000764,
+      "study_id": 57375967,
+      "dicom_id": "096052b7-d256dc40-453a102b-fa7d01c6-1b22c6b4",
+      "image_path": "D:\\mimic_data\\files_p10\\mimic-cxr-jpg\\2.1.0\\files\\p10\\p10000764\\s57375967\\096052b7-d256dc40-453a102b-fa7d01c6-1b22c6b4.jpg",
+      "pretrain_split": "pretrain_train",
+      "chexpert_row_found": true
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    }
+  },
+  "labs_ev": {
+    "exists": true,
+    "rows": 100662,
+    "cols": 6,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 58206436,
+      "hadm_id": 25911675,
+      "itemid": 50868,
+      "charttime": "2191-05-22 16:50:00",
+      "valuenum": 18.0
+    },
+    "keys": {
+      "study_dup": 94057
+    }
+  },
+  "labs_feat": {
+    "exists": true,
+    "rows": 6605,
+    "cols": 54,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 58206436,
+      "albumin": NaN,
+      "alkaline_phosphatase": NaN,
+      "alt": NaN,
+      "anion_gap": 18.0
+    },
+    "keys": {
+      "study_dup": 0
+    }
+  },
+  "clin_labs_t": {
+    "exists": true,
+    "rows": 9137,
+    "cols": 83,
+    "sample_head": {
+      "subject_id": 10000980,
+      "study_id": 51967283,
+      "dicom_id": "943486a3-b3fa9ff7-50f5a769-7a62fcbb-f39b6da4",
+      "hadm_id": 26913865.0,
+      "stay_id": 30905710.0,
+      "t0": "2189-06-27 06:43:48"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 7132,
+      "test": 1075,
+      "validate": 930
+    }
+  },
+  "overlap_t": {
+    "exists": true,
+    "rows": 867,
+    "cols": 83,
+    "sample_head": {
+      "subject_id": 10014610,
+      "study_id": 52971110,
+      "dicom_id": "52fc3f2b-69a2b240-317815c6-e2fbaad8-5b949071",
+      "hadm_id": 23859571.0,
+      "stay_id": 33798186.0,
+      "t0": "2174-01-04 21:53:42"
+    },
+    "keys": {
+      "study_dup": 0,
+      "dicom_dup": 0
+    },
+    "temporal_split": {
+      "train": 667,
+      "test": 110,
+      "validate": 90
+    }
+  },
+  "align_train_temp_vs_img_ft": {
+    "same_rows": true,
+    "set_equal": true,
+    "only_in_a": 0,
+    "only_in_b": 0
+  },
+  "patient_leak_ed_temp_subjects": 0
+}
