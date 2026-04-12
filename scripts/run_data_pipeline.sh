@@ -12,13 +12,22 @@ if [ ! -f "$PATHS_FILE" ]; then
 fi
 
 _yaml_val() {
-    grep -E "^${1}:" "$PATHS_FILE" | sed 's/^[^:]*:[[:space:]]*//' | tr -d '"'\''
+    python - "$1" <<'PYEOF'
+import sys
+key = sys.argv[1]
+with open("configs/paths.local.yaml") as f:
+    for line in f:
+        line = line.strip()
+        if line.startswith(key + ":"):
+            val = line.split(":", 1)[1].strip().strip('"').strip("'")
+            print(val)
+            break
+PYEOF
 }
 
 CXR_ROOT="$(_yaml_val mimic_cxr_root)"
 IV_ROOT="$(_yaml_val mimic_iv_root)"
 ED_ROOT="$(_yaml_val mimic_iv_ed_root)"
-LAB_DIR="$(_yaml_val labevents_dir)"
 
 if [ -z "$CXR_ROOT" ] || [ -z "$ED_ROOT" ]; then
     echo "ERROR: mimic_cxr_root and mimic_iv_ed_root must be set in $PATHS_FILE" >&2
