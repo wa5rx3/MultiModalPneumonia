@@ -1,126 +1,104 @@
-# Multimodal Pneumonia Detection — MIMIC-CXR + MIMIC-IV/ED
+# Multimodal Pneumonia Detection
 
-BSc thesis codebase. Investigates whether combining chest X-rays with structured ED triage data improves pneumonia detection over image-alone, using a time-safe cohort anchored at the moment of CXR acquisition (t₀).
+BSc thesis project. The question: does adding structured ED triage data (vitals, acuity, missingness flags) to a chest X-ray model actually improve pneumonia detection, or does the image already capture everything useful?
 
-**Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV-ED (PhysioNet, credentialed access required)
-**Backbone:** DenseNet121, pretrained on multilabel CheXpert labels, fine-tuned for binary pneumonia
-**Cohort:** 9,137 ED-anchored studies · 80/10/10 patient-level temporal split · test *n* = 1,075
+Short answer: calibration improves, discrimination does not.
+
+**Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV-ED (PhysioNet credentialed access required)  
+**Cohort:** 9,137 ED-anchored studies, 80/10/10 patient-level temporal split, test set n = 1,075  
+**Backbone:** DenseNet-121 pretrained on 14-label CheXpert task, fine-tuned for binary pneumonia
 
 ---
 
-## Key Results
+## Results
 
-All metrics on the held-out test set (temporal split, `u_ignore` label policy). Bootstrap CIs are patient-level paired, *n* = 2,000 replicates.
+Test set metrics (`u_ignore` label policy, 2,000-replicate patient-level paired bootstrap).
 
 | Model | AUROC | AUPRC | ECE |
 |---|---|---|---|
-| Clinical Logistic Regression | 0.606 | 0.548 | 0.037 |
-| Clinical XGBoost | 0.611 | 0.567 | 0.046 |
-| Image-only (DenseNet121) | **0.746** | **0.724** | 0.067 |
+| Logistic Regression (triage only) | 0.606 | 0.548 | 0.037 |
+| XGBoost (triage only) | 0.611 | 0.567 | 0.046 |
+| Image-only DenseNet-121 | **0.746** | **0.724** | 0.067 |
 | Multimodal — Concat MLP | 0.736 | 0.714 | **0.040** |
 | Multimodal — Attention Fusion | 0.737 | 0.710 | 0.132 |
 
-**Primary finding:** The multimodal model does not significantly outperform image-only (ΔAUROC = −0.009, 95% CI [−0.023, +0.005], P(Δ>0) = 0.10). Its advantage is **calibration**: ECE 0.040 vs 0.067. Both deep learning models substantially and significantly outperform clinical baselines (P(Δ>0) = 1.0 for both comparisons).
+The multimodal concat model does not significantly outperform image-only on discrimination (ΔAUROC = −0.009, 95% CI [−0.023, +0.005], P(Δ>0) = 0.10). The meaningful difference is calibration: ECE drops from 0.067 to 0.040, a 40% reduction. Both deep-learning models beat the triage-only baselines by a large margin (P(Δ>0) = 1.0).
 
-**Non-ED generalisation (internal check only):** Image model on non-ED MIMIC-CXR (n = 9,589): AUROC 0.534, 95% CI [0.520, 0.548]. The DenseNet backbone was pretrained on this population — this is not an independent external validation.
+Attention fusion matched image-only on AUROC but was severely miscalibrated (ECE 0.132), making it unsuitable at this feature-set size.
 
-Full metrics, bootstrap CIs, and calibration statistics: [`artifacts/evaluation/final_publication_report.json`](artifacts/evaluation/final_publication_report.json)
+Internal note on non-ED generalization: running the image model on non-ED MIMIC-CXR (n = 9,589) gives AUROC 0.534 [0.520, 0.548]. The backbone was pretrained on this population so this is not an independent test.
+
+All numbers, CIs, and pairwise comparisons: [`artifacts/evaluation/final_publication_report.json`](artifacts/evaluation/final_publication_report.json)
 
 ---
 
-## Repository Structure
+## Structure
 
 ```
-├── src/
-│   ├── data/           # Cohort construction & feature engineering (19 scripts)
-│   ├── datasets/       # PyTorch Dataset classes (binary, multilabel, multimodal)
-│   ├── models/         # Model architectures (DenseNet121, TabularMLP, fusion)
-│   ├── training/       # Training CLIs for all model types
-│   ├── evaluation/     # Bootstrap, calibration, decision curve analysis
-│   ├── interpretability/ # SHAP, Grad-CAM
-│   └── qc/             # Data quality checks
-│
-├── scripts/            # Figure generation, SHAP, publication report
-├── configs/
-│   ├── experiments/    # Hyperparameter configs for headline runs
-│   └── paths.local.example.yaml  # Copy → paths.local.yaml, set MIMIC roots
-│
-├── artifacts/
-│   ├── evaluation/     # Bootstrap JSONs, calibration plots, SHAP figures,
-│   │                   # ablation table, final_publication_report.json
-│   ├── interpretability/ # Grad-CAM heatmaps (true positives, false negatives)
-│   └── models/         # config.json + metrics.json per model run
-│                       # (weights not committed — see Reproducibility below)
-│
-├── Dockerfile          # pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime base
-├── Makefile            # Full pipeline: make all
-└── streamlit_app.py    # Lightweight dashboard for inspecting run metrics
+src/
+  data/             cohort construction and feature engineering (19 scripts)
+  datasets/         PyTorch Dataset classes for binary, multilabel, multimodal
+  models/           DenseNet-121 backbone, TabularMLP, concat and attention fusion
+  training/         training scripts for all model types
+  evaluation/       bootstrap, calibration analysis, decision curve analysis
+  interpretability/ Grad-CAM
+  qc/               data quality checks
+
+scripts/            figure generation, SHAP, publication report aggregation
+configs/
+  experiments/      YAML configs for the main training runs
+  paths.local.example.yaml
+
+artifacts/
+  evaluation/       bootstrap JSONs, calibration plots, ablation CSV, SHAP figures
+  interpretability/ Grad-CAM overlays (TP, FP, FN cases)
+  models/           config.json and metrics.json per run (weights not committed)
+
+tests/              77 unit tests covering models, feature engineering, bootstrap eval
+Dockerfile
+Makefile
+streamlit_app.py    dashboard for browsing run metrics and bootstrap results
 ```
 
 ---
 
-## Evaluation Artifacts
+## Cohort and methodology notes
 
-Everything needed to verify the thesis numbers is in `artifacts/evaluation/`:
+**t₀ anchor:** CXR acquisition timestamp (DICOM StudyDate + StudyTime). Every clinical feature comes from the ED triage intake, which structurally precedes imaging. There are no post-t₀ features.
 
-| File / Directory | Contents |
-|---|---|
-| `final_publication_report.json` | All locked metrics: AUROC, AUPRC, ECE, Brier, bootstrap CIs, pairwise ΔAUROCs |
-| `bootstrap_*.json` | Paired bootstrap outputs for each model comparison |
-| `calibration_final/` | Reliability diagrams + ECE/Brier/H-L statistics |
-| `feature_ablation_results.csv` | AUROC across 16 feature ablation configurations |
-| `shap/` | SHAP beeswarm + bar charts; top feature: O₂ saturation (mean |SHAP| = 0.148) |
-| `interpretability/gradcam_val_fn/` | Grad-CAM overlays for false-negative cases |
+**Label policy:** CheXpert uncertain labels are excluded from training (`u_ignore`). Results under `u_zero` and `u_one` policies are included in the ablation.
+
+**Split:** Patients ranked by their first t₀, then assigned 80/10/10. No patient appears in more than one split.
 
 ---
 
-## Design Decisions
-
-**t₀ anchor:** CXR acquisition datetime (DICOM StudyDate + StudyTime). All clinical features are ED triage intake measurements — structurally preceding imaging. No post-t₀ features.
-
-**Label policy:** CheXpert uncertain labels treated as negative (`u_ignore` = exclude uncertain studies from training). Sensitivity to this choice tested via `u_zero` and `u_one` variants.
-
-**Split:** Patient-level ordinal rank by first t₀. Each patient belongs to exactly one split. No patient-level leakage.
-
-**Fusion:** Concat MLP (DenseNet image embedding + TabularMLP embedding → joint head). Attention fusion tested as ablation — similar AUROC but severely miscalibrated (ECE 0.132).
-
----
-
-## Reproducing the Pipeline
-
-### Requirements
+## Setup
 
 ```bash
 pip install -r requirements.txt
-# or: pip install -e .
 ```
 
-MIMIC data requires PhysioNet credentialed access. Once downloaded, copy and fill in the paths config:
+MIMIC data requires PhysioNet credentialed access. After downloading, set your local paths:
 
 ```bash
 cp configs/paths.local.example.yaml configs/paths.local.yaml
-# edit paths.local.yaml with your local MIMIC roots
+# fill in MIMIC roots in paths.local.yaml
 ```
 
-### Pipeline
+Run the pipeline step by step or all at once:
 
 ```bash
-make pretrain           # DenseNet121 multilabel pretraining on MIMIC-CXR
-make finetune_image     # Binary pneumonia fine-tuning (image-only)
-make finetune_multimodal  # Multimodal (image + triage vitals)
-make train_clinical     # Logistic regression + XGBoost baselines
-make evaluate           # Bootstrap, calibration, feature ablation
-make shap               # SHAP values for clinical XGBoost
-make report             # Aggregate final_publication_report.json
+make pretrain             # multilabel CheXpert pretraining
+make finetune_image       # image-only binary pneumonia
+make finetune_multimodal  # image + triage fusion
+make train_clinical       # logistic regression and XGBoost baselines
+make evaluate             # bootstrap, calibration, ablation
+make shap                 # SHAP for XGBoost
+make report               # write final_publication_report.json
+make all                  # full pipeline
 ```
 
-Or run the full pipeline end-to-end:
-
-```bash
-make all
-```
-
-### Docker
+Docker (requires GPU):
 
 ```bash
 docker build -t multimodal-pneumonia .
@@ -131,12 +109,20 @@ docker run --gpus all \
   multimodal-pneumonia make all
 ```
 
-### Model Weights
-
-Trained model weights (`.pt` checkpoints, ~800 MB–1.2 GB each) are not stored in this repository. To inspect or run inference with the trained models, contact the author.
+Trained weights (~800 MB–1.2 GB per checkpoint) are not in the repository. Contact the author for access.
 
 ---
 
-## Compliance
+## Tests
 
-This project uses MIMIC-CXR-JPG v2.1.0, MIMIC-IV, and MIMIC-IV-ED under the PhysioNet Credentialed Health Data License. No patient-level data is included in this repository. Researchers wishing to reproduce results must complete PhysioNet credentialing at [physionet.org](https://physionet.org).
+```bash
+python -m pytest tests/ -v
+```
+
+77 tests, 1 skipped (requires the temporal constraint columns). Tests cover model forward passes, feature clipping bounds, bootstrap metric computation, and pipeline QC invariants. No MIMIC data required.
+
+---
+
+## Data compliance
+
+Uses MIMIC-CXR-JPG v2.1.0, MIMIC-IV, and MIMIC-IV-ED under the PhysioNet Credentialed Health Data License. No patient-level data is committed to this repository. Reproducing results requires completing PhysioNet credentialing at [physionet.org](https://physionet.org).
