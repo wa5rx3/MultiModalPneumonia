@@ -126,3 +126,4 @@ python -m pytest tests/ -v
 ## Data compliance
 
 Uses MIMIC-CXR-JPG v2.1.0, MIMIC-IV, and MIMIC-IV-ED under the PhysioNet Credentialed Health Data License. No patient-level data is committed to this repository. Reproducing results requires completing PhysioNet credentialing at [physionet.org](https://physionet.org).
+ 
