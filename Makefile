@@ -36,24 +36,32 @@ bootstrap_delta:
 	$(PYTHON) -m src.evaluation.bootstrap_eval \
 	  --model-a artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
 	  --model-b artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
-	  --output-json artifacts/evaluation/bootstrap_multimodal_vs_image.json \
+	  --output-json artifacts/evaluation/bootstrap_multimodal_vs_image_stronger_lr_v3.json \
 	  --n-bootstrap 2000 --seed $(SEED)
 
 calibration:
 	$(PYTHON) -m src.evaluation.calibration_analysis \
-	  --output-dir artifacts/evaluation/calibration_final \
+	  --output-dir artifacts/evaluation/calibration_stronger_lr_v3 \
 	  --n-bins 10 --bootstrap --n-bootstrap 2000 \
+	  --model "Image" artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
+	  --model "Multimodal" artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv
+
+dca:
+	$(PYTHON) -m src.evaluation.decision_curve_analysis \
+	  --output-dir artifacts/evaluation/dca \
 	  --model "Image" artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
 	  --model "Multimodal" artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv
 
 feature_ablation:
 	$(PYTHON) scripts/collect_feature_ablation_results.py
 
-evaluate: bootstrap_delta calibration feature_ablation
+evaluate: bootstrap_delta calibration dca feature_ablation
 
 # ─── SHAP ────────────────────────────────────────────────────────────────────
 shap:
-	$(PYTHON) scripts/generate_shap_clinical.py
+	$(PYTHON) scripts/generate_shap_clinical.py \
+	  --model-dir artifacts/models/clinical_xgb_u_ignore_temporal_strong_v2 \
+	  --feature-groups all
 
 # ─── Publication report ───────────────────────────────────────────────────────
 report:
@@ -68,4 +76,4 @@ all: pretrain finetune_image finetune_multimodal train_clinical evaluate shap re
 
 .PHONY: preprocess preprocess_labs pretrain finetune_image finetune_multimodal \
         train_clinical_lr train_clinical_xgb train_clinical bootstrap_delta \
-        calibration feature_ablation evaluate shap report all test
+        calibration dca feature_ablation evaluate shap report all test

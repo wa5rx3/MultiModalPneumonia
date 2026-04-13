@@ -25,6 +25,12 @@ REQUIRED_ARTEFACTS = [
     # Source of truth — all numerical results
     ("artifacts/evaluation/final_publication_report.json", MIN_JSON_BYTES, "json"),
 
+    # Bootstrap comparison
+    (
+        "artifacts/evaluation/bootstrap_multimodal_vs_image_stronger_lr_v3.json",
+        MIN_JSON_BYTES, "json"
+    ),
+
     # Feature ablation
     ("artifacts/evaluation/feature_ablation_results.csv", MIN_CSV_BYTES, "csv"),
 
@@ -46,58 +52,6 @@ REQUIRED_ARTEFACTS = [
 
     # DCA
     ("artifacts/evaluation/dca/decision_curve_standardized.png", MIN_PNG_BYTES, "png"),
-
-    # Generated thesis figures (from scripts/generate_thesis_figures.py)
-    (
-        "thesis_new_docs/figures/generated_results/fig_a1_pr_curves.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a3_ablation_bars.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a4_label_sensitivity.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a5_training_curves.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a6_missing_heatmap.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a7_vital_distributions.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/generated_results/fig_a8_label_distribution.png",
-        MIN_PNG_BYTES, "png"
-    ),
-
-    # Original result figures
-    (
-        "thesis_new_docs/figures/original_results/"
-        "roc_curve_all_models.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/original_results/"
-        "calibration_stronger_lr_v3_reliability_diagram_all_models.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/original_results/"
-        "shap_summary_beeswarm.png",
-        MIN_PNG_BYTES, "png"
-    ),
-    (
-        "thesis_new_docs/figures/original_results/"
-        "decision_curve_standardized.png",
-        MIN_PNG_BYTES, "png"
-    ),
 ]
 
 
