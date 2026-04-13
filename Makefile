@@ -24,10 +24,10 @@ finetune_multimodal:
 
 # ─── Clinical baselines ──────────────────────────────────────────────────────
 train_clinical_lr:
-	$(PYTHON) -m src.training.train_clinical_baseline --seed $(SEED)
+	$(PYTHON) -m src.training.train_clinical_baseline
 
 train_clinical_xgb:
-	$(PYTHON) -m src.training.train_clinical_xgb --seed $(SEED)
+	$(PYTHON) -m src.training.train_clinical_xgb
 
 train_clinical: train_clinical_lr train_clinical_xgb
 
