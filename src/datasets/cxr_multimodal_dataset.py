@@ -20,6 +20,7 @@ class CXRMultimodalDataset(Dataset):
         transform: Callable | None = None,
         image_col: str = "image_path",
         target_col: str = "target",
+        skip_missing: bool = True,
     ) -> None:
         if len(df) != len(tabular_array):
             raise ValueError(
@@ -31,8 +32,19 @@ class CXRMultimodalDataset(Dataset):
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
-        self.df = df.reset_index(drop=True).copy()
-        self.tabular_array = np.asarray(tabular_array, dtype=np.float32)
+        df = df.reset_index(drop=True).copy()
+        tabular_array = np.asarray(tabular_array, dtype=np.float32)
+
+        if skip_missing and image_col in df.columns:
+            exists_mask = df[image_col].map(lambda p: Path(p).exists()).values
+            n_missing = int((~exists_mask).sum())
+            if n_missing > 0:
+                print(f"[CXRMultimodalDataset] Skipping {n_missing} rows with missing images")
+                df = df[exists_mask].reset_index(drop=True)
+                tabular_array = tabular_array[exists_mask]
+
+        self.df = df
+        self.tabular_array = tabular_array
         self.transform = transform
         self.image_col = image_col
         self.target_col = target_col

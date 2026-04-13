@@ -20,6 +20,7 @@ class CXRBinaryDataset(Dataset):
         image_col: str = "image_path",
         target_col: str = "target",
         split_col: str = "temporal_split",
+        skip_missing: bool = True,
     ) -> None:
         self.df = pd.read_parquet(table_path).copy()
 
@@ -31,6 +32,13 @@ class CXRBinaryDataset(Dataset):
         self.df = self.df[self.df[split_col] == split].reset_index(drop=True)
         if len(self.df) == 0:
             raise ValueError(f"No rows found for split='{split}'")
+
+        if skip_missing and image_col in self.df.columns:
+            exists_mask = self.df[image_col].map(lambda p: Path(p).exists())
+            n_missing = int((~exists_mask).sum())
+            if n_missing > 0:
+                print(f"[CXRBinaryDataset] Skipping {n_missing} rows with missing images (split={split})")
+                self.df = self.df[exists_mask].reset_index(drop=True)
 
         self.transform = transform
         self.image_col = image_col
