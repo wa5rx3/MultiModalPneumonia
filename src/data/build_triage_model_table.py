@@ -66,6 +66,8 @@ def main() -> None:
         "stay_id",
         "split",
         "t0",
+        "intime",
+        "outtime",
         "image_path",
         "ViewPosition",
         "is_pa",
