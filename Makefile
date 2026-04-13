@@ -2,6 +2,7 @@
 # Requires: .venv activated or use PYTHON variable below
 PYTHON ?= python
 SEED   := 42
+export MPLCONFIGDIR := artifacts/.mpl_cache
 
 # ─── Data pipeline ───────────────────────────────────────────────────────────
 preprocess:
