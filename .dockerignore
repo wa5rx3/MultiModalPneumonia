@@ -1,0 +1,17 @@
+.venv/
+artifacts/
+.git/
+.github/
+__pycache__/
+*.py[cod]
+*.pt
+*.pth
+*.ckpt
+*.joblib
+*.parquet
+*.csv.gz
+*.h5
+.pytest_cache/
+configs/paths.local.yaml
+thesis_*/
+docs/
