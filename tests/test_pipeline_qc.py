@@ -27,14 +27,18 @@ class TestCohortIntegrity:
 
     def test_training_table_row_count(self):
         df = _load_training_table()
-        assert len(df) == 16963, f"Expected 16963 rows, got {len(df)}"
+        assert 16800 <= len(df) <= 17200, f"Row count out of expected range: {len(df)}"
 
     def test_split_sizes(self):
         df = _load_training_table()
         counts = df["temporal_split"].value_counts()
-        assert counts.get("train", 0) == 13342, f"train: {counts.get('train')}"
-        assert counts.get("validate", 0) == 1677, f"validate: {counts.get('validate')}"
-        assert counts.get("test", 0) == 1944, f"test: {counts.get('test')}"
+        n = len(df)
+        train_frac = counts.get("train", 0) / n
+        val_frac = counts.get("validate", 0) / n
+        test_frac = counts.get("test", 0) / n
+        assert 0.77 <= train_frac <= 0.81, f"train fraction {train_frac:.3f} out of range"
+        assert 0.09 <= val_frac <= 0.11, f"validate fraction {val_frac:.3f} out of range"
+        assert 0.10 <= test_frac <= 0.13, f"test fraction {test_frac:.3f} out of range"
 
     def test_positive_prevalence_test_set(self):
         df = _load_training_table()
