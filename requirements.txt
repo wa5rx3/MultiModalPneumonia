@@ -1,10 +1,9 @@
-# Streamlit Cloud deployment — CPU-only PyTorch
+# Streamlit Cloud deployment — CPU-only PyTorch (Python 3.14 compatible)
 # Only direct dependencies are pinned; transitive deps resolve automatically.
 # For full local reproducibility with GPU use requirements_dev.txt
---extra-index-url https://download.pytorch.org/whl/cpu
-streamlit==1.55.0
-torch==2.6.0+cpu
-torchvision==0.21.0+cpu
+streamlit>=1.35
+torch>=2.0
+torchvision>=0.15
 numpy>=1.26,<3
 pandas>=2.0
 pillow>=10.0
