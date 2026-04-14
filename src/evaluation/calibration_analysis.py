@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import matplotlib
 matplotlib.use('Agg')
@@ -125,24 +125,55 @@ def bootstrap_metric_ci(
     n_bootstrap: int = 2000,
     seed: int = 42,
     n_bins: int = 10,
+    patient_ids: np.ndarray | None = None,
 ) -> dict[str, float]:
+    """Bootstrap CI for ECE or Brier score.
+
+    When *patient_ids* is provided the resampling unit is the patient (cluster),
+    not the individual row.  All rows belonging to a resampled patient are
+    included together, which is the correct approach when a patient may
+    contribute more than one study.  This matches the patient-level bootstrap
+    used for AUROC/AUPRC in bootstrap_eval.py.
+    """
     rng = np.random.default_rng(seed)
-    n = len(y_true)
     values: list[float] = []
 
-    for _ in range(n_bootstrap):
-        idx = rng.integers(0, n, size=n)
-        y_true_b = y_true[idx]
-        y_prob_b = y_prob[idx]
+    if patient_ids is not None:
+        # --- patient-level resampling ---
+        unique_patients = np.array(sorted(set(patient_ids.tolist())))
+        # Build index arrays grouped by patient once (avoids repeated masking)
+        patient_to_indices: dict[Any, np.ndarray] = {}
+        for pid in unique_patients:
+            patient_to_indices[pid] = np.where(patient_ids == pid)[0]
 
-        if metric_name == "brier":
-            value = float(brier_score_loss(y_true_b, y_prob_b))
-        elif metric_name == "ece":
-            value, _, _ = compute_ece_mce(y_true_b, y_prob_b, n_bins=n_bins)
-        else:
-            raise ValueError(f"Unsupported metric_name: {metric_name}")
-
-        values.append(value)
+        for _ in range(n_bootstrap):
+            sampled = rng.choice(unique_patients, size=len(unique_patients), replace=True)
+            idx = np.concatenate([patient_to_indices[pid] for pid in sampled])
+            y_true_b = y_true[idx]
+            y_prob_b = y_prob[idx]
+            if len(np.unique(y_true_b)) < 2:
+                continue  # skip degenerate replicate
+            if metric_name == "brier":
+                value = float(brier_score_loss(y_true_b, y_prob_b))
+            elif metric_name == "ece":
+                value, _, _ = compute_ece_mce(y_true_b, y_prob_b, n_bins=n_bins)
+            else:
+                raise ValueError(f"Unsupported metric_name: {metric_name}")
+            values.append(value)
+    else:
+        # --- row-level resampling (legacy fallback) ---
+        n = len(y_true)
+        for _ in range(n_bootstrap):
+            idx = rng.integers(0, n, size=n)
+            y_true_b = y_true[idx]
+            y_prob_b = y_prob[idx]
+            if metric_name == "brier":
+                value = float(brier_score_loss(y_true_b, y_prob_b))
+            elif metric_name == "ece":
+                value, _, _ = compute_ece_mce(y_true_b, y_prob_b, n_bins=n_bins)
+            else:
+                raise ValueError(f"Unsupported metric_name: {metric_name}")
+            values.append(value)
 
     arr = np.asarray(values, dtype=float)
     return {
@@ -162,17 +193,27 @@ def calibration_metrics_from_predictions(
     y_true = df["target"].to_numpy(dtype=int)
     y_prob = df["pred_prob"].to_numpy(dtype=float)
 
+    # Use patient-level bootstrap when subject_id is available so that the
+    # resampling unit matches the AUROC/AUPRC bootstrap in bootstrap_eval.py.
+    patient_ids: Optional[np.ndarray] = None
+    if "subject_id" in df.columns:
+        patient_ids = df["subject_id"].to_numpy()
+
     brier = float(brier_score_loss(y_true, y_prob))
     ece, mce, bin_df = compute_ece_mce(y_true=y_true, y_prob=y_prob, n_bins=n_bins)
 
+    n_patients = int(df["subject_id"].nunique()) if "subject_id" in df.columns else None
+
     metrics: dict[str, Any] = {
         "n": int(len(df)),
+        "n_patients": n_patients,
         "positive_rate": float(y_true.mean()),
         "mean_pred_prob": float(y_prob.mean()),
         "brier_score": brier,
         "ece": ece,
         "mce": mce,
         "n_bins": int(n_bins),
+        "bootstrap_level": "patient" if patient_ids is not None else "row",
     }
 
     if bootstrap:
@@ -183,6 +224,7 @@ def calibration_metrics_from_predictions(
             n_bootstrap=n_bootstrap,
             seed=bootstrap_seed,
             n_bins=n_bins,
+            patient_ids=patient_ids,
         )
         metrics["ece_bootstrap"] = bootstrap_metric_ci(
             y_true=y_true,
@@ -191,6 +233,7 @@ def calibration_metrics_from_predictions(
             n_bootstrap=n_bootstrap,
             seed=bootstrap_seed,
             n_bins=n_bins,
+            patient_ids=patient_ids,
         )
 
     return metrics, bin_df

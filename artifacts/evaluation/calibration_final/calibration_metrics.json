@@ -7,82 +7,67 @@
     "Image": {
       "predictions_file": "artifacts\\models\\image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3\\test_predictions.csv",
       "n": 1075,
+      "n_patients": 887,
       "positive_rate": 0.4530232558139535,
       "mean_pred_prob": 0.5155365507062092,
       "brier_score": 0.2063056283325257,
       "ece": 0.06735261101362316,
       "mce": 0.1651922317884736,
       "n_bins": 10,
-      "hl_test": {
-        "hl_statistic": 34.13247272096097,
-        "df": 8,
-        "p_value": 3.844138716593881e-05,
-        "n_bins": 10,
-        "interpretation": "miscalibrated (p<0.05)"
-      },
+      "bootstrap_level": "patient",
       "brier_score_bootstrap": {
-        "mean": 0.20622863217725013,
-        "ci_low": 0.19484493342059997,
-        "ci_high": 0.21752672175509358
+        "mean": 0.2063054675273854,
+        "ci_low": 0.19487731347983986,
+        "ci_high": 0.21767078669813353
       },
       "ece_bootstrap": {
-        "mean": 0.072669709266542,
-        "ci_low": 0.050746011882847136,
-        "ci_high": 0.0962283274843249
+        "mean": 0.07249439392660421,
+        "ci_low": 0.04888447340778319,
+        "ci_high": 0.098045721579259
       }
     },
     "Multimodal": {
       "predictions_file": "artifacts\\models\\multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3\\test_predictions.csv",
       "n": 1075,
+      "n_patients": 887,
       "positive_rate": 0.4530232558139535,
       "mean_pred_prob": 0.4867857715071634,
       "brier_score": 0.20686361636847,
       "ece": 0.04034054008334182,
       "mce": 0.13100612232851427,
       "n_bins": 10,
-      "hl_test": {
-        "hl_statistic": 19.918484905823725,
-        "df": 8,
-        "p_value": 0.010648887833113912,
-        "n_bins": 10,
-        "interpretation": "miscalibrated (p<0.05)"
-      },
+      "bootstrap_level": "patient",
       "brier_score_bootstrap": {
-        "mean": 0.20680976679321328,
-        "ci_low": 0.1959735764158624,
-        "ci_high": 0.21757103591602542
+        "mean": 0.20680288513349168,
+        "ci_low": 0.1956323213861885,
+        "ci_high": 0.21792121422298644
       },
       "ece_bootstrap": {
-        "mean": 0.05165224819669024,
-        "ci_low": 0.03188740681744245,
-        "ci_high": 0.07387384917266493
+        "mean": 0.05144977615373877,
+        "ci_low": 0.03155512478833137,
+        "ci_high": 0.07341358602576348
       }
     },
     "Attention Fusion": {
       "predictions_file": "artifacts\\models\\multimodal_pneumonia_attn_fusion_u_ignore_temporal_v1\\test_predictions.csv",
       "n": 1075,
+      "n_patients": 887,
       "positive_rate": 0.4530232558139535,
       "mean_pred_prob": 0.3347818323519341,
       "brier_score": 0.2237598511044562,
       "ece": 0.13184638911554977,
       "mce": 0.18999010324478144,
       "n_bins": 10,
-      "hl_test": {
-        "hl_statistic": 133.96489229682672,
-        "df": 8,
-        "p_value": 4.258110694737955e-25,
-        "n_bins": 10,
-        "interpretation": "miscalibrated (p<0.05)"
-      },
+      "bootstrap_level": "patient",
       "brier_score_bootstrap": {
-        "mean": 0.22407430731901576,
-        "ci_low": 0.2084217977602914,
-        "ci_high": 0.2392248918116715
+        "mean": 0.22396992009964833,
+        "ci_low": 0.2089938156446144,
+        "ci_high": 0.2392397932129165
       },
       "ece_bootstrap": {
-        "mean": 0.13494085416836446,
-        "ci_low": 0.10867873433474887,
-        "ci_high": 0.16144290632460004
+        "mean": 0.13457162761406805,
+        "ci_low": 0.10806000197672912,
+        "ci_high": 0.16133756148580614
       }
     }
   }
