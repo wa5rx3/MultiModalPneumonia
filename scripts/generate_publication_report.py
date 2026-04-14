@@ -94,9 +94,9 @@ def main() -> None:
     print(f'Report saved to {output_path}')
     found_models = sum((1 for m in report['models'].values() if m.get('found')))
     found_comps = sum((1 for c in report['pairwise_comparisons'].values() if c.get('found')))
-    print(f'Models: {found_models}/{len(report['models'])} found')
-    print(f'Pairwise comparisons: {found_comps}/{len(report['pairwise_comparisons'])} found')
-    print(f'Feature ablation rows: {len(report['feature_ablation'].get('rows', []))}')
-    print(f'SHAP: {('found' if report['shap'].get('found') is not False else 'pending')}')
+    print(f"Models: {found_models}/{len(report['models'])} found")
+    print(f"Pairwise comparisons: {found_comps}/{len(report['pairwise_comparisons'])} found")
+    print(f"Feature ablation rows: {len(report['feature_ablation'].get('rows', []))}")
+    print(f"SHAP: {'found' if report['shap'].get('found') is not False else 'pending'}")
 if __name__ == '__main__':
     main()

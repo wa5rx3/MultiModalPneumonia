@@ -52,18 +52,18 @@ def main() -> None:
     plt.tight_layout()
     plt.savefig(output_dir / 'shap_summary_beeswarm.png', dpi=150, bbox_inches='tight')
     plt.close()
-    print(f'Saved beeswarm plot -> {output_dir / 'shap_summary_beeswarm.png'}')
+    print(f"Saved beeswarm plot -> {output_dir / 'shap_summary_beeswarm.png'}")
     plt.figure(figsize=(10, 6))
     shap.summary_plot(shap_values, X_test, plot_type='bar', max_display=len(feature_names), show=False)
     plt.tight_layout()
     plt.savefig(output_dir / 'shap_summary_bar.png', dpi=150, bbox_inches='tight')
     plt.close()
-    print(f'Saved bar plot -> {output_dir / 'shap_summary_bar.png'}')
+    print(f"Saved bar plot -> {output_dir / 'shap_summary_bar.png'}")
     mean_abs_shap = np.abs(shap_values).mean(axis=0).tolist()
     metadata = {'model_dir': str(model_dir), 'feature_groups': args.feature_groups, 'split': args.split, 'n_samples': int(len(df_split)), 'feature_names': feature_names, 'mean_abs_shap': {f: float(v) for f, v in zip(feature_names, mean_abs_shap)}, 'note': "XGBoost SHAP values are in original clinical units. No StandardScaler applied — tree-based model is scale-invariant. The tabular_preprocessor.joblib belongs to the multimodal model's tabular branch and must NOT be applied here."}
     with open(output_dir / 'shap_metadata.json', 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
-    print(f'Saved metadata -> {output_dir / 'shap_metadata.json'}')
+    print(f"Saved metadata -> {output_dir / 'shap_metadata.json'}")
     print('\nMean |SHAP| per feature (descending):')
     for feat, val in sorted(zip(feature_names, mean_abs_shap), key=lambda x: -x[1]):
         print(f'  {feat:30s}: {val:.4f}')
