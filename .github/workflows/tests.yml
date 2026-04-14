@@ -20,6 +20,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest==9.0.2
           pip install -e . --no-deps
 
       - name: run tests
