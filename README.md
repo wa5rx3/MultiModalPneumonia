@@ -75,7 +75,8 @@ streamlit_app.py    dashboard for browsing run metrics and bootstrap results
 ## Setup
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements_dev.txt
+pip install -e . --no-deps
 ```
 
 MIMIC data requires PhysioNet credentialed access. After downloading, set your local paths:
@@ -85,7 +86,13 @@ cp configs/paths.local.example.yaml configs/paths.local.yaml
 # fill in MIMIC roots in paths.local.yaml
 ```
 
-Run the pipeline step by step or all at once:
+Build the cohort manifests from raw MIMIC data first (required before any training step):
+
+```bash
+bash scripts/run_data_pipeline.sh
+```
+
+Then run the training and evaluation pipeline:
 
 ```bash
 make pretrain             # multilabel CheXpert pretraining
@@ -95,7 +102,7 @@ make train_clinical       # logistic regression and XGBoost baselines
 make evaluate             # bootstrap, calibration, ablation
 make shap                 # SHAP for XGBoost
 make report               # write final_publication_report.json
-make all                  # full pipeline
+make all                  # full pipeline (after run_data_pipeline.sh)
 ```
 
 Docker (requires GPU):
