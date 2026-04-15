@@ -46,15 +46,13 @@ calibration:
 	  --n-bins 10 --bootstrap --n-bootstrap 2000 \
 	  --model "Image" artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
 	  --model "Multimodal" artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
-	  --model "Attention Fusion" artifacts/models/multimodal_pneumonia_attn_fusion_u_ignore_temporal_v1/test_predictions.csv \
 	  --model "Clinical Logistic" artifacts/models/clinical_baseline_u_ignore_temporal_strong_v2/test_predictions.csv \
 	  --model "Clinical XGBoost" artifacts/models/clinical_xgb_u_ignore_temporal_strong_v2/test_predictions.csv
 	$(PYTHON) -m src.evaluation.calibration_analysis \
 	  --output-dir artifacts/evaluation/calibration_final \
 	  --n-bins 10 --bootstrap --n-bootstrap 2000 \
 	  --model "Image" artifacts/models/image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
-	  --model "Multimodal" artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv \
-	  --model "Attention Fusion" artifacts/models/multimodal_pneumonia_attn_fusion_u_ignore_temporal_v1/test_predictions.csv
+	  --model "Multimodal" artifacts/models/multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3/test_predictions.csv
 
 dca:
 	$(PYTHON) -m src.evaluation.decision_curve_analysis \
