@@ -22,7 +22,7 @@ Test set metrics (`u_ignore` label policy, 2,000-replicate patient-level paired 
 | Multimodal — Concat MLP | 0.736 | 0.714 | **0.040** |
 | Multimodal — Attention Fusion | 0.737 | 0.710 | 0.132 |
 
-The multimodal concat model does not significantly outperform image-only on discrimination (ΔAUROC = −0.009, 95% CI [−0.023, +0.005], P(Δ>0) = 0.10). The meaningful difference is calibration: ECE drops from 0.067 to 0.040, a 40% reduction. Both deep-learning models beat the triage-only baselines by a large margin (P(Δ>0) = 1.0).
+The multimodal concat model does not significantly outperform image-only on discrimination (ΔAUROC = −0.009, 95% CI [−0.023, +0.005], P(Δ>0) = 0.10). The meaningful difference is calibration: ECE drops from 0.067 to 0.040, a 40% reduction. Paired bootstrap on ΔECE gives 95% CI [−0.041, +0.003] with P(ΔECE<0) = 0.961 — strong directional evidence, borderline by a zero-exclusion CI criterion. Post-hoc temperature scaling on the image model (T = 1.21) reduces image ECE only to 0.065, so the calibration gap is not recoverable via a single-scalar correction. Both deep-learning models beat the triage-only baselines by a large margin (P(Δ>0) = 1.0).
 
 Attention fusion matched image-only on AUROC but was severely miscalibrated (ECE 0.132), making it unsuitable at this feature-set size.
 
@@ -44,7 +44,7 @@ src/
   interpretability/ Grad-CAM
   qc/               data quality checks
 
-scripts/            figure generation, SHAP, publication report aggregation
+scripts/            figure generation, SHAP, temperature scaling, delta-ECE bootstrap, publication report aggregation
 configs/
   experiments/      YAML configs for the main training runs
   paths.local.example.yaml
