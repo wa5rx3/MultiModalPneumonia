@@ -1,0 +1,18 @@
+{
+  "description": "Paired patient-level bootstrap for delta ECE (multimodal - image-only). \u0394ECE < 0 means multimodal is better calibrated.",
+  "model_a": "multimodal_concat",
+  "model_b": "image_only",
+  "n_test_rows": 1075,
+  "n_unique_patients": 887,
+  "n_bootstrap": 2000,
+  "bootstrap_seed": 42,
+  "n_bins": 10,
+  "n_skipped_replicates": 0,
+  "ece_image_point": 0.067353,
+  "ece_multimodal_point": 0.040341,
+  "delta_ece_point": -0.027012,
+  "delta_ece_bootstrap_mean": -0.021045,
+  "delta_ece_ci_low": -0.040849,
+  "delta_ece_ci_high": 0.002593,
+  "p_delta_negative": 0.961
+}

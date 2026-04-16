@@ -126,7 +126,8 @@ def bootstrap_metric_ci(
     seed: int = 42,
     n_bins: int = 10,
     patient_ids: np.ndarray | None = None,
-) -> dict[str, float]:
+    return_replicates: bool = False,
+) -> dict[str, float] | tuple[dict[str, float], np.ndarray]:
     """Bootstrap CI for ECE or Brier score.
 
     When *patient_ids* is provided the resampling unit is the patient (cluster),
@@ -134,6 +135,13 @@ def bootstrap_metric_ci(
     included together, which is the correct approach when a patient may
     contribute more than one study.  This matches the patient-level bootstrap
     used for AUROC/AUPRC in bootstrap_eval.py.
+
+    Parameters
+    ----------
+    return_replicates:
+        When True, return a tuple (summary_dict, replicates_array) where
+        replicates_array contains the per-bootstrap metric value.  Used by
+        bootstrap_delta_ece.py to compute paired ΔECE distributions.
     """
     rng = np.random.default_rng(seed)
     values: list[float] = []
@@ -176,11 +184,14 @@ def bootstrap_metric_ci(
             values.append(value)
 
     arr = np.asarray(values, dtype=float)
-    return {
+    summary = {
         "mean": float(arr.mean()),
         "ci_low": float(np.percentile(arr, 2.5)),
         "ci_high": float(np.percentile(arr, 97.5)),
     }
+    if return_replicates:
+        return summary, arr
+    return summary
 
 
 def calibration_metrics_from_predictions(

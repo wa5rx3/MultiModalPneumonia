@@ -1,0 +1,17 @@
+{
+  "method": "temperature_scaling",
+  "model": "image_only_densenet121_u_ignore_temporal_stronger_lr_v3",
+  "val_n": 930,
+  "test_n": 1075,
+  "n_bins": 10,
+  "n_bootstrap": 2000,
+  "bootstrap_seed": 42,
+  "optimal_temperature": 1.212707,
+  "val_nll_before_scaling": 0.60278,
+  "val_nll_after_scaling": 0.599891,
+  "image_only_original_ece": 0.0674,
+  "image_only_scaled_ece_point": 0.065351,
+  "image_only_scaled_ece_bootstrap_mean": 0.068764,
+  "image_only_scaled_ece_ci_low": 0.045568,
+  "image_only_scaled_ece_ci_high": 0.094987
+}
