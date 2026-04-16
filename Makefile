@@ -17,11 +17,11 @@ pretrain:
 
 # ─── Image fine-tuning ───────────────────────────────────────────────────────
 finetune_image:
-	$(PYTHON) -m src.training.train_image_pneumonia_finetune
+	$(PYTHON) -m src.training.train_image_pneumonia_finetune --lr-head 5e-5 --lr-backbone 1e-5
 
 # ─── Multimodal training (canonical run) ─────────────────────────────────────
 finetune_multimodal:
-	$(PYTHON) -m src.training.train_multimodal_pneumonia
+	$(PYTHON) -m src.training.train_multimodal_pneumonia --lr-head 5e-5 --lr-backbone 1e-5
 
 # ─── Clinical baselines ──────────────────────────────────────────────────────
 train_clinical_lr:
