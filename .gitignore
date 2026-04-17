@@ -50,9 +50,7 @@ data/processed/
 artifacts/manifests/*.parquet
 artifacts/manifests/*multi_match.csv
 
-# Patient-level prediction files (subject_id + probability scores)
-artifacts/models/**/test_predictions*.csv
-artifacts/models/**/val_predictions*.csv
+# Prediction files with extra identifiers or local filesystem paths
 artifacts/models/**/test_predictions_with_ids.csv
 artifacts/evaluation/prediction_behavior_*/predictions_copy.csv
 artifacts/evaluation/prediction_behavior_*/top_false_negatives.csv
