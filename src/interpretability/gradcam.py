@@ -31,8 +31,8 @@ class GradCAM:
 
     def _forward_hook(self, module: nn.Module, inputs, output) -> None:
         self.activations = output.detach()
-        # Register hook on the activation tensor itself instead of module-level
-        # backward hooks to avoid view+inplace conflicts in DenseNet blocks.
+
+
         output.register_hook(self._tensor_grad_hook)
 
     def remove_hooks(self) -> None:

@@ -43,7 +43,7 @@ def get_merge_keys(cohort: pd.DataFrame, chex: pd.DataFrame, allow_fallback: boo
 
 
 def build_conflict_report(chex: pd.DataFrame, group_keys: list[str]) -> dict:
-    # Only keep rows with a non-null pneumonia label for conflict analysis
+
     sub = chex[group_keys + ["Pneumonia"]].copy()
     sub = sub.dropna(subset=["Pneumonia"])
 
@@ -76,20 +76,20 @@ def collapse_chexpert(chex: pd.DataFrame, merge_keys: list[str]) -> tuple[pd.Dat
     needed_cols = [c for c in merge_keys + ["Pneumonia"] if c in chex.columns]
     sub = chex[needed_cols].copy()
 
-    # QC before collapsing
+
     pre_qc = build_conflict_report(sub, merge_keys)
 
-    # If there are conflicting labels at the merge-key level, fail loudly.
+
     if pre_qc["groups_with_conflicting_pneumonia_labels"] > 0:
         raise ValueError(
             "Conflicting CheXpert pneumonia labels found for the selected merge keys. "
             f"QC: {pre_qc}"
         )
 
-    # Safe collapse after conflict check
+
     sub = sub.drop_duplicates()
 
-    # After duplicates removed, there should be at most one row per merge key.
+
     key_counts = sub.groupby(merge_keys, dropna=False).size()
     multi_key_rows = int((key_counts > 1).sum())
     if multi_key_rows > 0:

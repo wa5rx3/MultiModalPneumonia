@@ -236,8 +236,8 @@ def main() -> None:
     for col in CHEXPERT_LABEL_COLS:
         merged[col] = pd.to_numeric(merged[col], errors="coerce")
 
-        # Consistent mask policy for pretraining:
-        # supervise only 0/1; ignore -1 and NaN
+
+
         merged[f"{col}_mask"] = merged[col].isin([0.0, 1.0])
 
     output_cols = [

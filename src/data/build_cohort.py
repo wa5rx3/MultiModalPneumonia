@@ -44,8 +44,8 @@ def make_expected_image_path(base_root: Path, subject_id: int, study_id: int, di
 def build_t0(df: pd.DataFrame) -> pd.Series:
     study_date = df["StudyDate"].astype("Int64").astype(str).str.strip()
 
-    # Keep only the integer HHMMSS part before any decimal point,
-    # then left-pad to 6 digits so e.g. 44509 -> 044509
+
+
     study_time = (
         df["StudyTime"]
         .astype(str)
@@ -61,7 +61,7 @@ def build_t0(df: pd.DataFrame) -> pd.Series:
     mm = study_time.str.slice(2, 4)
     ss = study_time.str.slice(4, 6)
 
-    # Clamp obviously invalid components to missing instead of silently producing garbage
+
     valid = (
         hh.astype(int).between(0, 23)
         & mm.astype(int).between(0, 59)

@@ -28,34 +28,34 @@ def main() -> None:
 
     df = pd.read_parquet(args.input_manifest).copy()
 
-    # Keep only rows with valid paths.
-    # exists=True  → verified present, keep.
-    # exists=False → verified missing, drop.
-    # exists=NA   → not checked, assume present.
+
+
+
+
     if "exists" in df.columns and not df["exists"].isna().all():
         df = df[df["exists"] == True].copy()
 
-    # Keep only frontal rows
+
     df = df[df["is_frontal"] == True].copy()
 
-    # Selection priority: PA first, then AP
+
     df["view_priority"] = 1
     df.loc[df["is_ap"] == True, "view_priority"] = 2
     df.loc[df["is_pa"] == True, "view_priority"] = 1
 
-    # Stable sort so first row per study is deterministic
+
     sort_cols = ["subject_id", "study_id", "view_priority", "dicom_id"]
     sort_cols = [c for c in sort_cols if c in df.columns]
     df = df.sort_values(sort_cols).copy()
 
-    # Keep one image per study
+
     cohort = (
         df.groupby(["subject_id", "study_id"], as_index=False)
         .head(1)
         .copy()
     )
 
-    # Clean up
+
     if "view_priority" in cohort.columns:
         cohort = cohort.drop(columns=["view_priority"])
 

@@ -132,15 +132,15 @@ def prepare_feature_matrix(df: pd.DataFrame) -> pd.DataFrame:
 
     X = df[needed].copy()
 
-    # Ensure numeric columns are numeric
+
     for col in NUMERIC_COLS:
         X[col] = pd.to_numeric(X[col], errors="coerce")
 
-    # Critical: left-merged rows may have null missing-flags. Make them explicit.
+
     for col in LAB_MISSING_FLAG_COLS:
         X[col] = X[col].fillna(True).astype(int)
 
-    # Triage missing flags should also be explicit
+
     triage_flag_cols = [c for c in TRIAGE_NUMERIC_COLS if c.endswith("_missing")]
     for col in triage_flag_cols:
         if col in X.columns:

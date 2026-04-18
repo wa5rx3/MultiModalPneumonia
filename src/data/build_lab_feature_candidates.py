@@ -8,40 +8,40 @@ import pandas as pd
 
 
 TARGET_KEYWORDS = [
-    # hematology
+
     "wbc", "white blood",
     "hemoglobin", "hematocrit",
     "platelet",
 
-    # basic metabolic
+
     "sodium", "potassium", "chloride",
     "bicarbonate", "co2",
-    "urea", "bun",  # <-- FIX
+    "urea", "bun",
     "creatinine",
     "glucose",
     "calcium",
 
-    # blood gas / acid-base
-    "ph",          # <-- FIX
+
+    "ph",
     "pco2",
     "po2",
     "base excess",
 
-    # inflammation / severity
+
     "lactate",
     "crp",
     "procalcitonin",
 
-    # liver
+
     "ast", "alt",
     "bilirubin",
     "alkaline phosphatase",
 
-    # proteins
+
     "albumin",
     "total protein",
 
-    # others
+
     "anion gap"
 ]
 
@@ -68,7 +68,7 @@ def main() -> None:
 
     df = pd.read_csv(args.d_labitems).copy()
 
-    # Typical columns: itemid, label, fluid, category
+
     for col in ["label", "fluid", "category"]:
         if col in df.columns:
             df[col] = df[col].astype("string").str.strip()

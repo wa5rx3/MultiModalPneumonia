@@ -156,7 +156,7 @@ def main() -> None:
     primary["is_ed_test_subject"] = primary["subject_id"].isin(ed_test_subjects)
     primary["exclude_from_supervised_pretraining"] = primary["pretrain_split"].str.startswith("exclude_")
 
-    # QC 1: every ED validate/test subject present in primary must be excluded
+
     primary_subjects_set = set(primary["subject_id"].unique().tolist())
     required_excluded = (ed_validate_subjects | ed_test_subjects) & primary_subjects_set
     actually_excluded = set(
@@ -169,7 +169,7 @@ def main() -> None:
             "present in primary are not excluded from supervised pretraining."
         )
 
-    # QC 2: if policy excludes all ED, ED train subjects in primary must also be excluded
+
     if args.policy == "exclude_all_ed":
         required_excluded_all_ed = ed_all_subjects & primary_subjects_set
         missing_all_ed_exclusions = required_excluded_all_ed - actually_excluded
@@ -179,7 +179,7 @@ def main() -> None:
                 "are not excluded under exclude_all_ed policy."
             )
 
-    # QC 3: excluded subjects must belong only to intended ED exclusion set
+
     if args.policy == "allow_ed_train":
         allowed_excluded_subjects = required_excluded
     else:
@@ -191,7 +191,7 @@ def main() -> None:
             f"Found {len(unexpected_excluded_subjects)} excluded subjects outside intended ED exclusion set."
         )
 
-    # QC 4: no forbidden ED val/test subjects in trainable pool
+
     trainable_subjects_seen = set(
         primary.loc[
             primary["pretrain_split"].isin(["pretrain_train", "pretrain_internal_val"]),

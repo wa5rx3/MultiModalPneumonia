@@ -13,7 +13,7 @@ class DenseNetBackbone(nn.Module):
         super().__init__()
         base = models.densenet121(weights="IMAGENET1K_V1")
         self.features = base.features
-        self.out_dim = base.classifier.in_features  # 1024
+        self.out_dim = base.classifier.in_features
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.features(x)
@@ -94,7 +94,7 @@ class MultimodalPneumoniaModel(nn.Module):
         return self.fusion_head(fused)
 
     def _extract_backbone_state_dict(self, state_dict: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
-        # Case 1: multimodal checkpoint keys like "image_backbone.features.denseblock1..."
+
         multimodal_filtered = {
             k.replace("image_backbone.", "", 1): v
             for k, v in state_dict.items()
@@ -103,7 +103,7 @@ class MultimodalPneumoniaModel(nn.Module):
         if multimodal_filtered:
             return multimodal_filtered
 
-        # Case 2: image-only fine-tune checkpoint keys like "features.denseblock1..."
+
         image_only_filtered = {
             k: v
             for k, v in state_dict.items()
@@ -112,7 +112,7 @@ class MultimodalPneumoniaModel(nn.Module):
         if image_only_filtered:
             return image_only_filtered
 
-        # Case 3: sometimes state dict may already match DenseNetBackbone keys exactly
+
         direct_filtered = {
             k: v
             for k, v in state_dict.items()

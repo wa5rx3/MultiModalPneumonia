@@ -49,7 +49,7 @@ def main() -> None:
     labs["valuenum"] = pd.to_numeric(labs["valuenum"], errors="coerce")
     labs = labs.dropna(subset=["charttime", "valuenum"])
 
-    # Build reverse map: itemid -> concept
+
     itemid_to_concept: dict[int, str] = {}
     for concept, itemids in feature_map.items():
         for itemid in itemids:
@@ -58,7 +58,7 @@ def main() -> None:
     labs["lab_concept"] = labs["itemid"].map(itemid_to_concept)
     labs = labs.dropna(subset=["lab_concept"])
 
-    # Sort so "last value before t0" is the last row per study/concept
+
     labs = labs.sort_values(["subject_id", "study_id", "lab_concept", "charttime"])
 
     last_vals = (
@@ -74,10 +74,10 @@ def main() -> None:
         aggfunc="first",
     ).reset_index()
 
-    # Flatten pivoted column names
+
     feat.columns.name = None
 
-    # Add missingness flags
+
     concept_cols = [c for c in feat.columns if c not in ["subject_id", "study_id"]]
     for col in concept_cols:
         feat[f"{col}_missing"] = feat[col].isna()

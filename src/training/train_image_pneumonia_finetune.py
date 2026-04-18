@@ -43,7 +43,7 @@ def build_model(pretrained_ckpt_path: str | None = None) -> nn.Module:
         ckpt = torch.load(ckpt_path, map_location="cpu")
         state_dict = ckpt["model_state_dict"]
 
-        # Load feature extractor only; keep binary head freshly initialized.
+
         filtered = {
             k: v
             for k, v in state_dict.items()

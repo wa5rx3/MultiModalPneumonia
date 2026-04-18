@@ -76,7 +76,7 @@ def main() -> None:
     if missing_abnormal:
         raise ValueError(f"CheXpert CSV missing abnormality columns: {missing_abnormal}")
 
-    # Decide merge keys
+
     can_merge_on_dicom = (
         args.merge_on_dicom
         and "dicom_id" in pred.columns
@@ -88,7 +88,7 @@ def main() -> None:
     else:
         merge_keys = ["subject_id", "study_id"]
 
-    # Collapse CheXpert to one row per merge key to avoid duplicate join explosions
+
     chex_small = chex[merge_keys + ABNORMAL_COLS].copy()
     chex_small = chex_small.drop_duplicates(subset=merge_keys)
 
@@ -101,11 +101,11 @@ def main() -> None:
 
     initial_n = len(df)
 
-    # Drop rows where all abnormality columns are NaN
+
     df = df.loc[~df[ABNORMAL_COLS].isna().all(axis=1)].copy()
     after_nan_drop_n = len(df)
 
-    # Define abnormal: any explicit positive finding among selected abnormal cols
+
     df["any_abnormal"] = (df[ABNORMAL_COLS] == 1).any(axis=1)
 
     positives = df.loc[df["target"] == 1].copy()

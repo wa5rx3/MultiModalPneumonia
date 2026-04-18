@@ -79,7 +79,7 @@ def prepare_xgb_matrix(df: pd.DataFrame) -> pd.DataFrame:
     for col in NUMERIC_COLS:
         X[col] = pd.to_numeric(X[col], errors="coerce")
 
-    # Critical: explicit missing-flag handling after left join
+
     for col in LAB_MISSING_FLAG_COLS:
         X[col] = X[col].fillna(True).astype(int)
 

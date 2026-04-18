@@ -101,7 +101,7 @@ def main() -> None:
         "target": [int(t) for t in all_targets],
         "pred_prob": all_probs,
     })
-    # bootstrap_eval expects "prob" column
+
     pred_df["prob"] = pred_df["pred_prob"]
 
     Path(args.output_csv).parent.mkdir(parents=True, exist_ok=True)

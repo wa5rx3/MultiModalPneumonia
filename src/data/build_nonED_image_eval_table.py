@@ -60,11 +60,11 @@ def main() -> None:
 
     merged = non_ed.merge(chexpert, on=["subject_id", "study_id"], how="left")
 
-    # u_ignore policy: keep only definite pos (1.0) or neg (0.0)
+
     labeled = merged[merged["pneumonia_chexpert"].isin([1.0, 0.0])].copy()
     labeled["target"] = (labeled["pneumonia_chexpert"] == 1.0).astype(int)
 
-    # Synthetic split label so CXRBinaryDataset filters correctly
+
     labeled["temporal_split"] = "eval"
 
     keep_cols = ["subject_id", "study_id", "dicom_id", "image_path", "target", "temporal_split"]

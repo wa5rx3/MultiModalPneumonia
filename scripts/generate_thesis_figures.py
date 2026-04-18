@@ -37,7 +37,8 @@ matplotlib.rc('figure', dpi=DPI)
 PRED_FILES = {'image': MODELS / 'image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3' / 'test_predictions.csv', 'multimodal': MODELS / 'multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3' / 'test_predictions.csv', 'attention': MODELS / 'multimodal_pneumonia_attn_fusion_u_ignore_temporal_v1' / 'test_predictions.csv', 'xgboost': MODELS / 'clinical_xgb_u_ignore_temporal_strong_v2' / 'test_predictions.csv', 'lr': MODELS / 'clinical_baseline_u_ignore_temporal_strong_v2' / 'test_predictions.csv'}
 VAL_PRED_FILES = {'image': MODELS / 'image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3' / 'val_predictions.csv', 'multimodal': MODELS / 'multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3' / 'val_predictions.csv'}
 HISTORY_FILES = {'image': MODELS / 'image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3' / 'history.json', 'multimodal': MODELS / 'multimodal_pneumonia_densenet121_triage_u_ignore_temporal_stronger_lr_v3' / 'history.json'}
-TRAINING_TABLE = MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet'
+_TRAINING_TABLE_CANDIDATES = [MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet', MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_one_temporal.parquet']
+TRAINING_TABLE = next((p for p in _TRAINING_TABLE_CANDIDATES if p.exists()), _TRAINING_TABLE_CANDIDATES[0])
 PUBLICATION_REPORT = EVAL / 'final_publication_report.json'
 ABLATION_CSV = EVAL / 'feature_ablation_results.csv'
 SHAP_VALUES = EVAL / 'shap' / 'shap_values.csv'
@@ -83,7 +84,7 @@ def fig_a1_pr_curves():
     ax.set_xlabel('Recall (Sensitivity)')
     ax.set_ylabel('Precision (PPV)')
     ax.set_title('Precision-Recall Curves: Test Set (n=1,075, u_ignore)')
-    ax.legend(loc='upper right', framealpha=0.92, fontsize=8, bbox_to_anchor=(1.0, 1.0))
+    ax.legend(loc='lower left', framealpha=0.95, fontsize=8.5)
     ax.grid(True, alpha=0.3)
     ax.set_aspect('equal')
     fig.tight_layout()
@@ -137,7 +138,7 @@ def fig_a2_reliability_panel():
     panel_models = [('image', 'Image-only (DenseNet121)'), ('multimodal', 'Multimodal-concat'), ('attention', 'Multimodal-attention'), ('xgboost', 'Clinical XGBoost'), ('lr', 'Clinical LR')]
     fig, axes = plt.subplots(2, 3, figsize=(14, 9))
     axes = axes.flatten()
-    # Hide the 6th subplot (empty cell in 2x3 grid)
+
     axes[5].set_visible(False)
     for i, (key, title) in enumerate(panel_models):
         ax = axes[i]
@@ -281,12 +282,11 @@ def fig_a5_training_curves():
         ax2.set_ylim(0.5, 0.85)
         best_auprc = max(va)
         ax2.axvline(best_ep, ls=':', lw=1.5, color='#333333', alpha=0.7)
-        # Position annotation to avoid overlap: place below best point if in upper half
-        y_offset = -0.05 if best_auprc > 0.7 else 0.04
-        x_offset = max(0.8, len(epochs) * 0.06)
+        x_text = best_ep + len(epochs) * 0.15
+        y_text = min(best_auprc + 0.06, 0.83)
         ax2.annotate(f'Best ep. {best_ep}\n{best_auprc:.4f}',
                      xy=(best_ep, best_auprc),
-                     xytext=(best_ep + x_offset, best_auprc + y_offset),
+                     xytext=(x_text, y_text),
                      fontsize=8, color='#333333',
                      arrowprops=dict(arrowstyle='->', color='#333333', lw=0.8))
         ax.set_title(titles[key], fontsize=11, fontweight='bold')
@@ -294,9 +294,11 @@ def fig_a5_training_curves():
         lines1 = [matplotlib.lines.Line2D([0], [0], color=color, lw=2, linestyle='-'),
                    matplotlib.lines.Line2D([0], [0], color=color, lw=2, linestyle='--'),
                    matplotlib.lines.Line2D([0], [0], color='#CC6600', lw=2, linestyle='-', marker='s')]
-        ax.legend(lines1, ['Train loss', 'Val loss', 'Val AUPRC'], loc='center right', fontsize=8.5)
+        ax.legend(lines1, ['Train loss', 'Val loss', 'Val AUPRC'],
+                  loc='upper center', bbox_to_anchor=(0.5, -0.14),
+                  ncol=3, fontsize=9, frameon=False)
     fig.suptitle('Training Curves: Fine-tuning Stage (val AUPRC selection criterion)', fontsize=12, y=1.02)
-    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.tight_layout(rect=[0, 0.03, 1, 0.97])
     out = OUT / 'fig_a5_training_curves.png'
     fig.savefig(out, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
@@ -367,9 +369,9 @@ def fig_a7_vital_distributions():
         ax.grid(True, axis='y', alpha=0.25)
         ax.spines[['top', 'right']].set_visible(False)
     patches = [mpatches.Patch(color=c, label=l, alpha=0.7) for l, c in colors_label.items()]
-    fig.legend(handles=patches, loc='lower center', ncol=2, fontsize=11, bbox_to_anchor=(0.5, -0.02), frameon=True)
-    fig.suptitle('Triage Vital Sign Distributions by Pneumonia Label (Training Set)', fontsize=13, y=1.02)
-    fig.tight_layout(rect=[0, 0.03, 1, 0.97])
+    fig.legend(handles=patches, loc='upper center', ncol=2, fontsize=11, bbox_to_anchor=(0.5, 0.97), frameon=True)
+    fig.suptitle('Triage Vital Sign Distributions by Pneumonia Label (Training Set)', fontsize=13, y=1.01)
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
     out = OUT / 'fig_a7_vital_distributions.png'
     fig.savefig(out, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
@@ -378,20 +380,37 @@ def fig_a7_vital_distributions():
 
 def fig_a8_label_distribution():
     print('  A8: Label distribution by policy...')
-    policies = {'u_ignore': 'u_ignore\n(definitive only)', 'u_zero': 'u_zero\n(uncertain  neg)', 'u_one': 'u_one\n(uncertain  pos)'}
+    policies = {'u_ignore': 'u_ignore\n(definitive only)', 'u_zero': 'u_zero\n(uncertain \u2192 neg)', 'u_one': 'u_one\n(uncertain \u2192 pos)'}
     splits = ['train', 'validate', 'test']
     split_labels = {'train': 'Training', 'validate': 'Validation', 'test': 'Test'}
     data = {}
-    for pol_key in ['u_ignore', 'u_zero', 'u_one']:
-        fp = MANIFESTS / f'cxr_clinical_pneumonia_training_table_{pol_key}_temporal.parquet'
-        d = pd.read_parquet(fp)
-        data[pol_key] = {}
+    u_one_clinical = MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_one_temporal.parquet'
+    multi_policy_clinical = {k: MANIFESTS / f'cxr_clinical_pneumonia_training_table_{k}_temporal.parquet' for k in ['u_ignore', 'u_zero', 'u_one']}
+    all_exist = all(p.exists() for p in multi_policy_clinical.values())
+    if all_exist:
+        for pol_key in ['u_ignore', 'u_zero', 'u_one']:
+            d = pd.read_parquet(multi_policy_clinical[pol_key])
+            data[pol_key] = {}
+            for sp in splits:
+                sub = d[d['temporal_split'] == sp]
+                data[pol_key][sp] = {'positive': int((sub['target'] == 1).sum()), 'negative': int((sub['target'] == 0).sum()), 'total': len(sub)}
+    else:
+        raw = pd.read_parquet(u_one_clinical)
+        if 'pneumonia_chexpert_raw' not in raw.columns:
+            image_table = MANIFESTS / 'cxr_image_pneumonia_finetune_table_u_one_temporal.parquet'
+            raw = raw.merge(pd.read_parquet(image_table)[['subject_id', 'study_id', 'pneumonia_chexpert_raw']], on=['subject_id', 'study_id'], how='left')
         for sp in splits:
-            sub = d[d['temporal_split'] == sp]
-            data[pol_key][sp] = {'positive': int((sub['target'] == 1).sum()), 'negative': int((sub['target'] == 0).sum()), 'total': len(sub)}
+            sub = raw[raw['temporal_split'] == sp]
+            n_pos_def = int((sub['pneumonia_chexpert_raw'] == 1).sum())
+            n_neg_def = int((sub['pneumonia_chexpert_raw'] == 0).sum())
+            n_uncertain = int((sub['pneumonia_chexpert_raw'] == -1).sum())
+            data.setdefault('u_ignore', {})[sp] = {'positive': n_pos_def, 'negative': n_neg_def, 'total': n_pos_def + n_neg_def}
+            data.setdefault('u_zero', {})[sp] = {'positive': n_pos_def, 'negative': n_neg_def + n_uncertain, 'total': n_pos_def + n_neg_def + n_uncertain}
+            data.setdefault('u_one', {})[sp] = {'positive': n_pos_def + n_uncertain, 'negative': n_neg_def, 'total': n_pos_def + n_neg_def + n_uncertain}
     fig, axes = plt.subplots(1, 3, figsize=(14, 5.5), sharey=False)
     c_pos = '#CC3311'
     c_neg = '#0077BB'
+    legend_handles = None
     for ax, sp in zip(axes, splits):
         x = np.arange(len(policies))
         pols = list(policies.keys())
@@ -400,17 +419,21 @@ def fig_a8_label_distribution():
         totals = [data[p][sp]['total'] for p in pols]
         bars_neg = ax.bar(x, neg_vals, color=c_neg, alpha=0.82, label='Negative', edgecolor='white', linewidth=0.5)
         bars_pos = ax.bar(x, pos_vals, bottom=neg_vals, color=c_pos, alpha=0.82, label='Positive', edgecolor='white', linewidth=0.5)
+        if legend_handles is None:
+            legend_handles = [bars_neg, bars_pos]
+        max_total = max(totals)
         for xi, pos, tot in zip(x, pos_vals, totals):
-            ax.text(xi, tot + tot * 0.02, f'{pos / tot * 100:.1f}%\nprevalence', ha='center', va='bottom', fontsize=8.5, color='#333333')
+            ax.text(xi, tot + max_total * 0.015, f'{pos / tot * 100:.1f}%\nprevalence', ha='center', va='bottom', fontsize=8.5, color='#333333')
         ax.set_xticks(x)
         ax.set_xticklabels([policies[p] for p in pols], fontsize=9)
         ax.set_ylabel('Number of studies')
         ax.set_title(f'{split_labels[sp]} split', fontsize=11, fontweight='bold')
-        ax.legend(fontsize=9, loc='upper left')
+        ax.set_ylim(top=max_total * 1.18)
         ax.grid(True, axis='y', alpha=0.25)
         ax.spines[['top', 'right']].set_visible(False)
-    fig.suptitle('Label Distribution by Policy and Split: CheXpert Uncertainty Handling', fontsize=12, y=1.03)
-    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.legend(handles=legend_handles, loc='upper center', bbox_to_anchor=(0.5, 0.94), ncol=2, fontsize=10, frameon=True)
+    fig.suptitle('Label Distribution by Policy and Split: CheXpert Uncertainty Handling', fontsize=12, y=1.00)
+    fig.tight_layout(rect=[0, 0, 1, 0.90])
     out = OUT / 'fig_a8_label_distribution.png'
     fig.savefig(out, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
@@ -420,34 +443,34 @@ def fig_a8_label_distribution():
 def fig_a9_shap_dependence():
     print('  A9: SHAP O2sat dependence plot...')
     shap_df = pd.read_csv(SHAP_VALUES)
-    train_df = pd.read_parquet(TRAINING_TABLE)
-    test_df = train_df[train_df['temporal_split'] == 'test'][['subject_id', 'study_id', 'o2sat', 'heartrate', 'temperature', 'target']].copy()
+    u_ignore_parquet = MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet'
+    u_one_parquet = MANIFESTS / 'cxr_clinical_pneumonia_training_table_u_one_temporal.parquet'
+    src_parquet = u_ignore_parquet if u_ignore_parquet.exists() else u_one_parquet
+    train_df = pd.read_parquet(src_parquet)
+    feat_cols = ['subject_id', 'study_id', 'o2sat', 'heartrate', 'temperature', 'target']
+    test_df = train_df[train_df['temporal_split'] == 'test'][feat_cols].copy()
     merged = shap_df.merge(test_df, on=['subject_id', 'study_id'], how='inner', suffixes=('_shap', '_raw'))
     x = merged['o2sat_raw']
     y = merged['o2sat_shap']
     c = merged['heartrate_raw']
-    target = merged['target']
-    fig, ax = plt.subplots(figsize=(7.5, 5.5))
+    fig, ax = plt.subplots(figsize=(8.0, 5.5))
     sc = ax.scatter(x, y, c=c, cmap='RdYlBu_r', s=15, alpha=0.65, vmin=c.quantile(0.05), vmax=c.quantile(0.95), linewidths=0, rasterized=True)
     cbar = fig.colorbar(sc, ax=ax, shrink=0.75, pad=0.02)
     cbar.set_label('Heart rate (bpm)', fontsize=10)
     ax.axhline(0, ls='--', lw=1.2, color='#444444', alpha=0.6)
-    from matplotlib.lines import Line2D
-    from scipy.ndimage import uniform_filter1d
     sorted_idx = np.argsort(x.values)
     x_s = x.values[sorted_idx]
     y_s = y.values[sorted_idx]
     window = max(1, len(x_s) // 20)
     y_smooth = pd.Series(y_s).rolling(window=window, center=True, min_periods=1).mean().values
-    ax.plot(x_s, y_smooth, '-', color='#222222', lw=2.0, alpha=0.8, label='Smoothed trend')
+    ax.plot(x_s, y_smooth, '-', color='#222222', lw=2.0, alpha=0.85, label='Smoothed trend')
     ax.axvspan(x.min(), 90, alpha=0.07, color='#CC3311', label='Severe hypoxemia (<90%)')
     ax.axvspan(90, 94, alpha=0.05, color='#FF9800', label='Mild hypoxemia (90–94%)')
-    ax.set_xlabel('O₂ saturation: measured value (%)', fontsize=11)
-    ax.set_ylabel('SHAP value for O₂ saturation\n(contribution to log-odds of pneumonia)', fontsize=11)
-    ax.set_title('SHAP Dependence Plot: O₂ Saturation\n(XGBoost, vitals+acuity group, n=1,075 test samples)', fontsize=12)
-    ax.legend(fontsize=9, loc='upper left')
+    ax.set_xlabel('O\u2082 saturation: measured value (%)', fontsize=11)
+    ax.set_ylabel('SHAP value for O\u2082 saturation\n(contribution to log-odds of pneumonia)', fontsize=11)
+    ax.set_title('SHAP Dependence Plot: O\u2082 Saturation\n(XGBoost, vitals+acuity group, n=1,075 test samples)', fontsize=12)
+    ax.legend(fontsize=9, loc='lower left', framealpha=0.92)
     ax.grid(True, alpha=0.2)
-    ax.text(0.97, 0.97, 'Low O₂ sat  positive SHAP\n(increases pneumonia probability)\nHigh O₂ sat  negative SHAP\n(decreases pneumonia probability)', transform=ax.transAxes, va='top', ha='right', fontsize=8.5, bbox=dict(boxstyle='round,pad=0.35', fc='white', ec='#cccccc', alpha=0.9))
     fig.tight_layout()
     out = OUT / 'fig_a9_shap_dependence_o2sat.png'
     fig.savefig(out, dpi=DPI, bbox_inches='tight')

@@ -63,7 +63,7 @@ MODELS: list[tuple[str, Path]] = [
     ),
 ]
 
-# Keep colors stable across plots / thesis figures
+
 MODEL_COLORS: dict[str, str] = {
     "Clinical logistic": "#4c4c4c",
     "Clinical XGBoost": "#7a7a7a",
@@ -86,20 +86,20 @@ def load_test_predictions(path: Path) -> pd.DataFrame:
     if missing:
         raise ValueError(f"{path} is missing required columns: {sorted(missing)}")
 
-    # If temporal_split exists, enforce test-only rows explicitly
+
     if "temporal_split" in df.columns:
         df = df.loc[df["temporal_split"] == "test"].copy()
 
-    # Keep only columns needed for alignment + plotting
+
     df = df[["subject_id", "study_id", "target", "pred_prob"]].copy()
 
-    # Normalize types
+
     df["subject_id"] = pd.to_numeric(df["subject_id"], errors="raise").astype("int64")
     df["study_id"] = pd.to_numeric(df["study_id"], errors="raise").astype("int64")
     df["target"] = pd.to_numeric(df["target"], errors="raise").astype("int64")
     df["pred_prob"] = pd.to_numeric(df["pred_prob"], errors="raise").astype("float64")
 
-    # Basic sanity checks
+
     if df.empty:
         raise ValueError(f"{path} contains no rows after filtering.")
 
@@ -112,7 +112,7 @@ def load_test_predictions(path: Path) -> pd.DataFrame:
     if ((df["pred_prob"] < 0) | (df["pred_prob"] > 1)).any():
         raise ValueError(f"{path} contains probabilities outside [0, 1].")
 
-    # Prevent silent duplication / misalignment
+
     dup_mask = df.duplicated(subset=["subject_id", "study_id"], keep=False)
     if dup_mask.any():
         dup_rows = df.loc[dup_mask, ["subject_id", "study_id"]].drop_duplicates()
@@ -173,7 +173,7 @@ def plot_roc(y_true: np.ndarray, scores: dict[str, np.ndarray], out_path: Path) 
 
     fig, ax = plt.subplots(figsize=(6.8, 6.4), dpi=180)
 
-    # Plot in intended order
+
     for name, _ in MODELS:
         y_score = scores[name]
         fpr, tpr, _ = roc_curve(y_true, y_score)

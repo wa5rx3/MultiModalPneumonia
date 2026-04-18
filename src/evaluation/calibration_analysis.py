@@ -147,9 +147,9 @@ def bootstrap_metric_ci(
     values: list[float] = []
 
     if patient_ids is not None:
-        # --- patient-level resampling ---
+
         unique_patients = np.array(sorted(set(patient_ids.tolist())))
-        # Build index arrays grouped by patient once (avoids repeated masking)
+
         patient_to_indices: dict[Any, np.ndarray] = {}
         for pid in unique_patients:
             patient_to_indices[pid] = np.where(patient_ids == pid)[0]
@@ -160,7 +160,7 @@ def bootstrap_metric_ci(
             y_true_b = y_true[idx]
             y_prob_b = y_prob[idx]
             if len(np.unique(y_true_b)) < 2:
-                continue  # skip degenerate replicate
+                continue
             if metric_name == "brier":
                 value = float(brier_score_loss(y_true_b, y_prob_b))
             elif metric_name == "ece":
@@ -169,7 +169,7 @@ def bootstrap_metric_ci(
                 raise ValueError(f"Unsupported metric_name: {metric_name}")
             values.append(value)
     else:
-        # --- row-level resampling (legacy fallback) ---
+
         n = len(y_true)
         for _ in range(n_bootstrap):
             idx = rng.integers(0, n, size=n)
@@ -204,8 +204,8 @@ def calibration_metrics_from_predictions(
     y_true = df["target"].to_numpy(dtype=int)
     y_prob = df["pred_prob"].to_numpy(dtype=float)
 
-    # Use patient-level bootstrap when subject_id is available so that the
-    # resampling unit matches the AUROC/AUPRC bootstrap in bootstrap_eval.py.
+
+
     patient_ids: Optional[np.ndarray] = None
     if "subject_id" in df.columns:
         patient_ids = df["subject_id"].to_numpy()

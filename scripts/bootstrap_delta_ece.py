@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.evaluation.bootstrap_eval import assert_aligned_for_delta, load_predictions
 from src.evaluation.calibration_analysis import compute_ece_mce
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+
 IMAGE_CSV = Path(
     "artifacts/models/"
     "image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3/"
@@ -46,7 +46,7 @@ N_BINS = 10
 
 
 def main() -> None:
-    # ── Load and align ────────────────────────────────────────────────────────
+
     print("Loading predictions …")
     df_image = load_predictions(str(IMAGE_CSV))
     df_multi = load_predictions(str(MULTI_CSV))
@@ -61,13 +61,13 @@ def main() -> None:
     prob_multi = df_multi_aligned["prob"].to_numpy(dtype=float)
     patient_ids = df_image_aligned["subject_id"].to_numpy(dtype=int)
 
-    # ── Point estimates ───────────────────────────────────────────────────────
+
     ece_image_point, _, _ = compute_ece_mce(y_true, prob_image, n_bins=N_BINS)
     ece_multi_point, _, _ = compute_ece_mce(y_true, prob_multi, n_bins=N_BINS)
     delta_point = ece_multi_point - ece_image_point
     print(f"Point ECE -- image: {ece_image_point:.4f}, multimodal: {ece_multi_point:.4f}, dECE: {delta_point:.4f}")
 
-    # ── Paired patient-level bootstrap ───────────────────────────────────────
+
     rng = np.random.default_rng(SEED)
     unique_patients = np.array(sorted(set(patient_ids.tolist())))
     patient_to_indices: dict[int, np.ndarray] = {
@@ -96,13 +96,13 @@ def main() -> None:
     delta_mean = float(arr.mean())
     ci_low = float(np.percentile(arr, 2.5))
     ci_high = float(np.percentile(arr, 97.5))
-    p_negative = float(np.mean(arr < 0.0))   # P(ΔECE < 0): multimodal better
+    p_negative = float(np.mean(arr < 0.0))
 
     print(f"dECE bootstrap: mean={delta_mean:.4f}, 95% CI [{ci_low:.4f}, {ci_high:.4f}], P(dECE<0)={p_negative:.3f}")
     if skipped:
         print(f"Skipped {skipped} degenerate replicates (single class).")
 
-    # ── Save ──────────────────────────────────────────────────────────────────
+
     output: dict = {
         "description": "Paired patient-level bootstrap for delta ECE (multimodal - image-only). ΔECE < 0 means multimodal is better calibrated.",
         "model_a": "multimodal_concat",

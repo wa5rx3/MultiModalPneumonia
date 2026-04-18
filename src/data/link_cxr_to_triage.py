@@ -14,7 +14,7 @@ def load_cxr(path: Path) -> pd.DataFrame:
 def load_triage(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
 
-    # Parse datetime columns if present
+
     for col in ["intime", "outtime", "charttime"]:
         if col in df.columns:
             df[col] = pd.to_datetime(df[col], errors="coerce")
@@ -56,9 +56,9 @@ def main() -> None:
 
     id_col = "stay_id" if "stay_id" in cxr.columns else "ed_stay_id"
 
-    # Temporal safety note: MIMIC-IV-ED triage is a per-stay intake summary.
-    # Triage assessment structurally precedes CXR ordering in ED workflow.
-    # No charttime filter needed — the data is a single intake snapshot.
+
+
+
     merged = cxr.merge(triage, on=id_col, how="left")
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)

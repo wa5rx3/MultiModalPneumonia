@@ -21,7 +21,7 @@ FEATURE_GROUPS = [
     "no_missing_flags",
 ]
 
-# (model_type, dir_pattern, metrics_file, auroc_key_path, auprc_key_path)
+
 MODEL_PATTERNS = [
     (
         "clinical_logistic",
@@ -46,7 +46,7 @@ MODEL_PATTERNS = [
     ),
 ]
 
-# Also include the canonical "all" runs from the standard naming
+
 CANONICAL_ALL_PATTERNS = [
     (
         "clinical_logistic",
@@ -109,7 +109,7 @@ def main() -> None:
     models_dir = Path(args.models_dir)
     rows: list[dict] = []
 
-    # Canonical "all" runs (standard naming)
+
     for model_type, dir_name, metrics_file, auroc_path, auprc_path, fg in CANONICAL_ALL_PATTERNS:
         model_dir = models_dir / dir_name
         if model_dir.is_dir():
@@ -132,11 +132,11 @@ def main() -> None:
                 "found": False,
             })
 
-    # Ablation runs
+
     for model_type, dir_pattern, metrics_file, auroc_path, auprc_path in MODEL_PATTERNS:
         for fg in FEATURE_GROUPS:
             if fg == "all":
-                continue  # covered by canonical patterns above
+                continue
             dir_name = dir_pattern.format(fg=fg)
             model_dir = models_dir / dir_name
             if model_dir.is_dir():

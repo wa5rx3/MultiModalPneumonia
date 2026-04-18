@@ -24,12 +24,12 @@ TRIAGE_COLUMNS = [
 
 
 def clip_triage_vitals(feat: pd.DataFrame) -> pd.DataFrame:
-    # Clip physiological variables to clinically plausible ranges
-    # to reduce the effect of measurement artifacts and obvious outliers.
-    # Temperature: MIMIC-IV-ED triage stores temperature in degrees Fahrenheit.
-    # Bounds: 95.0–105.8 °F  (≡ 35–41 °C).
+
+
+
+
     if "temperature" in feat.columns:
-        feat["temperature"] = feat["temperature"].clip(95.0, 105.8)  # °F
+        feat["temperature"] = feat["temperature"].clip(95.0, 105.8)
     if "heartrate" in feat.columns:
         feat["heartrate"] = feat["heartrate"].clip(30, 220)
     if "resprate" in feat.columns:
@@ -64,7 +64,7 @@ def main() -> None:
 
     df = pd.read_parquet(args.input).copy()
 
-    # Clean duplicate subject_id columns from merge
+
     if "subject_id_x" in df.columns:
         df = df.rename(columns={"subject_id_x": "subject_id"})
     if "subject_id_y" in df.columns:
@@ -102,7 +102,7 @@ def main() -> None:
         "acuity",
     ]
 
-    # Ensure numeric triage fields are numeric before clipping / missing flags
+
     for col in numeric_cols:
         if col in feat.columns:
             feat[col] = pd.to_numeric(feat[col], errors="coerce")

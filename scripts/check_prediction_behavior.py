@@ -158,7 +158,7 @@ def main() -> None:
     print(f"AUROC: {metrics['sanity_checks']['all_positive_dummy_auroc']:.6f}")
     print(f"AUPRC: {metrics['sanity_checks']['all_positive_dummy_auprc']:.6f}")
 
-    # Save metrics JSON-like CSV friendly summary
+
     pd.DataFrame(
         [
             {
@@ -183,10 +183,10 @@ def main() -> None:
         ]
     ).to_csv(output_dir / "summary.csv", index=False)
 
-    # Save full per-row predictions copy
+
     df.to_csv(output_dir / "predictions_copy.csv", index=False)
 
-    # Histogram: positives vs negatives
+
     plt.figure(figsize=(8, 5))
     plt.hist(
         df.loc[df["target"] == 1, "pred_prob"],
@@ -209,11 +209,11 @@ def main() -> None:
     plt.savefig(output_dir / "prediction_histogram.png", dpi=180)
     plt.close()
 
-    # Simple boxplot-style summary using pandas
+
     desc_df = df.groupby("target")["pred_prob"].describe().reset_index()
     desc_df.to_csv(output_dir / "prediction_distribution_by_class.csv", index=False)
 
-    # High-confidence errors
+
     false_positives = df[(df["target"] == 0) & (df["pred_prob"] >= args.threshold)].copy()
     false_negatives = df[(df["target"] == 1) & (df["pred_prob"] < args.threshold)].copy()
 

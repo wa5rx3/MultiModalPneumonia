@@ -22,7 +22,7 @@ CATEGORICAL_COLS = [
     "gender",
     "race",
     "arrival_transport",
-    # "disposition",  # removed for now: likely post-t0 / leakage risk
+
 ]
 
 MISSING_FLAG_COLS = [
@@ -81,12 +81,12 @@ def main() -> None:
 
     out = df[keep_cols].copy()
 
-    # Force numeric conversion only; do NOT impute here.
+
     for col in NUMERIC_COLS:
         if col in out.columns:
             out[col] = pd.to_numeric(out[col], errors="coerce")
 
-    # Clean categorical strings, but do NOT use future information
+
     for col in CATEGORICAL_COLS:
         if col in out.columns:
             out[col] = out[col].astype("string").str.strip()

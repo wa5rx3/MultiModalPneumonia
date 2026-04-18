@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 
 from src.models.clinical_baseline import FEATURE_GROUP_COLUMNS, MISSING_INDICATOR_COLS
 
-# Re-export for backward compatibility
+
 NUMERIC_COLS: List[str] = FEATURE_GROUP_COLUMNS["all"]["numeric"]
 CATEGORICAL_COLS: List[str] = FEATURE_GROUP_COLUMNS["all"]["categorical"]
 

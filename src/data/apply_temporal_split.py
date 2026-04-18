@@ -21,7 +21,7 @@ def main() -> None:
     split_cols = ["subject_id", "study_id", "temporal_split"]
     split_map = cohort[split_cols].drop_duplicates()
 
-    # drop old split if present; we now trust temporal_split
+
     if "split" in table.columns:
         table = table.drop(columns=["split"])
 

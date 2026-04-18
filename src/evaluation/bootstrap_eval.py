@@ -14,7 +14,7 @@ from tqdm import tqdm
 def load_predictions(path: str) -> pd.DataFrame:
     df = pd.read_csv(path).copy()
 
-    # Standardize probability column
+
     if "prob" not in df.columns:
         if "pred_prob" in df.columns:
             df["prob"] = df["pred_prob"]

@@ -19,9 +19,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize_scalar
-from scipy.special import expit as sigmoid  # numerically stable sigmoid
+from scipy.special import expit as sigmoid
 
-# Allow imports from src/
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.evaluation.calibration_analysis import (
     bootstrap_metric_ci,
@@ -29,7 +29,7 @@ from src.evaluation.calibration_analysis import (
     load_prediction_table,
 )
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+
 MODEL_DIR = Path(
     "artifacts/models/"
     "image_pneumonia_finetune_densenet121_u_ignore_temporal_stronger_lr_v3"
@@ -38,8 +38,8 @@ VAL_CSV = MODEL_DIR / "val_predictions.csv"
 TEST_CSV = MODEL_DIR / "test_predictions.csv"
 OUTPUT_JSON = Path("artifacts/evaluation/temperature_scaling_results.json")
 
-# ── Constants (from calibration_metrics.json) ─────────────────────────────────
-IMAGE_ONLY_ORIGINAL_ECE = 0.0674   # point estimate, 10-bin
+
+IMAGE_ONLY_ORIGINAL_ECE = 0.0674
 N_BINS = 10
 N_BOOTSTRAP = 2000
 SEED = 42
@@ -61,13 +61,13 @@ def nll_loss(T: float, logits: np.ndarray, targets: np.ndarray) -> float:
 
 
 def main() -> None:
-    # ── Load validation set ───────────────────────────────────────────────────
+
     print(f"Loading validation predictions from {VAL_CSV} …")
     df_val = load_prediction_table(VAL_CSV)
     y_val = df_val["target"].to_numpy(dtype=float)
     logits_val = prob_to_logit(df_val["pred_prob"].to_numpy(dtype=float))
 
-    # ── Fit temperature T on validation NLL ──────────────────────────────────
+
     result = minimize_scalar(
         fun=lambda T: nll_loss(T, logits_val, y_val),
         bounds=(0.01, 20.0),
@@ -77,14 +77,14 @@ def main() -> None:
     T_opt = float(result.x)
     print(f"Optimal temperature T = {T_opt:.4f}  (val NLL before={nll_loss(1.0, logits_val, y_val):.4f}, after={result.fun:.4f})")
 
-    # ── Apply to test set ─────────────────────────────────────────────────────
+
     print(f"Loading test predictions from {TEST_CSV} …")
     df_test = load_prediction_table(TEST_CSV)
     y_test = df_test["target"].to_numpy(dtype=float)
     logits_test = prob_to_logit(df_test["pred_prob"].to_numpy(dtype=float))
     scaled_probs = sigmoid(logits_test / T_opt).astype(float)
 
-    # Point ECE on scaled test probabilities
+
     ece_scaled_point, _, _ = compute_ece_mce(
         y_true=y_test.astype(int),
         y_prob=scaled_probs,
@@ -93,7 +93,7 @@ def main() -> None:
     print(f"Image-only ECE (original): {IMAGE_ONLY_ORIGINAL_ECE:.4f}")
     print(f"Image-only ECE (T-scaled):  {ece_scaled_point:.4f}")
 
-    # Bootstrap CI (patient-level)
+
     patient_ids: np.ndarray | None = None
     if "subject_id" in df_test.columns:
         patient_ids = df_test["subject_id"].to_numpy()
@@ -114,7 +114,7 @@ def main() -> None:
         f"95% CI [{bootstrap_result['ci_low']:.4f}, {bootstrap_result['ci_high']:.4f}]"
     )
 
-    # ── Save results ──────────────────────────────────────────────────────────
+
     output: dict = {
         "method": "temperature_scaling",
         "model": "image_only_densenet121_u_ignore_temporal_stronger_lr_v3",

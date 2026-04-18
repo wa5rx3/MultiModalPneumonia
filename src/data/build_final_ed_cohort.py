@@ -42,7 +42,7 @@ def main() -> None:
 
     cohort = df.merge(valid, on=study_key, how="inner").copy()
 
-    # Keep one row per study deterministically
+
     cohort = cohort.sort_values(study_key + [id_col]).groupby(study_key, as_index=False).head(1).copy()
 
     output_path = Path(args.output_cohort)

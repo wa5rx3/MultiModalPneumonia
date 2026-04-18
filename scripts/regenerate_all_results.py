@@ -17,24 +17,24 @@ import os
 import sys
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MIN_JSON_BYTES = 1000   # 1 KB for JSON files
-MIN_PNG_BYTES = 10_000  # 10 KB for image files
-MIN_CSV_BYTES = 500     # 500 B for CSV files
+MIN_JSON_BYTES = 1000
+MIN_PNG_BYTES = 10_000
+MIN_CSV_BYTES = 500
 
 REQUIRED_ARTEFACTS = [
-    # Source of truth — all numerical results
+
     ("artifacts/evaluation/final_publication_report.json", MIN_JSON_BYTES, "json"),
 
-    # Bootstrap comparison
+
     (
         "artifacts/evaluation/bootstrap_multimodal_vs_image_stronger_lr_v3.json",
         MIN_JSON_BYTES, "json"
     ),
 
-    # Feature ablation
+
     ("artifacts/evaluation/feature_ablation_results.csv", MIN_CSV_BYTES, "csv"),
 
-    # Calibration outputs
+
     (
         "artifacts/evaluation/calibration_stronger_lr_v3/"
         "reliability_diagram_all_models.png",
@@ -46,11 +46,11 @@ REQUIRED_ARTEFACTS = [
         MIN_JSON_BYTES, "json"
     ),
 
-    # SHAP figures
+
     ("artifacts/evaluation/shap/shap_summary_beeswarm.png", MIN_PNG_BYTES, "png"),
     ("artifacts/evaluation/shap/shap_summary_bar.png", MIN_PNG_BYTES, "png"),
 
-    # DCA
+
     ("artifacts/evaluation/dca/decision_curve_standardized.png", MIN_PNG_BYTES, "png"),
 ]
 
@@ -87,7 +87,7 @@ def verify():
 
         passed.append((rel_path, size))
 
-    # Print results
+
     print("ARTEFACT VERIFICATION REPORT")
     print("=" * 60)
     print(f"Project root: {PROJECT_ROOT}\n")
@@ -105,7 +105,7 @@ def verify():
     else:
         print(f"\nResult: All {len(passed)} artefacts VERIFIED.")
 
-        # Extra: validate key numbers in final_publication_report.json
+
         report_path = os.path.join(
             PROJECT_ROOT,
             "artifacts", "evaluation", "final_publication_report.json"

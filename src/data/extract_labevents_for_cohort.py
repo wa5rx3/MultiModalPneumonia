@@ -126,14 +126,14 @@ def main() -> None:
         ):
             stats["rows_read"] += len(chunk)
 
-            # Normalize
+
             chunk["subject_id"] = pd.to_numeric(chunk["subject_id"], errors="coerce").astype("Int64")
             chunk["hadm_id"] = coerce_hadm_id(chunk["hadm_id"])
             chunk["itemid"] = pd.to_numeric(chunk["itemid"], errors="coerce").astype("Int64")
             chunk["charttime"] = pd.to_datetime(chunk["charttime"], errors="coerce")
             chunk["valuenum"] = pd.to_numeric(chunk["valuenum"], errors="coerce")
 
-            # Filters
+
             chunk = chunk[chunk["subject_id"].isin(subject_ids)]
             stats["after_subject"] += len(chunk)
             if chunk.empty:
@@ -149,9 +149,9 @@ def main() -> None:
             if chunk.empty:
                 continue
 
-            # ---------------------------
-            # PRIMARY: hadm-safe matching
-            # ---------------------------
+
+
+
             chunk_hadm = chunk[chunk["hadm_id"].notna()]
             if not chunk_hadm.empty:
                 merged = chunk_hadm.merge(
@@ -175,9 +175,9 @@ def main() -> None:
                             ]
                         )
 
-            # ---------------------------
-            # OPTIONAL fallback
-            # ---------------------------
+
+
+
             if args.match_mode == "hadm_plus_fallback":
                 chunk_no_hadm = chunk[chunk["hadm_id"].isna()]
                 if not chunk_no_hadm.empty and not cohort_no_hadm.empty:

@@ -22,10 +22,10 @@ def load_admissions(path: Path) -> pd.DataFrame:
 
 
 def link_cxr_to_admissions(cxr: pd.DataFrame, adm: pd.DataFrame) -> pd.DataFrame:
-    # Merge on subject_id
+
     merged = cxr.merge(adm, on="subject_id", how="left")
 
-    # Keep only rows where t0 is within admission window
+
     in_window = (
         (merged["t0"] >= merged["admittime"]) &
         (merged["t0"] <= merged["dischtime"])

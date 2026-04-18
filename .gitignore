@@ -100,6 +100,12 @@ Yazan_thesis_v2_overleaf.zip
 Yazan_thesis_v2_overleaf/
 project_digest.py
 
+# === LOCAL-ONLY DEV ARTIFACTS ===
+AUDIT_NOTES.md
+audit_prompt.txt
+tmp_preview/
+artifacts/models/**/val_predictions_with_paths*.csv
+
 # === TOOL & EDITOR CONFIG ===
 .claude/
 .pytest_cache/

@@ -67,7 +67,7 @@ def select_examples(df: pd.DataFrame, mode: str, threshold: float, top_k: int) -
         subset = df[(pred_pos) & (target_pos)]
         return subset.sort_values("pred_prob", ascending=False).head(top_k)
 
-    # fn: high-confidence misses first (closest to threshold from below)
+
     subset = df[(~pred_pos) & (target_pos)].copy()
     subset["distance_to_threshold"] = threshold - subset["pred_prob"]
     subset = subset.sort_values(["distance_to_threshold", "pred_prob"], ascending=[True, False]).head(top_k)

@@ -40,7 +40,7 @@ def main() -> None:
 
     merged = triage.merge(labels, on=key_cols, how="inner", suffixes=("", "_label"))
 
-    # prefer label split if duplicate appears
+
     if "split_label" in merged.columns:
         merged["split"] = merged["split_label"]
         merged = merged.drop(columns=["split_label"])

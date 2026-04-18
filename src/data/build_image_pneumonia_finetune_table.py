@@ -72,16 +72,16 @@ def main() -> None:
         keep_cols.append("target")
     labels = labels[keep_cols].copy()
 
-    # Build binary target from the label-policy table.
-    # If a target column already exists (e.g. u_ignore/u_zero output from
-    # build_pneumonia_training_table.py), trust it directly.
+
+
+
     if "target" in labels.columns:
         labels["target"] = pd.to_numeric(labels["target"], errors="raise")
     else:
         labels["target"] = pd.NA
         labels.loc[labels["pneumonia_positive"] == True, "target"] = 1
         labels.loc[labels["pneumonia_negative"] == True, "target"] = 0
-        # Support label tables that retain uncertain flag but do not provide target.
+
         if "pneumonia_uncertain" in labels.columns:
             labels.loc[labels["pneumonia_uncertain"] == True, "target"] = 0
 
