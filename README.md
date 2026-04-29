@@ -4,9 +4,9 @@ BSc thesis project. The question: does adding structured ED triage data (vitals,
 
 Short answer: calibration improves, discrimination does not.
 
-**Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV-ED (PhysioNet credentialed access required)  
+**Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV v2.2 + MIMIC-IV-ED v2.2 (PhysioNet credentialed access required)  
 **Cohort:** 9,137 ED-anchored studies, 80/10/10 patient-level temporal split, test set n = 1,075  
-**Backbone:** DenseNet-121 pretrained on 14-label CheXpert task, fine-tuned for binary pneumonia
+**Backbone:** DenseNet-121 pretrained on the multilabel CheXpert-style task using 41,214 non-ED MIMIC-CXR-JPG studies, then fine-tuned for binary pneumonia
 
 ---
 
@@ -116,7 +116,7 @@ docker run --gpus all \
   multimodal-pneumonia make all
 ```
 
-Trained weights (~800 MB–1.2 GB per checkpoint) are not in the repository. Contact the author for access.
+Trained weights (~800 MB–1.2 GB per checkpoint) are not redistributed under the PhysioNet Data Use Agreement. To obtain weights, complete PhysioNet credentialing and re-run `make all` after configuring `configs/paths.local.yaml`.
 
 ---
 
@@ -130,7 +130,17 @@ python -m pytest tests/ -v
 
 ---
 
+## Dashboard
+
+```bash
+streamlit run streamlit_app.py
+```
+
+The dashboard reads pre-computed metrics from `artifacts/evaluation/` and runs without MIMIC access for browsing results, calibration plots, bootstrap comparisons, and Grad-CAM overlays.
+
+---
+
 ## Data compliance
 
-Uses MIMIC-CXR-JPG v2.1.0, MIMIC-IV, and MIMIC-IV-ED under the PhysioNet Credentialed Health Data License. No patient-level data is committed to this repository. Reproducing results requires completing PhysioNet credentialing at [physionet.org](https://physionet.org).
+Uses MIMIC-CXR-JPG v2.1.0, MIMIC-IV v2.2, and MIMIC-IV-ED v2.2 under the PhysioNet Credentialed Health Data License. No patient-level data is committed to this repository. Reproducing results requires completing PhysioNet credentialing at [physionet.org](https://physionet.org).
  
