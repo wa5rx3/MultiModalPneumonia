@@ -75,6 +75,20 @@ count delta vs thesis:
   acuity, view (is_pa/is_ap). Age (anchor_age) to be merged from patients.csv.
 - Smoke-tested both training scripts (1 epoch each) on the rebuilt tables: clean.
 
+### P2 preliminary (2026-06-11): image model across 5 seeds
+All 5 image-only fine-tunes done on the rebuilt cohort (shared pretrain backbone,
+lr 5e-5/1e-5). Per-seed test (n=1,075):
+- AUROC 0.7373 +/- 0.0027 (very stable)
+- AUPRC 0.7191 +/- 0.0040
+- ECE   0.0531 +/- 0.0083, range [0.041, 0.060]
+- Brier 0.2067 +/- 0.0010
+Key early observation: the seed-42 image ECE here is 0.060, and the thesis
+headline used the canonical seed-42 image ECE of 0.067 -- both at the TOP of the
+across-seed range. The image model's ECE alone wanders 0.041-0.060 by seed.
+This foreshadows that the H3 calibration gap (mm 0.040 vs img 0.067) may shrink
+substantially once concat is evaluated across seeds. NOT a conclusion: the paper
+rests on the paired dECE across seeds; concat multi-seed in progress (1/5 done).
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
