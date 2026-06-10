@@ -60,3 +60,20 @@ Author of record: Yazan (wa5rx3@gmail.com).
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
 Scientific Reports. Will not commit the story ahead of the data.
+
+### P0 result (2026-06-10): existing numbers reproduce exactly
+Re-ran the paired bootstrap and calibration on the committed `test_predictions.csv`:
+- ΔAUROC (multimodal − image) = −0.0090746, 95% CI [−0.022671, +0.004695],
+  P(Δ>0)=0.10 — matches `final_publication_report.json` to every decimal.
+- ECE: Image 0.06735, Multimodal 0.04034; Brier 0.20631 / 0.20686 — exact match.
+- Eval code is deterministic (seed 42) in this env; committed predictions intact.
+Conclusion: the artifacts are trustworthy; the pipeline is safe to build on.
+Also verified CXR images resolve on D: via `make_expected_image_path` (layout
+`files_pXX/mimic-cxr-jpg/2.1.0/files/pXX/pSUBJ/sSTUDY/dicom.jpg`), 5/5 sampled exist.
+
+### Scope decision (user, 2026-06-10): full ambitious track confirmed. Do the core
+rigor pass AND all three extensions: P4a labs-as-3rd-modality, P4b modern
+backbone/fusion baselines, P4c external image validation. Dataset path on D:
+confirmed by user — proceed as configured. This is the specialty-journal
+(CBM/BSPC) effort, multi-week. Task list created (#1–#8) with P2/P4a/P4b gated on
+the P1 cohort rebuild.
