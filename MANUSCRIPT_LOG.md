@@ -56,7 +56,26 @@ Author of record: Yazan (wa5rx3@gmail.com).
   and/or external image validation. [heavy — decide after P2 + time budget]
 - P5. Reframe manuscript honestly around what P2 shows; build figures/tables; venue.
 
-**Venue:** deferred until P2. If multi-seed confirms a calibration benefit →
+### P1 result (2026-06-10): cohort rebuilt, reproduces thesis at evaluation level
+Ran all 19 pipeline steps from raw MIMIC on D: (exit 0). Reconciliation of the
+count delta vs thesis:
+- u_ignore manifest: 9,154 studies; temporal split test=1,080 / val=930 / train=7,144.
+- Thesis reported 9,137 studies / test 1,075.
+- **Cause:** both the image and multimodal datasets filter to images that exist
+  on disk; ~17 JPGs (5 in the test split) are absent on this D: snapshot, so the
+  actually-trained/evaluated cohort is 1,075 test rows — an EXACT match to the
+  thesis (rebuilt test: n=1,075 after existence filter; prevalence 45.37%,
+  490 pos / 590 neg vs thesis 487/588). One study also lacks a chexpert label.
+- **Decision:** build the entire manuscript on this freshly-rebuilt, fully
+  reproducible cohort. Every number will trace to this pipeline run + multi-seed
+  training. The ~0.5% manifest delta is immaterial and documented here.
+- Verified image and concat test predictions align to the same 1,075 rows
+  (targets match) -> paired dAUROC/dECE analysis is valid.
+- Demographic columns available for P3 subgroups: gender, race, arrival_transport,
+  acuity, view (is_pa/is_ap). Age (anchor_age) to be merged from patients.csv.
+- Smoke-tested both training scripts (1 epoch each) on the rebuilt tables: clean.
+
+### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
 Scientific Reports. Will not commit the story ahead of the data.
