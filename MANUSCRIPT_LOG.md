@@ -89,6 +89,41 @@ This foreshadows that the H3 calibration gap (mm 0.040 vs img 0.067) may shrink
 substantially once concat is evaluated across seeds. NOT a conclusion: the paper
 rests on the paired dECE across seeds; concat multi-seed in progress (1/5 done).
 
+### P2 VERDICT (2026-06-11): multi-seed image vs concat (5 seeds each)
+Across-seed mean +/- std, test n=1,075:
+- image : AUROC 0.7373+/-0.0027, AUPRC 0.7191+/-0.0040, ECE 0.0531+/-0.0083, Brier 0.2067+/-0.0010
+- concat: AUROC 0.7410+/-0.0062, AUPRC 0.7154+/-0.0052, ECE 0.0404+/-0.0136, Brier 0.2050+/-0.0024
+Paired (concat - image), per seed across 5 seeds:
+- dAUROC +0.0037 +/- 0.0087, range [-0.0066,+0.0145], 3/5 favor mm
+- dAUPRC -0.0037 +/- 0.0079, 2/5 favor mm
+- dECE   -0.0127 +/- 0.0162, range [-0.0368,+0.0040], 4/5 favor mm
+- dBrier -0.0017 +/- 0.0030, ~0
+
+**Interpretation (the fork, decided):**
+1. H2 (non-inferior discrimination) -- ROBUSTLY CONFIRMED and slightly strengthened.
+   Across seeds dAUROC = +0.004 +/- 0.009, well inside the +/-0.05 margin; the
+   thesis seed-42 value (-0.009) was within ordinary seed noise. Image and concat
+   are statistically indistinguishable on discrimination.
+2. H3 (better calibration) -- REAL BUT MODEST AND SEED-SENSITIVE, not the clean
+   40% reduction the single checkpoint implied. Mean ECE 0.040 (concat) vs 0.053
+   (image); mean dECE -0.013, favoring mm in 4/5 seeds, but across-seed std (0.016)
+   exceeds the mean effect and the range crosses zero. On the rebuilt seed-42 the
+   gap is only -0.004 (vs thesis -0.027): the thesis headline (img ECE 0.067) used
+   a high-ECE image checkpoint at the top of the across-seed range.
+   => The honest, publishable message: SINGLE-SEED EVALUATION OVERSTATED THE
+   CALIBRATION ADVANTAGE ~2x. Multi-seed is necessary for calibration claims.
+   Brier is unchanged, so the effect is distributional alignment, not refinement.
+
+**Decision:** reframe the paper from "multimodal is better calibrated" to a
+rigorous reproducibility-aware evaluation: imaging dominates; triage fusion is
+discrimination-neutral and yields only a small, seed-fragile calibration gain
+that single-seed reporting overstates. This is a stronger, more honest contribution
+and is exactly what a careful Q1 reviewer rewards. Venue firms up after P4
+(labs/external/backbones); leaning Scientific Reports (rigorous nuanced/negative
+result) or Computers in Biology and Medicine if labs+external strengthen the
+clinical pipeline angle. n=5 seeds is the main analysis; may extend to 10 to
+tighten the dECE interval if time allows.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
