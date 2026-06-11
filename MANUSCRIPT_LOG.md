@@ -124,6 +124,20 @@ result) or Computers in Biology and Medicine if labs+external strengthen the
 clinical pipeline angle. n=5 seeds is the main analysis; may extend to 10 to
 tighten the dECE interval if time allows.
 
+### P3 results (2026-06-11): rigor + fairness analyses (5 seeds, image vs concat)
+- ECE bin-sensitivity: dECE (concat-image) ranges -0.005 (5 uniform bins, 2/5
+  favor mm) to -0.013 (10 uniform, 4/5). Calibration gain is small and shrinks
+  under coarser/quantile binning -> the thesis 10-bin choice flatters it.
+- Operating points (ED-relevant): at sens 0.90 spec 0.31 (img) vs 0.32 (concat);
+  at 0.95, 0.17 vs 0.18. Clinically equivalent.
+- Subgroup/fairness (mean AUROC across seeds): meaningful disparities --
+  sex: Male 0.77 vs Female 0.71; race: White 0.75, Asian 0.76, Black 0.71,
+  Hispanic 0.64 (small n, noisy); view PA 0.75 > AP 0.72; acuity high 0.76 >
+  low 0.71. Fusion does NOT consistently close gaps; in small minority strata it
+  can worsen calibration (Asian ECE 0.155->0.206). Report per-subgroup n and
+  caveat small strata. Strong, honest limitations/fairness section
+  (CLAIM / TRIPOD+AI). Artifacts in artifacts/evaluation/multiseed/.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for

@@ -1,0 +1,13 @@
+{
+  "factors": [
+    "sex",
+    "age_band",
+    "race_group",
+    "acuity_group",
+    "view"
+  ],
+  "min_subgroup_n": 30,
+  "n_seeds_requested": 5,
+  "per_subgroup_csv": "subgroup_metrics.csv",
+  "paired_delta_csv": "subgroup_paired_delta.csv"
+}
