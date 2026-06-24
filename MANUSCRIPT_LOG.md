@@ -149,6 +149,13 @@ configs/paths.local.yaml). Graceful no-op if config/IDs missing. Verified:
 reconstructed paths resolve 1075/1075 on D:. Saved-PNG-gallery tab was always
 fine (40 overlays under artifacts/interpretability/). Fix applied on branch only.
 
+Also fixed the Artifacts tab (`render_artifact_gallery`): it previously showed
+only a hardcoded list of <=2 images (reliability diagram + decision curve).
+Replaced with a dynamic gallery that enumerates all figures under
+artifacts/evaluation/ grouped by folder (23 figures vs 2), plus a listing of all
+result data files (75, incl. the 10 multiseed CSV/JSON). Excludes archive/ and
+the _repro_check/ scratch. Branch only.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for

@@ -1253,24 +1253,57 @@ def render_inference_tab(runs_df: pd.DataFrame) -> None:
             st.error(f"Inference failed: {e}")
 
 
+def _gather_eval_artifacts(pattern: str) -> list[Path]:
+    """All files matching pattern under artifacts/evaluation, excluding the
+    superseded `archive/` tree and the `_repro_check/` reproduction scratch."""
+    if not EVAL_DIR.exists():
+        return []
+    skip = {"_repro_check"}
+    out: list[Path] = []
+    for p in sorted(EVAL_DIR.rglob(pattern)):
+        if not p.is_file():
+            continue
+        if skip & set(p.relative_to(EVAL_DIR).parts):
+            continue
+        out.append(p)
+    return out
+
+
 def render_artifact_gallery() -> None:
     st.subheader("Evaluation Artifacts")
-    image_candidates = [
-        EVAL_DIR / "calibration_stronger_lr_v3" / "reliability_diagram_all_models.png",
-        EVAL_DIR / "calibration_strong_v2" / "reliability_diagram_all_models.png",
-        EVAL_DIR / "reliability_diagram_all_models.png",
-        EVAL_DIR / "dca" / "decision_curve.png",
-        EVAL_DIR / "decision_curve.png",
-    ]
-    shown = 0
-    cols = st.columns(2)
-    for idx, path in enumerate(image_candidates):
-        if path.exists():
-            with cols[shown % 2]:
-                st.image(str(path), caption=rel(path), use_container_width=True)
-            shown += 1
-    if shown == 0:
+    st.caption(
+        "Every figure and result file under `artifacts/evaluation/` "
+        "(superseded `archive/` and reproduction scratch excluded)."
+    )
+
+    images = _gather_eval_artifacts("*.png")
+    if not images:
         st.caption("No evaluation images found yet.")
+    else:
+        groups: dict[str, list[Path]] = {}
+        for p in images:
+            grp = str(p.parent.relative_to(EVAL_DIR)) or "(root)"
+            groups.setdefault(grp, []).append(p)
+        st.caption(f"{len(images)} figure(s) across {len(groups)} folder(s).")
+        for grp in sorted(groups):
+            paths = groups[grp]
+            with st.expander(f"{grp}  ({len(paths)})", expanded=True):
+                cols = st.columns(2)
+                for i, p in enumerate(paths):
+                    with cols[i % 2]:
+                        st.image(str(p), caption=p.name, use_container_width=True)
+
+    data_files = _gather_eval_artifacts("*.json") + _gather_eval_artifacts("*.csv")
+    if data_files:
+        rows = []
+        for p in sorted(data_files):
+            try:
+                kb = p.stat().st_size / 1024.0
+            except OSError:
+                kb = float("nan")
+            rows.append({"file": rel(p), "size_KB": round(kb, 1)})
+        with st.expander(f"Result data files ({len(rows)})", expanded=False):
+            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 
 def main() -> None:
