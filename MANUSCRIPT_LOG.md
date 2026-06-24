@@ -138,6 +138,17 @@ tighten the dECE interval if time allows.
   caveat small strata. Strong, honest limitations/fairness section
   (CLAIM / TRIPOD+AI). Artifacts in artifacts/evaluation/multiseed/.
 
+### Tooling fix (2026-06-17): live Grad-CAM tab in streamlit_app.py
+Pre-existing bug (present on master, not introduced by this work): the
+"Live from checkpoint" Grad-CAM tab requires an `image_path` column, but the
+shipped test_predictions.csv only stores subject_id/study_id/dicom_id, so the
+tab always errored out before running. Fix: added `ensure_image_path_column()`
+that reconstructs image_path from the IDs via the pipeline's own
+`make_expected_image_path(mimic_cxr_root, ...)` (root read from
+configs/paths.local.yaml). Graceful no-op if config/IDs missing. Verified:
+reconstructed paths resolve 1075/1075 on D:. Saved-PNG-gallery tab was always
+fine (40 overlays under artifacts/interpretability/). Fix applied on branch only.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for

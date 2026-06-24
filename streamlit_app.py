@@ -519,6 +519,44 @@ def resolve_image_path_on_disk(path_str: str) -> Path:
     return p
 
 
+@st.cache_data(show_spinner=False)
+def _configured_cxr_root() -> str | None:
+    """Read mimic_cxr_root from configs/paths.local.yaml (no yaml dep needed)."""
+    cfg = ROOT / "configs" / "paths.local.yaml"
+    if not cfg.is_file():
+        return None
+    for line in cfg.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("mimic_cxr_root:"):
+            val = line.split(":", 1)[1].strip().strip('"').strip("'")
+            return val or None
+    return None
+
+
+def ensure_image_path_column(df: pd.DataFrame) -> pd.DataFrame:
+    """Prediction CSVs store subject/study/dicom IDs but not image_path.
+    Reconstruct image_path from those IDs + the configured MIMIC-CXR root so the
+    live Grad-CAM tab can locate the JPG on disk. No-op if image_path already
+    present or if IDs / config are unavailable (caller then surfaces a clear error).
+    """
+    if "image_path" in df.columns:
+        return df
+    if not {"subject_id", "study_id", "dicom_id"}.issubset(df.columns):
+        return df
+    cxr_root = _configured_cxr_root()
+    if not cxr_root:
+        return df
+    from src.data.build_cohort import make_expected_image_path
+
+    root = Path(cxr_root)
+    df = df.copy()
+    df["image_path"] = [
+        str(make_expected_image_path(root, int(s), int(st_), str(d)))
+        for s, st_, d in zip(df["subject_id"], df["study_id"], df["dicom_id"])
+    ]
+    return df
+
+
 def resolve_gradcam_target_layer(model: nn.Module, layer_path: str) -> nn.Module:
     current: nn.Module = model
     for part in layer_path.split("."):
@@ -634,9 +672,14 @@ def render_gradcam_tab(runs_df: pd.DataFrame) -> None:
             st.error(f"Could not read predictions: {e}")
             return
 
+        pred_df = ensure_image_path_column(pred_df)
         required = {"image_path", "target", "pred_prob"}
         if not required.issubset(pred_df.columns):
-            st.error(f"Predictions CSV must contain columns: {sorted(required)}.")
+            st.error(
+                f"Predictions CSV must contain columns: {sorted(required)}. "
+                "`image_path` is reconstructed from subject_id/study_id/dicom_id via "
+                "configs/paths.local.yaml (mimic_cxr_root) — check that file is configured."
+            )
             return
 
         search = st.text_input("Filter by subject_id / study_id / path substring", value="")
