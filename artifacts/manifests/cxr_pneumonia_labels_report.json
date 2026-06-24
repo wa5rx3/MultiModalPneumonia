@@ -1,16 +1,16 @@
 {
-  "rows": 81385,
+  "rows": 81519,
   "merge_keys_used": [
     "subject_id",
     "study_id"
   ],
   "fallback_study_merge_allowed": true,
-  "chexpert_row_found": 81384,
+  "chexpert_row_found": 81518,
   "chexpert_row_missing": 1,
-  "positive": 4281,
-  "negative": 4856,
-  "uncertain": 7826,
-  "missing": 64422,
+  "positive": 4294,
+  "negative": 4860,
+  "uncertain": 7839,
+  "missing": 64526,
   "chexpert_qc": {
     "pre_qc": {
       "group_keys": [

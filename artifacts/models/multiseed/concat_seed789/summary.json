@@ -1,0 +1,25 @@
+{
+  "best_val_auprc": 0.7436132233437345,
+  "best_epoch": 2,
+  "epochs_completed": 10,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.4881720542907715,
+    "auroc": 0.7365712804945767,
+    "auprc": 0.7436132233437345,
+    "accuracy": 0.6731182795698925,
+    "f1": 0.6423529411764706,
+    "loss": 0.642368448992907
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.4530232548713684,
+    "auroc": 0.7486240902932014,
+    "auprc": 0.7198115780875795,
+    "accuracy": 0.6967441860465117,
+    "f1": 0.6509635974304069,
+    "loss": 0.6332666080664185
+  },
+  "output_dir": "artifacts\\models\\multiseed\\concat_seed789",
+  "tabular_preprocessor_file": "artifacts\\models\\multiseed\\concat_seed789\\tabular_preprocessor.joblib"
+}

@@ -1,6 +1,6 @@
 {
-  "input_rows": 81385,
-  "linked_rows": 81385,
+  "input_rows": 81519,
+  "linked_rows": 81519,
   "missing_triage_rows": 0,
   "columns": [
     "subject_id_x",

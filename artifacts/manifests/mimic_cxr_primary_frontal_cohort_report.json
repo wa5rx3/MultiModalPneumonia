@@ -1,10 +1,10 @@
 {
   "input_rows": 377110,
-  "rows_after_exists_filter": 376447,
-  "final_rows": 217922,
-  "final_subjects": 63871,
-  "final_studies": 217922,
-  "final_pa_rows": 85733,
-  "final_ap_rows": 132189,
+  "rows_after_exists_filter": 0,
+  "final_rows": 218139,
+  "final_subjects": 63945,
+  "final_studies": 218139,
+  "final_pa_rows": 85872,
+  "final_ap_rows": 132267,
   "missing_t0": 0
 }

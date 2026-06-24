@@ -1,18 +1,18 @@
 {
-  "rows": 9137,
-  "subjects": 7710,
-  "studies": 9137,
-  "positives": 4281,
-  "negatives": 4856,
-  "positive_rate": 0.46853452993323846,
+  "rows": 9154,
+  "subjects": 7722,
+  "studies": 9154,
+  "positives": 4294,
+  "negatives": 4860,
+  "positive_rate": 0.4690845532007865,
   "temporal_split_row_counts": {
-    "train": 7132,
-    "test": 1075,
+    "train": 7144,
+    "test": 1080,
     "validate": 930
   },
   "temporal_split_subject_counts": {
-    "test": 887,
-    "train": 6036,
+    "test": 890,
+    "train": 6045,
     "validate": 787
   },
   "notes": [

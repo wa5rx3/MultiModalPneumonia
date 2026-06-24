@@ -8,7 +8,5 @@
   "lateral_rows": 117986,
   "single_image_rows": 102675,
   "multi_image_rows": 274435,
-  "missing_t0": 0,
-  "existing": 376447,
-  "missing": 663
+  "missing_t0": 0
 }

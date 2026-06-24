@@ -1,0 +1,24 @@
+{
+  "best_val_auprc": 0.7461444030361044,
+  "best_epoch": 3,
+  "epochs_completed": 13,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.4881720542907715,
+    "auroc": 0.7347110650427573,
+    "auprc": 0.7461444030361044,
+    "accuracy": 0.6698924731182796,
+    "f1": 0.6383981154299175,
+    "loss": 0.6434786193451639
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.4530232548713684,
+    "auroc": 0.7391987595859699,
+    "auprc": 0.7237021542579458,
+    "accuracy": 0.6706976744186046,
+    "f1": 0.6201716738197425,
+    "loss": 0.6361534823389614
+  },
+  "output_dir": "artifacts\\models\\multiseed\\image_seed42"
+}

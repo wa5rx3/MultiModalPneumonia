@@ -1,37 +1,35 @@
 {
-  "rows": 217922,
-  "studies": 217922,
-  "subjects": 63871,
+  "rows": 218139,
+  "studies": 218139,
+  "subjects": 63945,
   "seed": 42,
-  "policy": "exclude_all_ed",
+  "policy": "allow_ed_train",
   "internal_val_frac": 0.1,
   "ed_subject_counts": {
-    "train": 37923,
-    "validate": 4740,
-    "test": 4741,
-    "total": 47404
+    "train": 37977,
+    "validate": 4747,
+    "test": 4748,
+    "total": 47472
   },
   "non_ed_subject_counts": {
-    "train": 14821,
-    "internal_val": 1646,
-    "total": 16467
+    "train": 14826,
+    "internal_val": 1647,
+    "total": 16473
   },
   "pretrain_split_row_counts": {
-    "exclude_ed_train": 136625,
-    "pretrain_train": 41214,
-    "exclude_ed_test": 18341,
-    "exclude_ed_validate": 17119,
-    "pretrain_internal_val": 4623
+    "pretrain_train": 177871,
+    "exclude_ed_test": 18361,
+    "exclude_ed_validate": 17141,
+    "pretrain_internal_val": 4766
   },
   "pretrain_split_subject_counts": {
-    "exclude_ed_test": 4741,
-    "exclude_ed_train": 37923,
-    "exclude_ed_validate": 4740,
-    "pretrain_internal_val": 1646,
-    "pretrain_train": 14821
+    "exclude_ed_test": 4748,
+    "exclude_ed_validate": 4747,
+    "pretrain_internal_val": 1647,
+    "pretrain_train": 52803
   },
-  "excluded_from_pretraining_rows": 172085,
-  "excluded_from_pretraining_subjects": 47404,
+  "excluded_from_pretraining_rows": 35502,
+  "excluded_from_pretraining_subjects": 9495,
   "notes": [
     "ED validate/test subjects are always excluded from supervised pretraining.",
     "Policy controls whether ED train subjects are allowed or excluded.",

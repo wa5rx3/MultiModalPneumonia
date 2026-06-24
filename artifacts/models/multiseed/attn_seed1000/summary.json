@@ -1,0 +1,25 @@
+{
+  "best_val_auprc": 0.7513679572939795,
+  "best_epoch": 1,
+  "epochs_completed": 9,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.4881720542907715,
+    "auroc": 0.7341141302335913,
+    "auprc": 0.7513679572939795,
+    "accuracy": 0.6870967741935484,
+    "f1": 0.6481257557436517,
+    "loss": 0.6338109055818137
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.4530232548713684,
+    "auroc": 0.7411857967006104,
+    "auprc": 0.7268574188339894,
+    "accuracy": 0.695813953488372,
+    "f1": 0.6338185890257558,
+    "loss": 0.6337906854117618
+  },
+  "output_dir": "artifacts\\models\\multiseed\\attn_seed1000",
+  "tabular_preprocessor_file": "artifacts\\models\\multiseed\\attn_seed1000\\tabular_preprocessor.joblib"
+}

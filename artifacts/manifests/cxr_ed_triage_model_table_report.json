@@ -1,5 +1,5 @@
 {
-  "rows": 81385,
+  "rows": 81519,
   "columns": [
     "subject_id",
     "study_id",
@@ -8,6 +8,8 @@
     "stay_id",
     "split",
     "t0",
+    "intime",
+    "outtime",
     "image_path",
     "ViewPosition",
     "is_pa",
@@ -33,14 +35,14 @@
     "acuity_missing"
   ],
   "numeric_missing_counts": {
-    "temperature": 6818,
-    "heartrate": 4837,
-    "resprate": 5971,
-    "o2sat": 5769,
-    "sbp": 5024,
-    "dbp": 5232,
-    "pain": 7732,
-    "acuity": 2604
+    "temperature": 6821,
+    "heartrate": 4839,
+    "resprate": 5974,
+    "o2sat": 5771,
+    "sbp": 5026,
+    "dbp": 5234,
+    "pain": 7743,
+    "acuity": 2605
   },
   "categorical_missing_counts": {
     "gender": 0,
