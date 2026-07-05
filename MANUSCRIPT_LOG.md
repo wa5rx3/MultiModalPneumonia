@@ -1,14 +1,20 @@
+# Manuscript Conversion — Decision & Experiment Log
 
-### Leakage audit of the labs gain (2026-07-06, prompted by user challenge)
-Ruled out leakage 3 ways: (1) temporal -- 0/314145 lab rows have charttime > t0
-(all in (t0-24h, t0], median lead 1h); (2) split -- 0 subjects in >1 split, 0 dup
-studies; (3) preprocessing -- imputer/scaler fit on TRAIN only (transform on
-val/test). ALSO: univariate AUROC of 'any lab drawn' vs pneumonia on test = 0.464
-(near-null, slightly NEGATIVE). => correct my earlier overstatement: missingness is
-NOT a strong acuity proxy. The +0.009 labs-vs-image gain is not leakage, not
-chemistry (subcohort), not a strong missingness confound; it is small and within
-the patient-level bootstrap CI. Flags-only ablation will finalize the mechanism.
-and `thesis_new_docs/`
+Running log of the thesis → journal manuscript effort. Append-only narrative: what
+I tried, what I found, judgment calls and why (including dead ends). Numbers here
+are provisional working notes; the authoritative values always live in the
+regenerated artifacts under `artifacts/` and are tied to a named data split.
+
+Branch: `paper/manuscript-2026` (off `master`). master left untouched until merge.
+Author of record: Yazan (wa5rx3@gmail.com).
+
+---
+
+## 2026-06-10 — Orientation
+
+**Environment confirmed**
+- Repo: `C:\MultiModalFinal`. Thesis source of truth: `Yazan_thesis_v2_overleaf/`
+  (chapters 01–05 + appendix A; `thesis_documentation/` and `thesis_new_docs/`
   are stale and ignored per instructions).
 - Dataset on D: confirmed present and matches `configs/paths.local.yaml`:
   - `mimic_cxr_root: D:/mimic_data` (CXR-JPG under `files_pXX/mimic-cxr-jpg/2.1.0/`,
@@ -210,3 +216,13 @@ backbone/fusion baselines, P4c external image validation. Dataset path on D:
 confirmed by user — proceed as configured. This is the specialty-journal
 (CBM/BSPC) effort, multi-week. Task list created (#1–#8) with P2/P4a/P4b gated on
 the P1 cohort rebuild.
+
+### Leakage audit of the labs gain (2026-07-06, prompted by user challenge)
+Ruled out leakage 3 ways: (1) temporal -- 0/314145 lab rows have charttime > t0
+(all in (t0-24h, t0], median lead 1h); (2) split -- 0 subjects in >1 split, 0 dup
+studies; (3) preprocessing -- imputer/scaler fit on TRAIN only (transform on
+val/test). ALSO: univariate AUROC of 'any lab drawn' vs pneumonia on test = 0.464
+(near-null, slightly NEGATIVE). => corrected my earlier overstatement: missingness
+is NOT a strong acuity proxy. The +0.009 labs-vs-image gain is not leakage, not
+chemistry (subcohort), not a strong missingness confound; it is small and within
+the patient-level bootstrap CI. Flags-only ablation will finalize the mechanism.
