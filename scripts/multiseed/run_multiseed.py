@@ -107,6 +107,24 @@ def labs_cmd(seed: int) -> list[str]:
     ]
 
 
+def labflags_dir(seed: int) -> Path:
+    return OUT_ROOT / f"labflags_seed{seed}"
+
+
+def labflags_cmd(seed: int) -> list[str]:
+    # ablation: image + triage + lab MISSINGNESS FLAGS ONLY (no lab values)
+    return [
+        sys.executable, "-m", "src.training.train_multimodal_pneumonia",
+        "--input-table", LABS_TABLE,
+        "--image-backbone-checkpoint", PRETRAIN_BACKBONE,
+        "--output-dir", str(labflags_dir(seed)),
+        "--lr-head", "5e-5", "--lr-backbone", "1e-5",
+        "--epochs", "30", "--patience", "8", "--batch-size", "16",
+        "--image-size", "224", "--num-workers", "4", "--seed", str(seed),
+        "--fusion-type", "concat", "--tabular-feature-groups", "triage_plus_lab_flags",
+    ]
+
+
 def prune_epoch_ckpts(model_dir: Path) -> int:
     ck = model_dir / "checkpoints"
     removed = 0
@@ -141,7 +159,7 @@ def run_one(arch: str, seed: int, cmd: list[str], out_dir: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--archs", nargs="+", default=["image", "concat"],
-                    choices=["image", "concat", "attn", "labs"])
+                    choices=["image", "concat", "attn", "labs", "labflags"])
     ap.add_argument("--seeds", nargs="+", type=int, default=DEFAULT_SEEDS)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -151,10 +169,11 @@ def main() -> None:
         "concat": (concat_cmd, concat_dir),
         "attn": (attn_cmd, attn_dir),
         "labs": (labs_cmd, labs_dir),
+        "labflags": (labflags_cmd, labflags_dir),
     }
     plan: list[tuple[str, int, list[str], Path]] = []
     # image first (attn depends on it), then concat, then attn, then labs
-    for arch in ["image", "concat", "attn", "labs"]:
+    for arch in ["image", "concat", "attn", "labs", "labflags"]:
         if arch not in args.archs:
             continue
         cmd_fn, dir_fn = builders[arch]

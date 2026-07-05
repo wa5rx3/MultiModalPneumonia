@@ -65,15 +65,21 @@ def _lab_concepts() -> list[str]:
         return list(json.load(f).keys())
 
 
-def build_triage_plus_labs_columns(df: pd.DataFrame) -> tuple[list[str], list[str]]:
-    """Triage 'all' features plus every lab value/missing-flag column present in
-    the input table. Lab concept names come from the feature map so the set stays
-    in sync with the lab pipeline. Missing lab values are median-imputed by the
-    tabular preprocessor; the *_missing flags carry the missingness signal."""
+def build_triage_plus_labs_columns(
+    df: pd.DataFrame, include_values: bool = True
+) -> tuple[list[str], list[str]]:
+    """Triage 'all' features plus lab columns present in the input table. Lab
+    concept names come from the feature map so the set stays in sync with the lab
+    pipeline. With include_values=True, both lab values (median-imputed by the
+    preprocessor) and *_missing flags are used. With include_values=False, ONLY the
+    *_missing flags are added (no chemistry) -- the ablation that isolates whether a
+    labs 'benefit' comes from lab values or merely from whether labs were drawn."""
     concepts = _lab_concepts()
-    lab_value_cols = [c for c in concepts if c in df.columns]
     lab_missing_cols = [f"{c}_missing" for c in concepts if f"{c}_missing" in df.columns]
-    numeric = list(TRIAGE_NUMERIC_COLS) + lab_value_cols + lab_missing_cols
+    numeric = list(TRIAGE_NUMERIC_COLS)
+    if include_values:
+        numeric = numeric + [c for c in concepts if c in df.columns]
+    numeric = numeric + lab_missing_cols
     return numeric, list(TRIAGE_CATEGORICAL_COLS)
 
 
@@ -412,7 +418,8 @@ def main() -> None:
         "--tabular-feature-groups",
         type=str,
         default="all",
-        choices=["all", "vitals_only", "vitals_plus_acuity", "no_missing_flags", "triage_plus_labs"],
+        choices=["all", "vitals_only", "vitals_plus_acuity", "no_missing_flags",
+                 "triage_plus_labs", "triage_plus_lab_flags"],
         dest="tabular_feature_groups",
     )
     args = parser.parse_args()
@@ -451,8 +458,10 @@ def main() -> None:
             f"train={len(train_df)}, validate={len(val_df)}, test={len(test_df)}"
         )
 
-    if args.tabular_feature_groups == "triage_plus_labs":
-        active_numeric_cols, active_categorical_cols = build_triage_plus_labs_columns(df)
+    if args.tabular_feature_groups in ("triage_plus_labs", "triage_plus_lab_flags"):
+        active_numeric_cols, active_categorical_cols = build_triage_plus_labs_columns(
+            df, include_values=(args.tabular_feature_groups == "triage_plus_labs")
+        )
     else:
         tab_group = FEATURE_GROUP_COLUMNS[args.tabular_feature_groups]
         active_numeric_cols = tab_group["numeric"]

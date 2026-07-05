@@ -175,6 +175,26 @@ expected ~null; (2) lab-present subcohort (n~272) sensitivity: do labs help WHER
 available? 1-epoch smoke passed (AUROC 0.738, 1075 test rows). Labs 5-seed
 training launched.
 
+### P4a labs VERDICT (2026-07-06): small gain, but it's a missingness/acuity proxy
+Full-cohort multi-seed (5 seeds, identical 1075 test):
+- image: AUROC 0.7373+/-0.0027, ECE 0.0531, Brier 0.2067
+- concat(triage): AUROC 0.7410+/-0.0062, ECE 0.0404, Brier 0.2050
+- labs(triage+labs): AUROC 0.7466+/-0.0035, ECE 0.0427, Brier 0.2033
+Paired labs - image: dAUROC +0.0093+/-0.0051 (5/5 seeds, range [+0.002,+0.014]
+EXCLUDES zero), dBrier -0.0034 (4/5). So labs give a small, seed-consistent
+discrimination + proper-score gain -- a POSITIVE result, unlike triage-concat.
+BUT lab-present subcohort (n=269, where labs ARE available): image 0.776, concat
+0.782, labs 0.778 AUROC -- discrimination TIED; lab VALUES do not help where
+available (labs calibration still better: ECE 0.056 vs 0.071). => the full-cohort
+AUROC gain is NOT lab chemistry; it tracks the missingness pattern (whether labs
+were drawn = acuity/admission proxy). Running the decisive ablation now:
+triage + lab MISSINGNESS FLAGS ONLY (no values), 5 seeds. If it reproduces the
++0.009, the labs 'benefit' is confirmed as a missingness/acuity artifact, not
+chemistry. Honest paper claim regardless: imaging carries discrimination; neither
+triage nor lab chemistry adds reliable discrimination; the tabular branch modestly
+aids calibration; and labs are anyway unavailable at imaging time for ~75% of
+patients. Story stays a rigorous nuanced/negative result.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
