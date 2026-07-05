@@ -156,6 +156,25 @@ artifacts/evaluation/ grouped by folder (23 figures vs 2), plus a listing of all
 result data files (75, incl. the 10 multiseed CSV/JSON). Excludes archive/ and
 the _repro_check/ scratch. Branch only.
 
+### P4a labs (2026-06-17): time-safe extraction done; KEY coverage finding
+Extracted labevents at/before t0 (24h lookback, subject+encounter fallback,
+strictly time-safe). Feature table = last value <= t0 per concept + missingness
+flags. Built triage+labs table on the rebuilt cohort (recomputed missingness
+post-join). tabular_input_dim 110 (18 triage + 52 lab cols, one-hot).
+**Coverage reality (verified by dtype-normalized key intersection, not a bug):**
+only 25.4% of u_ignore studies (272/1080 test) have ANY resulted lab <=t0;
+CBC/BMP ~25%, lactate 9%, liver ~8%, and the pneumonia-specific inflammatory
+markers CRP 0.5% / procalcitonin 0.6% essentially absent. Interpretation: at the
+moment of ED imaging most labs have not resulted yet -> labs are largely
+UNAVAILABLE at decision time. This is itself a clinically meaningful result and
+explains why immediately-available triage vitals are the relevant pre-imaging
+modality. (Prior repo "overlap=9137" report was NOT lab-filtered; 25% is truth.)
+Plan: (1) full-cohort image+triage+labs multi-seed (5 seeds) vs image/concat on
+the identical 1075 test (labs imputed where absent + missing flags) -- primary,
+expected ~null; (2) lab-present subcohort (n~272) sensitivity: do labs help WHERE
+available? 1-epoch smoke passed (AUROC 0.738, 1075 test rows). Labs 5-seed
+training launched.
+
 ### Venue: deferred until P2. If multi-seed confirms a calibration benefit →
 Computers in Biology and Medicine / BSPC framing as a clinically-useful trade.
 If it does not survive → rigorous well-powered negative result, better fit for
