@@ -117,7 +117,7 @@ def main() -> None:
     ].sort_values(["arch", "seed"]).reset_index(drop=True)
     per_seed.to_csv(EVAL_OUT / "per_seed_metrics.csv", index=False)
 
-    summary: dict = {"n_bins": args.n_bins, "seeds": args.seeds, "per_arch": {}, "paired_concat_minus_image": {}}
+    summary: dict = {"n_bins": args.n_bins, "seeds": args.seeds, "per_arch": {}, "paired_vs_image": {}}
     for arch in args.archs:
         sub = per_seed[per_seed["arch"] == arch]
         if sub.empty:
@@ -127,31 +127,32 @@ def main() -> None:
             for metric in ["auroc", "auprc", "ece", "mce", "brier", "mean_pred_prob"]
         }
 
-    # paired deltas per seed (concat vs image)
-    deltas = {k: [] for k in ["delta_auroc", "delta_auprc", "delta_ece", "delta_brier"]}
-    per_seed_delta_rows = []
-    for seed in args.seeds:
-        c = preds.get(("concat", seed))
-        i = preds.get(("image", seed))
-        if c is None or i is None:
-            continue
-        d = paired_delta(c, i, n_bins=args.n_bins)
-        d_row = {"seed": seed, **d}
-        per_seed_delta_rows.append(d_row)
-        for k in deltas:
-            deltas[k].append(d[k])
+    # paired deltas per seed: every fusion arch vs image-only, on identical test rows
+    fusion_archs = [a for a in args.archs if a != "image"]
+    all_delta_rows = []
+    for arch in fusion_archs:
+        deltas = {k: [] for k in ["delta_auroc", "delta_auprc", "delta_ece", "delta_brier"]}
+        for seed in args.seeds:
+            m = preds.get((arch, seed))
+            i = preds.get(("image", seed))
+            if m is None or i is None:
+                continue
+            d = paired_delta(m, i, n_bins=args.n_bins)
+            all_delta_rows.append({"arch": arch, "seed": seed, **d})
+            for k in deltas:
+                deltas[k].append(d[k])
+        if any(deltas.values()):
+            summary["paired_vs_image"][arch] = {}
+            for k, vals in deltas.items():
+                s = summarize(vals)
+                arr = np.asarray(vals)
+                # lower is better for ece/brier, higher for auroc/auprc
+                s["frac_seeds_favoring_fusion"] = float((arr < 0).mean() if k in ("delta_ece", "delta_brier")
+                                                        else (arr > 0).mean())
+                summary["paired_vs_image"][arch][k] = s
 
-    if per_seed_delta_rows:
-        pd.DataFrame(per_seed_delta_rows).to_csv(EVAL_OUT / "per_seed_paired_delta.csv", index=False)
-        for k, vals in deltas.items():
-            s = summarize(vals)
-            # fraction of seeds where multimodal is better (delta<0 for ece/brier, >0 for auroc/auprc)
-            arr = np.asarray(vals)
-            if k in ("delta_ece", "delta_brier"):
-                s["frac_seeds_favoring_multimodal"] = float((arr < 0).mean())
-            else:
-                s["frac_seeds_favoring_multimodal"] = float((arr > 0).mean())
-            summary["paired_concat_minus_image"][k] = s
+    if all_delta_rows:
+        pd.DataFrame(all_delta_rows).to_csv(EVAL_OUT / "per_seed_paired_delta.csv", index=False)
 
     with open(EVAL_OUT / "multiseed_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
@@ -165,11 +166,11 @@ def main() -> None:
     for arch, md in summary["per_arch"].items():
         line = ", ".join(f"{m}={md[m]['mean']:.4f}+/-{md[m]['std']:.4f}" for m in ["auroc", "auprc", "ece", "brier"])
         print(f"{arch:8s}: {line}")
-    if summary["paired_concat_minus_image"]:
-        print("\n=== Paired (concat - image), across seeds ===")
-        for k, s in summary["paired_concat_minus_image"].items():
+    for arch, dd in summary["paired_vs_image"].items():
+        print(f"\n=== Paired ({arch} - image), across seeds ===")
+        for k, s in dd.items():
             print(f"{k:12s}: mean={s['mean']:+.4f} std={s['std']:.4f} range=[{s['min']:+.4f},{s['max']:+.4f}] "
-                  f"frac_favoring_mm={s['frac_seeds_favoring_multimodal']:.2f}")
+                  f"frac_favoring_fusion={s['frac_seeds_favoring_fusion']:.2f}")
     print(f"\nWrote {EVAL_OUT}/per_seed_metrics.csv and multiseed_summary.json")
 
 

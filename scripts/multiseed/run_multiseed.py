@@ -86,6 +86,27 @@ def attn_cmd(seed: int) -> list[str]:
     ]
 
 
+LABS_TABLE = "artifacts/manifests/cxr_clinical_labs_training_table_u_ignore_temporal.parquet"
+
+
+def labs_dir(seed: int) -> Path:
+    return OUT_ROOT / f"labs_seed{seed}"
+
+
+def labs_cmd(seed: int) -> list[str]:
+    # image + triage + early labs (concat), same recipe as concat; shared pretrain backbone
+    return [
+        sys.executable, "-m", "src.training.train_multimodal_pneumonia",
+        "--input-table", LABS_TABLE,
+        "--image-backbone-checkpoint", PRETRAIN_BACKBONE,
+        "--output-dir", str(labs_dir(seed)),
+        "--lr-head", "5e-5", "--lr-backbone", "1e-5",
+        "--epochs", "30", "--patience", "8", "--batch-size", "16",
+        "--image-size", "224", "--num-workers", "4", "--seed", str(seed),
+        "--fusion-type", "concat", "--tabular-feature-groups", "triage_plus_labs",
+    ]
+
+
 def prune_epoch_ckpts(model_dir: Path) -> int:
     ck = model_dir / "checkpoints"
     removed = 0
@@ -120,23 +141,25 @@ def run_one(arch: str, seed: int, cmd: list[str], out_dir: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--archs", nargs="+", default=["image", "concat"],
-                    choices=["image", "concat", "attn"])
+                    choices=["image", "concat", "attn", "labs"])
     ap.add_argument("--seeds", nargs="+", type=int, default=DEFAULT_SEEDS)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
+    builders = {
+        "image": (image_cmd, image_dir),
+        "concat": (concat_cmd, concat_dir),
+        "attn": (attn_cmd, attn_dir),
+        "labs": (labs_cmd, labs_dir),
+    }
     plan: list[tuple[str, int, list[str], Path]] = []
-    # image first (attn depends on it), then concat, then attn
-    for arch in ["image", "concat", "attn"]:
+    # image first (attn depends on it), then concat, then attn, then labs
+    for arch in ["image", "concat", "attn", "labs"]:
         if arch not in args.archs:
             continue
+        cmd_fn, dir_fn = builders[arch]
         for seed in args.seeds:
-            if arch == "image":
-                plan.append((arch, seed, image_cmd(seed), image_dir(seed)))
-            elif arch == "concat":
-                plan.append((arch, seed, concat_cmd(seed), concat_dir(seed)))
-            else:
-                plan.append((arch, seed, attn_cmd(seed), attn_dir(seed)))
+            plan.append((arch, seed, cmd_fn(seed), dir_fn(seed)))
 
     print(f"Planned {len(plan)} runs: archs={args.archs} seeds={args.seeds}", flush=True)
     for arch, seed, cmd, out_dir in plan:

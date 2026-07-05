@@ -57,6 +57,26 @@ TRIAGE_CATEGORICAL_COLS = [
     "arrival_transport",
 ]
 
+LAB_FEATURE_MAP_PATH = "artifacts/tables/lab_feature_map.json"
+
+
+def _lab_concepts() -> list[str]:
+    with open(LAB_FEATURE_MAP_PATH, "r", encoding="utf-8") as f:
+        return list(json.load(f).keys())
+
+
+def build_triage_plus_labs_columns(df: pd.DataFrame) -> tuple[list[str], list[str]]:
+    """Triage 'all' features plus every lab value/missing-flag column present in
+    the input table. Lab concept names come from the feature map so the set stays
+    in sync with the lab pipeline. Missing lab values are median-imputed by the
+    tabular preprocessor; the *_missing flags carry the missingness signal."""
+    concepts = _lab_concepts()
+    lab_value_cols = [c for c in concepts if c in df.columns]
+    lab_missing_cols = [f"{c}_missing" for c in concepts if f"{c}_missing" in df.columns]
+    numeric = list(TRIAGE_NUMERIC_COLS) + lab_value_cols + lab_missing_cols
+    return numeric, list(TRIAGE_CATEGORICAL_COLS)
+
+
 def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -392,7 +412,7 @@ def main() -> None:
         "--tabular-feature-groups",
         type=str,
         default="all",
-        choices=["all", "vitals_only", "vitals_plus_acuity", "no_missing_flags"],
+        choices=["all", "vitals_only", "vitals_plus_acuity", "no_missing_flags", "triage_plus_labs"],
         dest="tabular_feature_groups",
     )
     args = parser.parse_args()
@@ -431,9 +451,16 @@ def main() -> None:
             f"train={len(train_df)}, validate={len(val_df)}, test={len(test_df)}"
         )
 
-    tab_group = FEATURE_GROUP_COLUMNS[args.tabular_feature_groups]
-    active_numeric_cols = tab_group["numeric"]
-    active_categorical_cols = tab_group["categorical"]
+    if args.tabular_feature_groups == "triage_plus_labs":
+        active_numeric_cols, active_categorical_cols = build_triage_plus_labs_columns(df)
+    else:
+        tab_group = FEATURE_GROUP_COLUMNS[args.tabular_feature_groups]
+        active_numeric_cols = tab_group["numeric"]
+        active_categorical_cols = tab_group["categorical"]
+    print(
+        f"Tabular feature set '{args.tabular_feature_groups}': "
+        f"{len(active_numeric_cols)} numeric + {len(active_categorical_cols)} categorical columns"
+    )
 
     preprocessor = build_tabular_preprocessor(active_numeric_cols, active_categorical_cols)
     X_train_tab = prepare_tabular_df(train_df, active_numeric_cols, active_categorical_cols)
