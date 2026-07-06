@@ -81,9 +81,11 @@ def fig_pr(preds):
         pr, rc, _ = precision_recall_curve(y, p)
         ax.plot(rc, pr, color=COLORS[name], lw=1.8, label=f"{name} (AUPRC {average_precision_score(y,p):.3f})")
     ax.axhline(prev, color="k", ls="--", lw=1, alpha=0.5, label=f"Prevalence {prev:.2f}")
-    ax.set_xlabel("Recall"); ax.set_ylabel("Precision")
-    ax.set_title("Precision-recall curves"); ax.legend(fontsize=8, loc="lower left"); ax.grid(alpha=0.3)
-    fig.tight_layout(); fig.savefig(OUT / "fig8_pr.png", dpi=200); plt.close(fig)
+    ax.set_xlabel("Recall"); ax.set_ylabel("Precision"); ax.set_ylim(0.0, 1.0)
+    ax.set_title("Precision-recall curves")
+    ax.legend(fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=2, frameon=False)
+    ax.grid(alpha=0.3)
+    fig.tight_layout(); fig.savefig(OUT / "fig8_pr.png", dpi=200, bbox_inches="tight"); plt.close(fig)
 
 
 def fig_reliability(preds):
