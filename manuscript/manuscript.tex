@@ -454,6 +454,32 @@ straddles zero; the labs and lab-flags-only deltas are identical.}
 \label{fig:deltas}
 \end{figure*}
 
+\subsection{Feature ablation}
+\label{subsec:ablation}
+Retraining the concat model with restricted triage feature subsets
+(Table~\ref{tab:ablation}, representative seed 42) leaves AUROC essentially
+unchanged (0.736--0.752, a 0.016 range), confirming that the CXR backbone---not any
+particular triage feature---drives discrimination. Removing the missingness
+indicators does not reduce performance, consistent with their marginal,
+largely missingness-pattern contribution (Section~\ref{subsec:labs}).
+
+\begin{table}[t]
+\centering
+\caption{Triage feature-group ablation for the concat model (seed 42). AUROC is
+stable across subsets, confirming the CXR backbone dominates.}
+\label{tab:ablation}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Triage features & AUROC & AUPRC \\
+\midrule
+All (vitals, acuity, demographics, flags) & 0.736 & 0.714 \\
+Vitals only                               & 0.740 & 0.714 \\
+Vitals $+$ acuity                         & 0.744 & 0.723 \\
+No missingness flags                      & 0.752 & 0.734 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Caution 1: single-seed evaluation inflates the calibration effect}
 \label{subsec:cal}
 A single checkpoint suggested the concat model was markedly better calibrated (ECE
