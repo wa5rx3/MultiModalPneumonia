@@ -12,6 +12,9 @@ the specific claim it is cited for. Status below; nothing is filler or fabricate
 | seyyedkalantari2021underdiagnosis | Underdiagnosis bias (Seyyed-Kalantari et al.) | Nature Medicine 2021; s41591-021-01595-0 | subgroup/fairness gaps |
 | hayat2022medfuse | MedFuse (Hayat, Geras, Shamout) | MLHC 2022, PMLR 182:479-503; arXiv 2207.07027 | related multimodal MIMIC CXR+clinical work; async/missing modalities |
 | soenksen2022multimodal | HAIM (Soenksen et al.) | npj Digital Medicine 5:149 (2022) | related multimodal healthcare framework |
+| che2018recurrent | GRU-D (Che et al.) | Scientific Reports 8:6085 (2018); 10.1038/s41598-018-24271-9 | informative-missingness framing of Caution 2 |
+| ovadia2019trust | Uncertainty under dataset shift (Ovadia et al.) | NeurIPS 2019, vol 32 | single-model calibration fragility; Caution 1 + external ECE |
+| lee2024multimodal | ED CXR+EHR heart-failure screening (Lee et al.) | Comput Methods Programs Biomed 255:108357 (2024); 10.1016/j.cmpb.2024.108357 | recent ED fusion; "when fusion helps" comparison |
 
 Note: the HAIM authors' GitHub readme mislabels the venue as "Nature Machine
 Intelligence"; the actual publication is npj Digital Medicine (nature.com

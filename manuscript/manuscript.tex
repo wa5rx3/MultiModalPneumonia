@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%% manuscript.tex %%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Journal submission --- Cognitive Computation (Cogn Comput)
+% Journal submission: Cognitive Computation (Cogn Comput)
 % Format: SVJour3, twocolumn, final (professor's skeleton).
 % Content: OUR rigorous, multi-seed, time-safe, externally-validated study.
 % Template used for STRUCTURE/FORMAT only; all numbers and claims are ours.
@@ -76,7 +76,7 @@ with Missing-Data Cautions}
 \textbf{Background:} Emergency-department (ED) triage records structured vital
 signs before chest imaging, motivating multimodal models that fuse the chest
 radiograph (CXR) with clinical context for pneumonia detection. Whether such fusion
-helps---under strict time-safety and rigorous multi-seed evaluation---remains
+helps, under strict time-safety and rigorous multi-seed evaluation, remains
 unclear, and prior studies often report single-run results without leakage or
 missing-data audits.
 \textbf{Methods:} We construct a temporally safe cohort by linking MIMIC-CXR-JPG,
@@ -93,7 +93,7 @@ NIH ChestX-ray14, and explicit temporal, split and preprocessing leakage audits.
 triage-only baselines (0.61). Adding triage vitals leaves discrimination unchanged
 ($\Delta$AUROC $+0.004\pm0.009$, within a pre-specified $\pm0.05$ margin). A
 calibration advantage reported from a single checkpoint (ECE 0.040 vs 0.067) shrinks
-to $\Delta$ECE $-0.013\pm0.016$ across seeds---single-seed evaluation overstated it
+to $\Delta$ECE $-0.013\pm0.016$ across seeds; single-seed evaluation overstated it
 $\sim$2$\times$. Adding early labs yields a small, seed-consistent AUROC gain
 ($+0.009\pm0.005$) that an ablation shows is reproduced exactly by lab
 \emph{missingness indicators alone}, with no contribution from lab values, and is not
@@ -122,9 +122,9 @@ decision-support tool, and deep convolutional networks now approach radiologist-
 performance on several radiographic findings \citep{huang2017densenet}.
 
 A structurally appealing but underused source of complementary information is the ED
-triage record. On arrival, a triage nurse records vital signs---temperature, heart
+triage record. On arrival, a triage nurse records vital signs (temperature, heart
 rate, respiratory rate, peripheral oxygen saturation (SpO$_2$), blood pressure, a
-pain score---and an acuity level, \emph{before} any imaging is ordered. Multimodal
+pain score) and an acuity level, \emph{before} any imaging is ordered. Multimodal
 models that fuse the CXR with this immediately available context are widely proposed
 \citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the
 intuition that combining the two streams should better reflect the clinical picture
@@ -138,11 +138,11 @@ optimistic leakage from information generated after the decision point. Second,
 reported from a single training run, although both are sensitive to training
 stochasticity \citep{guo2017calibration,nixon2019measuring}. Third, \emph{missing
 data}: clinical inputs in the ED are heavily and non-randomly missing, so a model may
-exploit \emph{whether} a measurement exists rather than its value---an effect that
+exploit \emph{whether} a measurement exists rather than its value, an effect that
 can masquerade as a genuine multimodal benefit.
 
-We address a deliberately conditional question---\emph{when, if ever, does
-immediately available clinical context help a CXR pneumonia model?}---under strict
+We address a deliberately conditional question, \emph{when, if ever, does
+immediately available clinical context help a CXR pneumonia model?}, under strict
 time-safety, with multi-seed replication and explicit missing-data and leakage
 audits, and report in line with prediction-model and medical-imaging guidance
 \citep{collins2024tripodai,tejani2024claim}. Our contribution is not a new
@@ -180,8 +180,8 @@ early detection and reliable exclusion in unambiguous cases \citep{metlay2019ids
 Triage vital signs quantify physiological perturbation and severity; they are highly
 correlated with pneumonia but non-specific, since tachycardia, hypoxia and high
 acuity accompany many respiratory presentations. Crucially, triage measurements are
-recorded before imaging is ordered---a workflow guarantee, not a statistical
-regularity---so they carry no risk of temporal leakage.
+recorded before imaging is ordered (a workflow guarantee, not a statistical
+regularity) so they carry no risk of temporal leakage.
 
 \subsection{The MIMIC database family}
 The Medical Information Mart for Intensive Care (MIMIC) programme provides the
@@ -208,15 +208,39 @@ the cost of a smaller, higher-prevalence evaluation set.
 DenseNet-121~\citep{huang2017densenet} propagates features through dense
 connectivity, $x_\ell = H_\ell([x_0,\dots,x_{\ell-1}])$, and forms a strong CXR
 backbone under transfer learning. Intermediate (feature-level) fusion extracts
-modality-specific embeddings and combines them---by concatenation, or by attention
-over modality tokens. Several works fuse structured clinical data with CXR for ICU
-or inpatient outcomes \citep{hayat2022medfuse,soenksen2022multimodal}; MedFuse in
-particular notes that healthcare modalities are collected asynchronously and are
-often missing, which our missing-data analysis makes central. To our knowledge, no
-prior work simultaneously (i) targets ED-specific pneumonia, (ii) uses ED triage
-vitals under a verified time-safety constraint, (iii) evaluates with a patient-level
-temporal split \emph{and} multi-seed replication, and (iv) audits missingness and
-leakage explicitly. This study fills that gap.
+modality-specific embeddings and combines them, by concatenation or by attention
+over modality tokens~\citep{acosta2022multimodal}.
+
+Prior clinical fusion studies typically report positive gains, but on tasks that
+differ from ours in an important way. MedFuse fuses MIMIC clinical time-series with
+CXR for ICU mortality and phenotyping~\citep{hayat2022medfuse}, and the HAIM
+framework fuses imaging, tabular, text and time-series for inpatient
+outcomes~\citep{soenksen2022multimodal}; both target \emph{outcomes} that are not
+directly visible in the radiograph. Recent emergency-department work is similar: Lee
+et al.~\citep{lee2024multimodal} fuse CXR and EHR to screen for acute heart failure
+in the ED (AUROC 0.89), again a task whose label is not encoded in the image. Our
+result, that fusion is discrimination-neutral for radiographic \emph{pneumonia}, is
+consistent with rather than contradictory to this body of work: pneumonia is defined
+\emph{by} the radiograph, so the image already contains the label and there is little
+room for clinical context to add discriminative signal. This distinction, that fusion
+tends to help when the target lies partly outside the image but not when the image is
+essentially the target, is a useful lens on when multimodal CXR fusion should be
+expected to help.
+
+Two further literatures frame our cautions. \emph{Informative missingness}, the
+observation that missing values and their patterns correlate with the label, is well
+established and is often \emph{exploited} as a predictive feature~\citep{che2018recurrent};
+we demonstrate the flip side, that within a fusion model it can \emph{masquerade} as a
+chemistry-driven benefit and therefore must be controlled for. \emph{Calibration under
+distribution shift} is known to be fragile for single models and post-hoc scaling,
+with model averaging more robust~\citep{ovadia2019trust}; this is consistent both with
+our single-seed calibration caution and with the prevalence-driven degradation of ECE
+we observe on the external NIH set.
+
+To our knowledge, no prior work simultaneously (i) targets ED-specific pneumonia,
+(ii) uses ED triage vitals under a verified time-safety constraint, (iii) evaluates
+with a patient-level temporal split \emph{and} multi-seed replication, and (iv)
+audits missingness and leakage explicitly. This study fills that gap.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Materials and Methods}
@@ -413,9 +437,9 @@ prevalence 45.3\%). Clinical baselines are single-fit.}
 Model & AUROC & AUPRC & ECE & Brier \\
 \midrule
 Image-only DenseNet-121            & $0.737\pm0.003$ & $0.719\pm0.004$ & $0.053\pm0.008$ & $0.207\pm0.001$ \\
-Multimodal --- concat (triage)     & $0.741\pm0.006$ & $0.715\pm0.005$ & $0.040\pm0.014$ & $0.205\pm0.002$ \\
-Multimodal --- attention (triage)  & $0.738\pm0.006$ & $0.713\pm0.012$ & $0.076\pm0.042$ & $0.212\pm0.010$ \\
-Multimodal --- concat ($+$labs)    & $0.747\pm0.004$ & $0.724\pm0.004$ & $0.043\pm0.011$ & $0.203\pm0.002$ \\
+Multimodal (concat, triage)     & $0.741\pm0.006$ & $0.715\pm0.005$ & $0.040\pm0.014$ & $0.205\pm0.002$ \\
+Multimodal (attention, triage)  & $0.738\pm0.006$ & $0.713\pm0.012$ & $0.076\pm0.042$ & $0.212\pm0.010$ \\
+Multimodal (concat, $+$labs)    & $0.747\pm0.004$ & $0.724\pm0.004$ & $0.043\pm0.011$ & $0.203\pm0.002$ \\
 Logistic regression (triage)       & 0.606 & 0.548 & 0.037 & 0.242 \\
 XGBoost (triage)                   & 0.611 & 0.567 & 0.046 & 0.241 \\
 \bottomrule
@@ -458,8 +482,8 @@ straddles zero; the labs and lab-flags-only deltas are identical.}
 \label{subsec:ablation}
 Retraining the concat model with restricted triage feature subsets
 (Table~\ref{tab:ablation}, representative seed 42) leaves AUROC essentially
-unchanged (0.736--0.752, a 0.016 range), confirming that the CXR backbone---not any
-particular triage feature---drives discrimination. Removing the missingness
+unchanged (0.736--0.752, a 0.016 range), confirming that the CXR backbone, not any
+particular triage feature, drives discrimination. Removing the missingness
 indicators does not reduce performance, consistent with their marginal,
 largely missingness-pattern contribution (Section~\ref{subsec:labs}).
 
@@ -528,7 +552,7 @@ was ordered, is small, and lies within the patient-level bootstrap CI.
 Under time-safe matching, only 25.4\% of ED-anchored CXR studies (272/1{,}075 test)
 have any resolved laboratory value at or before imaging (Fig.~\ref{fig:labcov}).
 Complete-blood-count and metabolic panels reach $\sim$25\%, but the most
-pneumonia-specific markers---CRP and procalcitonin---are present in only 0.5\% and
+pneumonia-specific markers (CRP and procalcitonin) are present in only 0.5\% and
 0.6\% of studies. At the moment of imaging the informative labs are essentially
 unavailable, which explains both the small labs effect and its missingness origin.
 
@@ -544,7 +568,7 @@ $t_0$; pneumonia-specific markers (red) are essentially unavailable at imaging t
 \label{subsec:op}
 ED triage for pneumonia prioritises sensitivity. At a fixed sensitivity of 0.90 the
 specificity is 0.31 (image) versus 0.32 (concat); at 0.95, 0.17 versus 0.18
-(Table~\ref{tab:op})---clinically equivalent operating behaviour. Decision-curve
+(Table~\ref{tab:op}), clinically equivalent operating behaviour. Decision-curve
 analysis (Fig.~\ref{fig:dca}) shows both CXR models providing substantially higher
 net benefit than the triage-only baselines and the treat-all/treat-none references
 across the clinically relevant threshold range, with the image and multimodal curves
@@ -620,7 +644,7 @@ or view gaps.}
 For the triage-only XGBoost model, exact TreeSHAP attributes the largest importance
 to SpO$_2$ (mean $|\text{SHAP}|=0.148$), followed by heart rate (0.099), temperature
 (0.078) and respiratory rate (0.062) (Table~\ref{tab:shap};
-Fig.~\ref{fig:shap})---consistent with the pathophysiology of pneumonia, in which
+Fig.~\ref{fig:shap}), consistent with the pathophysiology of pneumonia, in which
 alveolar consolidation impairs gas exchange. Grad-CAM on the image branch
 (Fig.~\ref{fig:gradcam}) localises activation over regions of consolidation in
 confident true positives, whereas a false positive attends to overlapping opacity and
@@ -725,8 +749,8 @@ Model & Policy & Test $n$ & AUROC & AUPRC \\
 \section{Discussion}
 \label{sec:discussion}
 The chest radiograph carries the discriminative signal for radiographic pneumonia in
-this ED cohort. Immediately available structured clinical context---triage vitals,
-and even a broad early-laboratory panel---does not add reliable discrimination, and
+this ED cohort. Immediately available structured clinical context (triage vitals,
+and even a broad early-laboratory panel) does not add reliable discrimination, and
 the image model generalises externally with minimal loss. The asymmetry is
 intuitive: the radiograph encodes the outcome (radiographic consolidation) almost
 directly, whereas vital signs and labs encode severity and physiological perturbation
@@ -744,13 +768,33 @@ missingness-only ablation makes this mechanism explicit and is, to our knowledge
 rarely reported control in clinical multimodal studies. Both cautions are
 actionable and inexpensive.
 
-\paragraph{Comparison to related work.} Unlike prior multimodal CXR studies that
-report single-run gains on ICU or inpatient cohorts
-\citep{hayat2022medfuse,soenksen2022multimodal}, we evaluate ED pneumonia under a
-verified time-safety constraint with multi-seed replication and explicit audits, and
-reach a negative but well-powered conclusion on discrimination. Direct numerical
-comparison across cohorts and label definitions is uninformative; the methodological
-contribution is the rigour of the evaluation and the two cautions.
+\paragraph{When should fusion be expected to help?} Our result sharpens a practical
+heuristic. Multimodal CXR fusion has been most successful for \emph{prognostic} and
+\emph{screening} targets whose ground truth is not the radiograph itself, for example
+ICU mortality~\citep{hayat2022medfuse}, inpatient
+outcomes~\citep{soenksen2022multimodal} and ED acute-heart-failure
+screening~\citep{lee2024multimodal}, where clinical context supplies information the
+image cannot. Radiographic pneumonia is the opposite case: the label is defined by the
+image, so the marginal information in triage vitals or early labs is small, and our
+well-powered negative result is exactly what this heuristic predicts. The finding is
+thus not that fusion ``fails'' but that its value is conditional on the target lying
+partly outside the imaging modality, which should guide where fusion is worth the added
+complexity in ED decision support.
+
+\paragraph{Comparison to related work.} Prior multimodal CXR studies typically report
+single-run gains on ICU or inpatient
+cohorts~\citep{hayat2022medfuse,soenksen2022multimodal,lee2024multimodal}; we instead
+evaluate ED pneumonia under a verified time-safety constraint with multi-seed
+replication and explicit audits, and reach a negative but well-powered conclusion on
+discrimination. Our missingness finding complements the informative-missingness
+literature: where GRU-D and related models \emph{use} missingness as a predictive
+feature~\citep{che2018recurrent}, we show that in a fusion setting the same signal can
+be mistaken for a chemistry-driven gain, and we provide a simple flags-only control
+that disentangles the two. Our calibration finding aligns with benchmarks showing that
+single-model uncertainty is unreliable under distribution shift while model averaging
+is more robust~\citep{ovadia2019trust}. Direct numerical comparison across cohorts and
+label definitions is uninformative; the contribution is the rigour of the evaluation
+and the two transferable cautions.
 
 \paragraph{Limitations.} Training and multimodal evaluation are single-institution
 (MIMIC) and retrospective; external validation confirms the image branch generalises
@@ -769,8 +813,8 @@ clinical context with the chest radiograph does not reliably improve pneumonia
 discrimination, and the one apparent gain is an artefact of missing-data structure.
 The image model itself is robust and generalises across institutions with an AUROC
 drop of only 0.016. Beyond the negative result, the study contributes a reproducible,
-time-safe multimodal ED pipeline and two reusable cautions---single-seed calibration
-inflation and missingness-as-signal---for the growing field of clinical multimodal AI.
+time-safe multimodal ED pipeline and two reusable cautions (single-seed calibration
+inflation and missingness-as-signal) for the growing field of clinical multimodal AI.
 Future work includes end-to-end fine-tuning of modern foundation backbones,
 multi-site validation, and prospective evaluation with recalibration to the local
 base rate.
