@@ -322,11 +322,26 @@ The \textbf{image model} is DenseNet-121, initialised from ImageNet, multilabel-
 pretrained on 182{,}637 non-ED MIMIC-CXR studies (14 CheXpert findings, masked
 binary cross-entropy over observed labels), then fine-tuned for binary pneumonia at
 $224\times224$ with class-balanced loss and differential learning rates
-($5\times10^{-5}$ head, $10^{-5}$ backbone). The \textbf{concatenation} model
-concatenates the 1024-d image embedding with a 128-d tabular-MLP embedding
-$[e_v; e_t]$ and applies a fully connected head; the \textbf{attention} model fuses
-the tokens $[\texttt{CLS}, e_v, e_t]$ with a two-layer Transformer and reads out the
-CLS token \citep{acosta2022multimodal}. The \textbf{$+$labs} model appends the 26 lab
+($5\times10^{-5}$ head, $10^{-5}$ backbone). Multilabel pretraining minimises a masked binary cross-entropy that ignores
+not-mentioned CheXpert labels,
+\begin{equation}
+\mathcal{L}_{\text{mBCE}} = -\frac{1}{\sum_i m_i}\sum_i m_i\bigl[y_i\log\hat p_i +
+(1-y_i)\log(1-\hat p_i)\bigr],
+\label{eq:mbce}
+\end{equation}
+where $m_i\in\{0,1\}$ masks unobserved conditions. The triage vector is encoded by a
+two-layer TabularMLP (batch-normalised, dropout $0.2$) to a 128-d embedding $e_t$.
+The \textbf{concatenation} model concatenates the 1024-d image embedding $e_v$ with
+$e_t$, $[e_v; e_t]\in\mathbb{R}^{1152}$, and applies a fully connected head; the
+\textbf{attention} model projects each embedding to a $d$-dimensional token, prepends
+a learnable \texttt{CLS} token, and applies a two-layer Transformer whose scaled
+dot-product attention
+\begin{equation}
+\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+\label{eq:attn}
+\end{equation}
+mixes the $[\texttt{CLS},e_v,e_t]$ tokens; the \texttt{CLS} output feeds the
+classifier \citep{acosta2022multimodal}. The \textbf{$+$labs} model appends the 26 lab
 values and their flags to the tabular vector. \textbf{Clinical baselines} are
 logistic regression and XGBoost \citep{chen2016xgboost} on triage features. A
 \textbf{modern-backbone baseline} uses a CheXpert-trained DenseNet-121
