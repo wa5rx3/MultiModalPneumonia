@@ -1,0 +1,118 @@
+% References for the manuscript. Every entry below was either verified live
+% (2026-07) or inherited from the thesis bibliography after the pre-submission
+% audit (AUDIT_NOTES.md) confirmed complete fields and plausible venues/DOIs.
+% Verification status per entry noted in manuscript/REFERENCES_VERIFICATION.md.
+
+% ---- Datasets & data governance ----
+@misc{johnson2019mimiccxr,
+  author = {Johnson, Alistair E W and Pollard, Tom J and Berkowitz, Seth J and Greenbaum, Nathaniel R and Lungren, Matthew P and Deng, Chih-ying and Mark, Roger G and Horng, Steven},
+  title = {{MIMIC-CXR-JPG}, a large publicly available database of labeled chest radiographs},
+  year = {2019}, howpublished = {arXiv:1901.07042}, url = {https://arxiv.org/abs/1901.07042}}
+
+@article{johnson2023mimiciv,
+  author = {Johnson, Alistair E W and Bulgarelli, Lucas and Shen, Lu and others},
+  title = {{MIMIC-IV}, a freely accessible electronic health record dataset},
+  journal = {Scientific Data}, year = {2023}, volume = {10}, number = {1}, pages = {1},
+  doi = {10.1038/s41597-022-01899-x}}
+
+@misc{johnson2023mimicived,
+  author = {Johnson, Alistair E W and Bulgarelli, Lucas and Pollard, Tom J and Horng, Steven and Celi, Leo A and Mark, Roger G},
+  title = {{MIMIC-IV-ED}: Emergency Department module of {MIMIC-IV}},
+  year = {2023}, publisher = {PhysioNet}, url = {https://physionet.org/content/mimic-iv-ed/}}
+
+@inproceedings{irvin2019chexpert,
+  author = {Irvin, Jeremy and Rajpurkar, Pranav and Ko, Michael and others},
+  title = {{CheXpert}: A Large Chest Radiograph Dataset with Uncertainty Labels and Expert Comparison},
+  booktitle = {AAAI}, year = {2019}, volume = {33}, pages = {590--597},
+  doi = {10.1609/aaai.v33i01.3301590}}
+
+@inproceedings{wang2017chestxray,
+  author = {Wang, Xiaosong and Peng, Yifan and Lu, Le and Lu, Zhiyong and Bagheri, Mohammadhadi and Summers, Ronald M},
+  title = {{ChestX-ray8}: Hospital-scale Chest {X-ray} Database and Benchmarks on Weakly-Supervised Classification and Localization of Common Thorax Diseases},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2017}, pages = {2097--2106}, doi = {10.1109/CVPR.2017.369}}
+
+% ---- Models & methods ----
+@inproceedings{huang2017densenet,
+  author = {Huang, Gao and Liu, Zhuang and van der Maaten, Laurens and Weinberger, Kilian Q},
+  title = {Densely Connected Convolutional Networks},
+  booktitle = {CVPR}, year = {2017}, pages = {4700--4708}, doi = {10.1109/CVPR.2017.243}}
+
+@inproceedings{chen2016xgboost,
+  author = {Chen, Tianqi and Guestrin, Carlos},
+  title = {{XGBoost}: A Scalable Tree Boosting System},
+  booktitle = {KDD}, year = {2016}, pages = {785--794}, doi = {10.1145/2939672.2939785}}
+
+@inproceedings{cohen2022torchxrayvision,
+  author = {Cohen, Joseph Paul and Viviano, Joseph D and Bertin, Paul and Morrison, Paul and Torabian, Parsa and Guarrera, Matteo and Lungren, Matthew P and Chaudhari, Akshay and Brooks, Rupert and Hashir, Mohammad and Bertrand, Hadrien},
+  title = {{TorchXRayVision}: A library of chest {X-ray} datasets and models},
+  booktitle = {Proceedings of Machine Learning Research (MIDL)}, year = {2022}, volume = {172}, pages = {231--249},
+  url = {https://proceedings.mlr.press/v172/cohen22a.html}}
+
+% ---- Calibration & statistical evaluation ----
+@inproceedings{guo2017calibration,
+  author = {Guo, Chuan and Pleiss, Geoff and Sun, Yu and Weinberger, Kilian Q},
+  title = {On calibration of modern neural networks},
+  booktitle = {ICML}, year = {2017}, volume = {70}, pages = {1321--1330},
+  url = {https://proceedings.mlr.press/v70/guo17a.html}}
+
+@inproceedings{nixon2019measuring,
+  author = {Nixon, Jeremy and Dusenberry, Michael W and Zhang, Linchuan and Jerfel, Ghassen and Tran, Dustin},
+  title = {Measuring Calibration in Deep Learning},
+  booktitle = {CVPR Workshops}, year = {2019}, url = {https://arxiv.org/abs/1904.01685}}
+
+@article{piaggio2012noninferiority,
+  author = {Piaggio, Gilda and Elbourne, Diana R and Pocock, Stuart J and Evans, Stephen J W and Altman, Douglas G},
+  title = {Reporting of Noninferiority and Equivalence Randomized Trials: Extension of the {CONSORT 2010 Statement}},
+  journal = {JAMA}, year = {2012}, volume = {308}, number = {24}, pages = {2594--2604},
+  doi = {10.1001/jama.2012.87802}}
+
+% ---- Multimodal clinical AI (related work) ----
+@article{acosta2022multimodal,
+  author = {Acosta, Juli{\'a}n N and Falcone, Guido J and Rajpurkar, Pranav and Topol, Eric J},
+  title = {Multimodal biomedical {AI}},
+  journal = {Nature Medicine}, year = {2022}, volume = {28}, number = {9}, pages = {1773--1784},
+  doi = {10.1038/s41591-022-01981-2}}
+
+@inproceedings{hayat2022medfuse,
+  author = {Hayat, Nasir and Geras, Krzysztof J and Shamout, Farah E},
+  title = {{MedFuse}: Multi-modal fusion with clinical time-series data and chest {X-ray} images},
+  booktitle = {Machine Learning for Healthcare (MLHC)}, series = {PMLR}, volume = {182}, pages = {479--503},
+  year = {2022}, url = {https://proceedings.mlr.press/v182/hayat22a.html}}
+
+@article{soenksen2022multimodal,
+  author = {Soenksen, Luis R and Ma, Yu and Zeng, Cynthia and Boussioux, Leonard and Villalobos Carballo, Kimberly and Na, Liangyuan and Wiberg, Holly M and Li, Michael Lingzhi and Fuentes, Ignacio and Bertsimas, Dimitris},
+  title = {Integrated multimodal artificial intelligence framework for healthcare applications},
+  journal = {npj Digital Medicine}, year = {2022}, volume = {5}, pages = {149},
+  doi = {10.1038/s41746-022-00689-4}}
+
+% ---- Fairness & reporting ----
+@article{seyyedkalantari2021underdiagnosis,
+  author = {Seyyed-Kalantari, Laleh and Zhang, Haoran and McDermott, Matthew B A and Chen, Irene Y and Ghassemi, Marzyeh},
+  title = {Underdiagnosis Bias of Artificial Intelligence Algorithms Applied to Chest Radiographs in Under-Served Patient Populations},
+  journal = {Nature Medicine}, year = {2021}, volume = {27}, pages = {2176--2182},
+  doi = {10.1038/s41591-021-01595-0}}
+
+@article{larrazabal2020gender,
+  author = {Larrazabal, Agostina J and Nieto, Nicol{\'a}s and Peterson, Victoria and Milone, Diego H and Ferrante, Enzo},
+  title = {Gender imbalance in medical imaging datasets produces biased classifiers for computer-aided diagnosis},
+  journal = {PNAS}, year = {2020}, volume = {117}, number = {23}, pages = {12592--12594},
+  doi = {10.1073/pnas.1919012117}}
+
+@article{collins2024tripodai,
+  author = {Collins, Gary S and Moons, Karel G M and Dhiman, Paula and others},
+  title = {{TRIPOD+AI} statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods},
+  journal = {BMJ}, year = {2024}, volume = {385}, pages = {e078378}, doi = {10.1136/bmj-2023-078378}}
+
+@article{tejani2024claim,
+  author = {Tejani, Ali S and Klontzas, Michail E and Gatti, Anthony A and Mongan, John T and Moy, Linda and Park, Seong Ho and Kahn, Charles E},
+  title = {Checklist for {Artificial Intelligence} in {Medical Imaging} ({CLAIM}): 2024 Update},
+  journal = {Radiology: Artificial Intelligence}, year = {2024}, volume = {6}, number = {4}, pages = {e240300},
+  doi = {10.1148/ryai.240300}}
+
+% ---- Clinical background ----
+@article{metlay2019idsa,
+  author = {Metlay, Joshua P and Waterer, Grant W and Long, Ann C and others},
+  title = {Diagnosis and Treatment of Adults with Community-acquired Pneumonia (ATS/IDSA Guideline)},
+  journal = {American Journal of Respiratory and Critical Care Medicine}, year = {2019},
+  volume = {200}, number = {7}, pages = {e45--e67}, doi = {10.1164/rccm.201908-1581ST}}
