@@ -249,3 +249,17 @@ our task-specific fine-tuned DenseNet. Backbone choice is justified; conclusions
 are not an artifact of an outdated backbone. Bonus: CheXpert->MIMIC zero-shot
 0.667 is a clean external-MODEL domain-shift data point. (Caveat to state: probe
 is frozen, not end-to-end finetuned; full foundation-model finetuning = future work.)
+
+### P4c external validation VERDICT (2026-07-06): image model generalizes to NIH
+Ran all 5 image seeds on all 112,120 NIH ChestX-ray14 radiographs (user provided
+D:/nihxrays.zip; read images straight from the zip, single decode pass). NIH
+pneumonia prevalence 1.28% (1,431 pos), NLP-mined label.
+- External AUROC 0.7216 +/- 0.0052 (5 seeds), ensemble 0.7256
+- Internal MIMIC test AUROC 0.7373 -> external DROP only -0.016. STRONG result:
+  discrimination transfers across institution/scanner/label pipeline with minimal
+  loss. Converts the single-institution limitation into "externally validated".
+- AUPRC 0.030 and ECE 0.44 look poor ONLY due to the 45%->1.3% prevalence shift
+  (AUPRC prevalence-dependent; ECE reflects prior mismatch -> needs recalibration).
+  AUROC (prevalence-independent) is the fair cross-dataset metric and it holds.
+All P0-P4c experiments now complete. Manuscript external section + fig6 filled.
+Remaining: venue-formatted LaTeX (Scientific Reports) + final polish.
