@@ -156,6 +156,11 @@ yields a clear answer and two transferable cautions:
 \item A \textbf{multi-seed evaluation} (five seeds) of image-only, triage-fusion and
   laboratory-fusion models with paired bootstrap comparisons, showing that
   immediately available clinical context is \emph{discrimination-neutral}.
+\item A \textbf{decision heuristic for when fusion helps}: multimodal CXR fusion adds
+  discriminative value when the target lies partly outside the image (prognosis,
+  screening), but not when the image essentially defines the label (radiographic
+  diagnosis), which reconciles our negative result with the positive results reported
+  for prognostic tasks and guides where fusion is worth the added complexity.
 \item \textbf{Caution 1 (single-seed calibration inflation):} a calibration advantage
   that appears large from one checkpoint shrinks roughly twofold and becomes
   seed-fragile under replication.
@@ -240,7 +245,29 @@ we observe on the external NIH set.
 To our knowledge, no prior work simultaneously (i) targets ED-specific pneumonia,
 (ii) uses ED triage vitals under a verified time-safety constraint, (iii) evaluates
 with a patient-level temporal split \emph{and} multi-seed replication, and (iv)
-audits missingness and leakage explicitly. This study fills that gap.
+audits missingness and leakage explicitly (Table~\ref{tab:related}). This study fills
+that gap.
+
+\begin{table*}[t]
+\centering
+\caption{Positioning against representative multimodal CXR + clinical-data studies.
+``Time-safe'' denotes an explicitly verified constraint that all features precede
+the prediction time; ``Missingness audit'' denotes an explicit control isolating
+missingness from measured values. \checkmark: reported; --: not reported.}
+\label{tab:related}
+\footnotesize
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+Study & Task & Modalities & Time-safe & External val. & Multi-seed & Missingness audit \\
+\midrule
+MedFuse~\citep{hayat2022medfuse}      & ICU mortality / phenotyping & CXR + time-series & -- & -- & -- & partial (async.) \\
+HAIM~\citep{soenksen2022multimodal}   & Inpatient outcomes (11 tasks) & CXR + tab. + text + TS & -- & -- & -- & -- \\
+Lee et al.~\citep{lee2024multimodal}  & ED heart-failure screening & CXR + EHR & -- & -- & -- & -- \\
+\textbf{This work}                    & ED pneumonia diagnosis & CXR + triage + labs
+  & \checkmark & \checkmark\,(image) & \checkmark\,(5 seeds) & \checkmark\,(flags-only) \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Materials and Methods}
@@ -515,7 +542,12 @@ overstated the benefit roughly twofold. The apparent gap is also binning-depende
 \citep{nixon2019measuring}. Brier scores are essentially unchanged, so any effect is
 distributional alignment rather than refinement. Reliability diagrams
 (Fig.~\ref{fig:reliability}) show all deep models tracking the diagonal closely, with
-attention fusion the clear outlier.
+attention fusion the clear outlier. Finally, a simple post-hoc correction removes
+what remains of the gap: temperature scaling of the image model (optimal $T=1.37$,
+fit on the validation logits) lowers its test ECE from 0.060 to 0.042, matching the
+concat model's 0.040. The modest calibration difference therefore does not motivate
+multimodal fusion on calibration grounds, since a single-parameter recalibration of
+the image model alone recovers it~\citep{ovadia2019trust}.
 
 \begin{figure}[t]
 \centering
@@ -797,13 +829,22 @@ label definitions is uninformative; the contribution is the rigour of the evalua
 and the two transferable cautions.
 
 \paragraph{Limitations.} Training and multimodal evaluation are single-institution
-(MIMIC) and retrospective; external validation confirms the image branch generalises
-to NIH but is necessarily limited to imaging, as no external dataset links ED triage
-to the CXR, and probabilities require recalibration to the target base rate before
-deployment (the \emph{u\_ignore} policy also raises internal evaluation prevalence to
-45.3\%). The lab-present subcohort is small ($n{=}269$); the modern-backbone
-comparison uses frozen features rather than end-to-end fine-tuning; and NIH labels
-are NLP-derived, adding label noise to the external estimate.
+(MIMIC) and retrospective. External validation confirms that the image branch
+generalises to NIH, but it is necessarily limited to imaging: to our knowledge no
+public dataset links ED triage (or early labs) to the chest radiograph, so the
+fusion branches themselves cannot yet be validated externally, and building such a
+linked multi-site resource is an important community need. The steep degradation of
+prevalence-dependent calibration on NIH ($45\%\!\to\!1.3\%$) is expected rather than a
+defect: before deployment in a population with a different base rate, a scalar
+post-hoc recalibration (temperature or Platt scaling) fit on a small labelled sample
+from the target site would restore calibrated probabilities without retraining, and
+our temperature-scaling result shows a single parameter suffices internally. The
+lab-present subcohort is small ($n{=}269$), but this reflects the clinical reality
+that structured laboratory results are rarely resolved at the exact moment of initial
+ED imaging (Section~\ref{subsec:labcov}) rather than a sampling artefact; it is the
+correct denominator for the question ``do labs help when available''. Finally, the
+\emph{u\_ignore} policy raises internal evaluation prevalence to 45.3\%, and NIH
+labels are NLP-derived, adding label noise to the external estimate.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Conclusion}
