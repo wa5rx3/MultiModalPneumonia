@@ -1,0 +1,18 @@
+{
+  "weights": "densenet121-res224-chex",
+  "note": "CheXpert-trained (non-MIMIC) backbone; no MIMIC test contamination",
+  "zeroshot_test": {
+    "n": 1075,
+    "auroc": 0.6671520764363239,
+    "auprc": 0.6322080852782379,
+    "ece": 0.16062747151352638,
+    "brier": 0.25952592492103577
+  },
+  "linear_probe_test": {
+    "n": 1075,
+    "auroc": 0.6874380142200618,
+    "auprc": 0.6473393241861172,
+    "ece": 0.05637279058516182,
+    "brier": 0.22383542301103188
+  }
+}

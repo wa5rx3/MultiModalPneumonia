@@ -226,3 +226,26 @@ val/test). ALSO: univariate AUROC of 'any lab drawn' vs pneumonia on test = 0.46
 is NOT a strong acuity proxy. The +0.009 labs-vs-image gain is not leakage, not
 chemistry (subcohort), not a strong missingness confound; it is small and within
 the patient-level bootstrap CI. Flags-only ablation will finalize the mechanism.
+
+### P4a flags-only ablation VERDICT (2026-07-06): gain is 100% missingness, 0% chemistry
+5-seed labflags (triage + lab MISSINGNESS FLAGS ONLY, no values):
+- labs (values+flags): AUROC 0.7466+/-0.0035, dAUROC vs image +0.0093
+- labflags (flags only): AUROC 0.7466+/-0.0054, dAUROC vs image +0.0092  <-- identical
+=> lab VALUES contribute nothing to discrimination beyond the missingness indicator.
+The small labs 'gain' is entirely the who-got-bloodwork signal, not chemistry
+(values add only a marginal calibration nudge: labs ECE 0.043 vs labflags 0.048).
+Clean methodological finding for the paper: a multimodal model appears to benefit
+from labs, but ablation shows it exploits missing-data STRUCTURE, not lab values --
+a caution for clinical multimodal fusion with heavily-missing inputs. Not leakage.
+
+### P4b modern backbone baseline (2026-07-06)
+torchxrayvision CheXpert-trained DenseNet-121 (non-MIMIC, no test contamination),
+full test n=1075:
+- zero-shot Pneumonia output: AUROC 0.667, ECE 0.161
+- frozen-feature linear probe (LR on our train): AUROC 0.687, ECE 0.056
+- our task-finetuned DenseNet-121 (image-only): AUROC 0.737
+=> a modern CXR foundation model, zero-shot or as frozen features, UNDERPERFORMS
+our task-specific fine-tuned DenseNet. Backbone choice is justified; conclusions
+are not an artifact of an outdated backbone. Bonus: CheXpert->MIMIC zero-shot
+0.667 is a clean external-MODEL domain-shift data point. (Caveat to state: probe
+is frozen, not end-to-end finetuned; full foundation-model finetuning = future work.)
