@@ -1,27 +1,25 @@
 """External validation on NIH ChestX-ray14 (P4c).
 
 Runs OUR fine-tuned image-only DenseNet-121 models (the 5 multi-seed checkpoints)
-on the NIH ChestX-ray14 dataset -- a different institution, scanner population, and
-label pipeline -- to test cross-dataset generalization. This is true external
-validation (our model -> outside data), addressing the single biggest reviewer
-objection to a single-institution MIMIC study.
+on NIH ChestX-ray14 -- a different institution, scanner population and label
+pipeline -- to test cross-dataset generalisation (our model -> outside data),
+addressing the main reviewer objection to a single-institution MIMIC study.
 
-Label: NIH 'Finding Labels' contains 'Pneumonia' -> positive. Preprocessing matches
-our MIMIC eval transform exactly (Resize 224, ImageNet normalize, 3-channel) so the
-only thing that changes is the data distribution.
+Reads images directly from the distribution zip (no 42 GB extraction) and decodes
+each image ONCE, scoring all five seed models in a single pass. Preprocessing
+matches our MIMIC eval transform (Resize 224, ImageNet normalize, 3-channel) so
+only the data distribution changes. Label: NIH 'Finding Labels' contains
+'Pneumonia' -> positive.
 
 Usage:
-  python -m scripts.analysis.external_validation_nih \
-    --images-dir  D:/nih_cxr/images \
-    --labels-csv  D:/nih_cxr/Data_Entry_2017.csv \
-    [--limit N] [--batch-size 32] [--device cuda]
-
-Output: artifacts/evaluation/external_nih/*.{json,csv}
+  python -m scripts.analysis.external_validation_nih --zip D:/nihxrays.zip [--limit N]
 """
 from __future__ import annotations
 
 import argparse
+import io
 import json
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -56,38 +54,11 @@ def build_image_model(ckpt_path: Path, device) -> nn.Module:
     return m.to(device).eval()
 
 
-def index_images(images_dir: Path) -> dict[str, Path]:
-    """Map NIH filename (e.g. 00000001_000.png) -> full path, recursively."""
-    idx = {}
-    for p in images_dir.rglob("*.png"):
-        idx.setdefault(p.name, p)
-    return idx
-
-
 def metrics(y, p) -> dict:
     ece, _, _ = compute_ece_mce(np.asarray(y), np.asarray(p), n_bins=10)
     return {"n": int(len(y)), "positive_rate": float(np.mean(y)),
             "auroc": float(roc_auc_score(y, p)), "auprc": float(average_precision_score(y, p)),
             "ece": float(ece), "brier": float(brier_score_loss(y, p))}
-
-
-@torch.no_grad()
-def infer(model, paths, tfm, device, batch_size) -> np.ndarray:
-    probs = []
-    buf = []
-    def flush():
-        if not buf:
-            return
-        t = torch.stack(buf).to(device)
-        probs.append(torch.sigmoid(model(t)).squeeze(1).cpu().numpy())
-        buf.clear()
-    for p in paths:
-        img = Image.open(p).convert("RGB")
-        buf.append(tfm(img))
-        if len(buf) >= batch_size:
-            flush()
-    flush()
-    return np.concatenate(probs)
 
 
 def summarize(vals) -> dict:
@@ -98,62 +69,74 @@ def summarize(vals) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--images-dir", required=True)
-    ap.add_argument("--labels-csv", required=True)
+    ap.add_argument("--zip", required=True)
     ap.add_argument("--runs", nargs="+", default=DEFAULT_RUNS)
+    ap.add_argument("--labels-name", default="Data_Entry_2017.csv")
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--batch-size", type=int, default=32)
+    ap.add_argument("--batch-size", type=int, default=48)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     device = torch.device(args.device)
 
-    print("Indexing images ...", flush=True)
-    idx = index_images(Path(args.images_dir))
-    print(f"  found {len(idx)} png files on disk", flush=True)
+    zf = zipfile.ZipFile(args.zip)
+    # filename (e.g. 00000001_000.png) -> zip entry path
+    name_to_entry = {Path(n).name: n for n in zf.namelist() if n.lower().endswith(".png")}
+    print(f"zip pngs: {len(name_to_entry)}", flush=True)
 
-    lab = pd.read_csv(args.labels_csv)
-    # NIH columns: 'Image Index', 'Finding Labels'
+    with zf.open(args.labels_name) as f:
+        lab = pd.read_csv(f)
     col_img = "Image Index" if "Image Index" in lab.columns else lab.columns[0]
     col_lbl = "Finding Labels" if "Finding Labels" in lab.columns else lab.columns[1]
     lab = lab[[col_img, col_lbl]].copy()
-    lab["path"] = lab[col_img].map(idx)
-    lab = lab.dropna(subset=["path"])
+    lab = lab[lab[col_img].isin(name_to_entry)]
     lab["target"] = lab[col_lbl].astype(str).str.contains("Pneumonia").astype(int)
     if args.limit:
         lab = lab.head(args.limit)
-    paths = lab["path"].tolist()
+    entries = [name_to_entry[n] for n in lab[col_img]]
     y = lab["target"].to_numpy()
-    print(f"Evaluating on {len(paths)} NIH images | pneumonia prevalence {y.mean():.4f}", flush=True)
+    print(f"Evaluating {len(entries)} NIH images | pneumonia prevalence {y.mean():.4f} "
+          f"({int(y.sum())} positive)", flush=True)
     if len(np.unique(y)) < 2:
-        raise SystemExit("Only one class present; cannot compute AUROC.")
+        raise SystemExit("Only one class present.")
+
+    runs = [r for r in args.runs if (Path(r) / "checkpoints" / "best.pt").is_file()]
+    seed_models = {Path(r).name: build_image_model(Path(r) / "checkpoints" / "best.pt", device) for r in runs}
+    print(f"loaded {len(seed_models)} seed models: {list(seed_models)}", flush=True)
 
     tfm = eval_transform()
+    probs = {s: [] for s in seed_models}
+    buf = []
+
+    @torch.no_grad()
+    def flush():
+        if not buf:
+            return
+        t = torch.stack(buf).to(device)
+        for s, m in seed_models.items():
+            probs[s].append(torch.sigmoid(m(t)).squeeze(1).cpu().numpy())
+        buf.clear()
+
+    for i, entry in enumerate(entries):
+        img = Image.open(io.BytesIO(zf.read(entry))).convert("RGB")
+        buf.append(tfm(img))
+        if len(buf) >= args.batch_size:
+            flush()
+        if (i + 1) % 10000 == 0:
+            print(f"  {i+1}/{len(entries)} decoded", flush=True)
+    flush()
+
     per_seed = {}
-    prob_accum = np.zeros(len(paths), dtype=np.float64)
-    for run in args.runs:
-        ckpt = Path(run) / "checkpoints" / "best.pt"
-        if not ckpt.is_file():
-            print(f"  [skip] no checkpoint at {ckpt}", flush=True)
-            continue
-        seed = Path(run).name
-        print(f"  inferring {seed} ...", flush=True)
-        model = build_image_model(ckpt, device)
-        p = infer(model, paths, tfm, device, args.batch_size)
-        per_seed[seed] = metrics(y, p)
+    prob_accum = np.zeros(len(entries), dtype=np.float64)
+    for s in seed_models:
+        p = np.concatenate(probs[s])
+        per_seed[s] = metrics(y, p)
         prob_accum += p
-        del model
-        if device.type == "cuda":
-            torch.cuda.empty_cache()
+    ens = metrics(y, prob_accum / len(seed_models))
 
-    if not per_seed:
-        raise SystemExit("No image checkpoints found.")
-
-    # across-seed summary of each metric + the seed-averaged ensemble
-    ens = metrics(y, prob_accum / len(per_seed))
     summary = {
         "dataset": "NIH ChestX-ray14",
-        "n_images": len(paths),
+        "n_images": len(entries),
         "pneumonia_prevalence": float(y.mean()),
         "n_seeds": len(per_seed),
         "per_seed": per_seed,
@@ -166,13 +149,13 @@ def main() -> None:
         json.dump(summary, f, indent=2)
     pd.DataFrame([{"seed": s, **per_seed[s]} for s in per_seed]).to_csv(OUT / "external_nih_per_seed.csv", index=False)
 
-    print("\n=== NIH ChestX-ray14 external validation (our image model) ===")
     a = summary["across_seed"]
-    print(f"  across 5 seeds: AUROC {a['auroc']['mean']:.4f}+/-{a['auroc']['std']:.4f}  "
+    print("\n=== NIH ChestX-ray14 external validation (our image model) ===")
+    print(f"  n={len(entries)}  pneumonia prevalence {y.mean():.4f}")
+    print(f"  across {len(per_seed)} seeds: AUROC {a['auroc']['mean']:.4f}+/-{a['auroc']['std']:.4f}  "
           f"AUPRC {a['auprc']['mean']:.4f}  ECE {a['ece']['mean']:.4f}")
     print(f"  seed-ensemble : AUROC {ens['auroc']:.4f}  AUPRC {ens['auprc']:.4f}")
-    print(f"  (internal MIMIC test AUROC ~0.737) -> external drop = "
-          f"{0.7373 - a['auroc']['mean']:+.4f}")
+    print(f"  internal MIMIC test AUROC ~0.737 -> external change {a['auroc']['mean'] - 0.7373:+.4f}")
     print(f"\nWrote {OUT}/")
 
 
