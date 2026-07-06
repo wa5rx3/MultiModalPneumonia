@@ -2,8 +2,8 @@
 %
 % Journal submission --- Cognitive Computation (Cogn Comput)
 % Format: SVJour3, twocolumn, final (professor's skeleton).
-% Content: OUR rigorous multi-seed, time-safe, externally-validated study.
-% (Template used for STRUCTURE/FORMAT only; all numbers/claims are ours.)
+% Content: OUR rigorous, multi-seed, time-safe, externally-validated study.
+% Template used for STRUCTURE/FORMAT only; all numbers and claims are ours.
 %
 \RequirePackage{fix-cm}
 \documentclass[twocolumn, final]{svjour3}
@@ -16,7 +16,7 @@
 \usepackage{textcomp}
 \usepackage{multirow}
 \usepackage{xurl}
-\usepackage[round]{natbib}   % required by spbasic; gives compact (Author et al. Year) cites
+\usepackage[round]{natbib}   % required by spbasic; compact (Author et al. Year) cites
 \usepackage{hyperref}
 % Let long DOIs/URLs in the two-column bibliography break instead of overflowing.
 \Urlmuskip=0mu plus 1mu\relax
@@ -46,18 +46,14 @@ with Missing-Data Cautions}
 
 \institute{
   Yazan Al-Dabain
-    \at Department of Software Technology and Methodology,
-       Faculty of Informatics,
-       E\"{o}tv\"{o}s Lor\'{a}nd University,
-       P\'{a}zm\'{a}ny P\'{e}ter S\'{e}t\'{a}ny 1/C,
+    \at Department of Software Technology and Methodology, Faculty of Informatics,
+       E\"{o}tv\"{o}s Lor\'{a}nd University, P\'{a}zm\'{a}ny P\'{e}ter S\'{e}t\'{a}ny 1/C,
        Budapest 1117, Hungary \\
        \email{} % TODO: institutional email
   \and
   Arafat Md Easin
-    \at Department of Software Technology and Methodology,
-       Faculty of Informatics,
-       E\"{o}tv\"{o}s Lor\'{a}nd University,
-       P\'{a}zm\'{a}ny P\'{e}ter S\'{e}t\'{a}ny 1/C,
+    \at Department of Software Technology and Methodology, Faculty of Informatics,
+       E\"{o}tv\"{o}s Lor\'{a}nd University, P\'{a}zm\'{a}ny P\'{e}ter S\'{e}t\'{a}ny 1/C,
        Budapest 1117, Hungary \\
        \email{arafatmdeasin@inf.elte.hu}
   \and
@@ -67,8 +63,8 @@ with Missing-Data Cautions}
        \email{mufti.mahmud@ntu.ac.uk}
   \and
   Swakkhar Shatabda
-    \at Department of Computer Science and Engineering,
-       BRAC University, Dhaka 1212, Bangladesh \\
+    \at Department of Computer Science and Engineering, BRAC University,
+       Dhaka 1212, Bangladesh \\
        \email{swakkhar.shatabda@bracu.ac.bd}
 }
 
@@ -79,128 +75,309 @@ with Missing-Data Cautions}
 \begin{abstract}
 \textbf{Background:} Emergency-department (ED) triage records structured vital
 signs before chest imaging, motivating multimodal models that fuse the chest
-radiograph (CXR) with clinical context for pneumonia detection. Whether such
-fusion actually helps---under strict time-safety and rigorous evaluation---is
-unclear.
-\textbf{Methods:} We build a temporally safe cohort from MIMIC-CXR-JPG, MIMIC-IV
-and MIMIC-IV-ED, anchoring every feature at the CXR acquisition time $t_0$ and
-admitting only measurements resolved at or before $t_0$. On a patient-level
-temporal split (test $n{=}1{,}075$), we train image-only, concatenation- and
-attention-fusion, and clinical-baseline models across five random seeds, adding an
-early-laboratory panel as a third modality. We report AUROC, AUPRC, expected
-calibration error (ECE) and Brier score as mean$\pm$SD over seeds with paired
-per-seed deltas, external validation on NIH ChestX-ray14, and explicit leakage and
+radiograph (CXR) with clinical context for pneumonia detection. Whether such fusion
+helps---under strict time-safety and rigorous multi-seed evaluation---remains
+unclear, and prior studies often report single-run results without leakage or
 missing-data audits.
-\textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, far
-above triage-only baselines (0.61). Adding triage vitals leaves discrimination
-unchanged ($\Delta$AUROC $+0.004\pm0.009$, within a pre-specified $\pm0.05$
-margin). A calibration advantage reported from a single checkpoint (ECE 0.040 vs
-0.067) shrinks to $\Delta$ECE $-0.013\pm0.016$ across seeds---single-seed
-evaluation overstated it $\sim$2$\times$. Adding early labs yields a small,
-seed-consistent AUROC gain ($+0.009\pm0.005$) that an ablation shows is reproduced
-exactly by lab \emph{missingness indicators alone}, with no contribution from lab
-values, and is not attributable to leakage. Externally, discrimination transfers
-with minimal loss (AUROC $0.722\pm0.005$ on 112{,}120 NIH radiographs).
+\textbf{Methods:} We construct a temporally safe cohort by linking MIMIC-CXR-JPG,
+MIMIC-IV and MIMIC-IV-ED, anchoring every feature at the CXR acquisition time $t_0$
+and admitting only measurements resolved at or before $t_0$. On a patient-level
+temporal split (test $n{=}1{,}075$; prevalence 45.3\%) we train image-only,
+concatenation- and attention-fusion, and clinical-baseline models across five random
+seeds, and add a time-safe early-laboratory panel as a third modality. We report
+AUROC, AUPRC, expected calibration error (ECE) and Brier score as mean$\pm$SD over
+seeds with paired per-seed deltas, patient-level bootstrap intervals, decision-curve
+and subgroup analyses, SHAP and Grad-CAM interpretability, external validation on
+NIH ChestX-ray14, and explicit temporal, split and preprocessing leakage audits.
+\textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, far above
+triage-only baselines (0.61). Adding triage vitals leaves discrimination unchanged
+($\Delta$AUROC $+0.004\pm0.009$, within a pre-specified $\pm0.05$ margin). A
+calibration advantage reported from a single checkpoint (ECE 0.040 vs 0.067) shrinks
+to $\Delta$ECE $-0.013\pm0.016$ across seeds---single-seed evaluation overstated it
+$\sim$2$\times$. Adding early labs yields a small, seed-consistent AUROC gain
+($+0.009\pm0.005$) that an ablation shows is reproduced exactly by lab
+\emph{missingness indicators alone}, with no contribution from lab values, and is not
+leakage. Externally, discrimination transfers with minimal loss (AUROC
+$0.722\pm0.005$ on 112{,}120 NIH radiographs).
 \textbf{Conclusion:} The chest radiograph carries the discriminative signal;
 immediately available clinical context does not reliably add discrimination, and
 naive multimodal fusion can appear beneficial for reasons that will not generalise.
 We offer two transferable cautions for clinical multimodal AI: single-seed
 calibration inflation, and missingness masquerading as multimodal benefit.
 \keywords{Pneumonia detection \and Chest radiograph \and Multimodal fusion \and
-Emergency department triage \and Calibration \and Reproducibility \and
-Missing data \and External validation}
+Emergency department triage \and Calibration \and Reproducibility \and Missing data
+\and External validation}
 \end{abstract}
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Introduction}
 \label{sec:introduction}
-Pneumonia is a leading cause of ED presentation and admission, and the frontal
-chest radiograph (CXR) remains central to its diagnosis~\citep{metlay2019idsa}.
-Deep-learning CXR classifiers approach radiologist-level performance on several
-findings, and a substantial literature proposes fusing imaging with structured
-clinical data~\citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}.
-Three methodological issues recur in that literature and motivate this study.
-First, \emph{temporal safety}: clinical variables are frequently included without
-verifying they were available at prediction time, risking optimistic leakage.
-Second, \emph{single-seed reporting}: calibration and small discrimination effects
-are often reported from a single training run, although both are sensitive to
-training stochasticity~\citep{guo2017calibration,nixon2019measuring}. Third,
-\emph{missing data}: clinical inputs in the ED are heavily and non-randomly
-missing, so a model can exploit \emph{whether} a measurement exists rather than its
-value.
+Pneumonia is an acute lower respiratory tract infection and a leading cause of
+emergency-department (ED) presentation, hospital admission and death worldwide
+\citep{metlay2019idsa}. The frontal chest radiograph (CXR) is the recommended
+first-line imaging investigation, but its clinical value is bottlenecked by
+radiologist availability during peak ED demand. Automated CXR analysis that produces
+\emph{well-calibrated} probability estimates is therefore an attractive
+decision-support tool, and deep convolutional networks now approach radiologist-level
+performance on several radiographic findings \citep{huang2017densenet}.
+
+A structurally appealing but underused source of complementary information is the ED
+triage record. On arrival, a triage nurse records vital signs---temperature, heart
+rate, respiratory rate, peripheral oxygen saturation (SpO$_2$), blood pressure, a
+pain score---and an acuity level, \emph{before} any imaging is ordered. Multimodal
+models that fuse the CXR with this immediately available context are widely proposed
+\citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the
+intuition that combining the two streams should better reflect the clinical picture
+at the moment of decision.
+
+Three methodological issues, however, recur across this literature and motivate the
+present study. First, \emph{temporal safety}: clinical variables are frequently
+included without verifying they were actually available at prediction time, risking
+optimistic leakage from information generated after the decision point. Second,
+\emph{single-seed reporting}: calibration and small discrimination effects are often
+reported from a single training run, although both are sensitive to training
+stochasticity \citep{guo2017calibration,nixon2019measuring}. Third, \emph{missing
+data}: clinical inputs in the ED are heavily and non-randomly missing, so a model may
+exploit \emph{whether} a measurement exists rather than its value---an effect that
+can masquerade as a genuine multimodal benefit.
 
 We address a deliberately conditional question---\emph{when, if ever, does
 immediately available clinical context help a CXR pneumonia model?}---under strict
 time-safety, with multi-seed replication and explicit missing-data and leakage
-audits, reported in line with prediction-model and medical-imaging
-guidance~\citep{collins2024tripodai,tejani2024claim}. Our contribution is not a new
-architecture but a rigorous, reproducible, externally-validated evaluation and two
-transferable cautions for clinical multimodal fusion: (i) single-seed evaluation
-can overstate a calibration advantage roughly twofold; and (ii) a multimodal model
-can present a spurious ``benefit'' driven by missing-data structure rather than the
-measured values.
+audits, and report in line with prediction-model and medical-imaging guidance
+\citep{collins2024tripodai,tejani2024claim}. Our contribution is not a new
+architecture but a rigorous, reproducible, externally-validated evaluation that
+yields a clear answer and two transferable cautions:
+
+\begin{itemize}
+\item A \textbf{temporally safe, reproducible multimodal ED cohort} linking three
+  MIMIC databases at the CXR acquisition time $t_0$, with every feature verified to
+  precede imaging (0 of 314{,}145 laboratory values post-$t_0$).
+\item A \textbf{multi-seed evaluation} (five seeds) of image-only, triage-fusion and
+  laboratory-fusion models with paired bootstrap comparisons, showing that
+  immediately available clinical context is \emph{discrimination-neutral}.
+\item \textbf{Caution 1 (single-seed calibration inflation):} a calibration advantage
+  that appears large from one checkpoint shrinks roughly twofold and becomes
+  seed-fragile under replication.
+\item \textbf{Caution 2 (missingness as signal):} a small ``labs'' gain that is
+  reproduced entirely by laboratory \emph{missingness indicators}, not the measured
+  values, and is not attributable to leakage.
+\item \textbf{External validation} of the image model on 112{,}120 NIH ChestX-ray14
+  radiographs, showing cross-institution generalisation with an AUROC drop of only
+  $0.016$, together with subgroup, decision-curve, interpretability and
+  modern-backbone analyses.
+\end{itemize}
+
+% ═════════════════════════════════════════════════════════════════════
+\section{Background and Related Work}
+\label{sec:background}
+
+\subsection{Pneumonia and ED triage}
+Pneumonia manifests on a frontal CXR as regions of increased opacity (consolidation)
+where air-filled alveoli fill with exudate. Reported CXR sensitivity for pneumonia
+is moderate (0.43--0.74) with high specificity, reflecting both the difficulty of
+early detection and reliable exclusion in unambiguous cases \citep{metlay2019idsa}.
+Triage vital signs quantify physiological perturbation and severity; they are highly
+correlated with pneumonia but non-specific, since tachycardia, hypoxia and high
+acuity accompany many respiratory presentations. Crucially, triage measurements are
+recorded before imaging is ordered---a workflow guarantee, not a statistical
+regularity---so they carry no risk of temporal leakage.
+
+\subsection{The MIMIC database family}
+The Medical Information Mart for Intensive Care (MIMIC) programme provides the
+largest publicly available de-identified clinical dataset linked to real hospital
+records from the Beth Israel Deaconess Medical Center (BIDMC). This study uses three
+interoperable components. \textbf{MIMIC-CXR-JPG}~\citep{johnson2019mimiccxr} contains
+227{,}835 chest-radiograph studies from 64{,}588 patients (2011--2019) with CheXpert
+labels for 14 findings. \textbf{MIMIC-IV}~\citep{johnson2023mimiciv} provides
+hospital-admission and laboratory records, enabling temporal consistency checks and
+the laboratory modality. \textbf{MIMIC-IV-ED}~\citep{johnson2023mimicived} provides
+ED-specific records for all BIDMC emergency visits, including the structured triage
+table used as the tabular input. All are distributed through PhysioNet under a Data
+Use Agreement; per-patient date shifts preserve temporal ordering and durations.
+
+\subsection{Automated labelling: CheXpert}
+CheXpert~\citep{irvin2019chexpert} is an NLP pipeline that extracts binary labels for
+14 thoracic conditions from free-text reports, assigning each a value of positive,
+negative, uncertain ($-1$), or not-mentioned. The uncertain label captures hedging
+language (``cannot exclude'', ``possible pneumonia''). We adopt \emph{u\_ignore}
+(exclude uncertain studies) as the primary policy, which preserves label quality at
+the cost of a smaller, higher-prevalence evaluation set.
+
+\subsection{Deep learning and multimodal fusion}
+DenseNet-121~\citep{huang2017densenet} propagates features through dense
+connectivity, $x_\ell = H_\ell([x_0,\dots,x_{\ell-1}])$, and forms a strong CXR
+backbone under transfer learning. Intermediate (feature-level) fusion extracts
+modality-specific embeddings and combines them---by concatenation, or by attention
+over modality tokens. Several works fuse structured clinical data with CXR for ICU
+or inpatient outcomes \citep{hayat2022medfuse,soenksen2022multimodal}; MedFuse in
+particular notes that healthcare modalities are collected asynchronously and are
+often missing, which our missing-data analysis makes central. To our knowledge, no
+prior work simultaneously (i) targets ED-specific pneumonia, (ii) uses ED triage
+vitals under a verified time-safety constraint, (iii) evaluates with a patient-level
+temporal split \emph{and} multi-seed replication, and (iv) audits missingness and
+leakage explicitly. This study fills that gap.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Materials and Methods}
 \label{sec:methods}
 
-\subsection{Data and cohort}
-We link MIMIC-CXR-JPG v2.1.0~\citep{johnson2019mimiccxr}, MIMIC-IV
-v2.2~\citep{johnson2023mimiciv} and MIMIC-IV-ED v2.2~\citep{johnson2023mimicived}.
-The anchor $t_0$ is the CXR acquisition timestamp (DICOM StudyDate$+$StudyTime).
-Studies are restricted to frontal ED-anchored radiographs with a linkable ED stay.
-Pneumonia labels are the CheXpert label~\citep{irvin2019chexpert} from the radiology
-report; radiologically uncertain studies are excluded (\texttt{u\_ignore}). The
-cohort comprises 9{,}154 ED-anchored studies; the patient-level temporal split
-assigns train 7{,}144 / validation 930 / test 1{,}080 studies, and models train and
-evaluate on radiographs available on disk, yielding a held-out test set of
-$n{=}1{,}075$ (487 positive / 588 negative; prevalence 45.3\%).
+\subsection{Datasets and how they are used}
+\label{subsec:datasets}
+The task is binary radiographic-pneumonia classification of a frontal ED CXR. Each
+of the three MIMIC components plays a distinct role. MIMIC-CXR-JPG supplies the
+\emph{images} (JPEG radiographs) and the \emph{labels} (CheXpert pneumonia), together
+with DICOM metadata (view position; StudyDate/StudyTime, from which the temporal
+anchor $t_0$ is derived). MIMIC-IV-ED supplies the \emph{primary tabular modality}:
+the triage table (vitals, pain, acuity) recorded at ED intake, linked to each CXR
+through the ED stay. MIMIC-IV supplies the \emph{admission records} used to verify
+temporal consistency and the \emph{laboratory events} used for the time-safe
+laboratory modality. The image branch consumes MIMIC-CXR-JPG; the tabular branch
+consumes MIMIC-IV-ED (triage) and, in the laboratory variant, MIMIC-IV (labs); the
+CheXpert labels supervise all models.
 
-\subsection{Temporal safety and split}
-Every clinical feature is a triage measurement or a laboratory value resolved at or
-before $t_0$; for labs we additionally require charttime within
-$(t_0{-}24\,\text{h}, t_0]$. Time-safety was verified empirically: of 314{,}145
-extracted lab measurements, zero have charttime after $t_0$. Patients are ordered by
-their first $t_0$ and assigned 80/10/10 at the patient level; no patient appears in
-more than one split (0 cross-split subjects, 0 duplicate studies).
+\subsection{Cohort construction pipeline}
+\label{subsec:cohort}
+A scripted pipeline links the sources through temporally constrained relational
+joins. Each CXR study is linked to a hospital admission (by \texttt{subject\_id} and
+admission window) and to an ED stay (by \texttt{stay\_id} with $t_0 \in
+[\text{intime}, \text{outtime}]$); one-to-one study-to-stay integrity is enforced by
+deduplication. The triage table is merged on \texttt{stay\_id}; studies are
+restricted to frontal (PA/AP) projections; CheXpert pneumonia labels are merged and
+the \emph{u\_ignore} policy applied. The temporal anchor is $t_0 =
+\text{StudyDate}+\text{StudyTime}$ from DICOM metadata. The resulting cohort
+comprises 9{,}154 ED-anchored studies; the patient-level temporal split (below)
+assigns train 7{,}144 / validation 930 / test 1{,}080 studies. Models train and
+evaluate only on radiographs present on disk in our data snapshot, yielding a
+held-out test set of $n{=}1{,}075$ (487 positive / 588 negative; prevalence 45.3\%).
+The entire pipeline is reproducible from a single entry point, emitting versioned
+manifests at each stage. Table~\ref{tab:cohort} summarises the cohort: the split
+sizes, test-set demographics (median age 65; 55\% female; predominantly White with
+substantial Black and Hispanic representation), the near-even PA/AP view split, and
+the triage vital-sign distributions with their missingness rates (3--8\% per vital),
+which motivate the per-vital missingness indicators.
+
+\begin{table}[t]
+\centering
+\caption{Cohort characteristics. Splits are patient-level and temporally ordered;
+demographic and vital-sign statistics are for the test split.}
+\label{tab:cohort}
+\footnotesize
+\begin{tabular}{@{}lc@{}}
+\toprule
+Characteristic & Value \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Splits: studies / patients / prevalence}}\\
+\quad Train      & 7{,}144 / 6{,}045 / 46.9\% \\
+\quad Validation & 930 / 787 / 48.8\% \\
+\quad Test       & 1{,}080 / 890 / 45.4\% \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Test-set demographics}}\\
+\quad Age, mean (median) & 64 (65) \\
+\quad Female & 55.0\% \\
+\quad White / Black / Hispanic / Asian / Other & 678 / 258 / 71 / 36 / 37 \\
+\quad View: PA / AP & 56.8\% / 43.2\% \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Test-set triage vitals: mean$\pm$SD (\% missing)}}\\
+\quad Temperature (\textdegree{}F) & 98.5$\pm$1.4~(5.9\%) \\
+\quad Heart rate (bpm)             & 87.7$\pm$19.6~(3.3\%) \\
+\quad Respiratory rate (/min)      & 18.6$\pm$3.5~(4.5\%) \\
+\quad SpO$_2$ (\%)                 & 97.4$\pm$3.6~(4.8\%) \\
+\quad Systolic BP (mmHg)           & 135$\pm$24~(4.0\%) \\
+\quad Diastolic BP (mmHg)          & 73$\pm$16~(4.3\%) \\
+\quad Pain (0--10)                 & 3.8$\pm$4.3~(8.2\%) \\
+\quad Acuity (ESI 1--5)            & 2.3$\pm$0.7~(1.2\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Time-safety and the patient-level temporal split}
+\label{subsec:timesafety}
+Every clinical feature is either a triage measurement (recorded at intake, before
+imaging by protocol) or a laboratory value with charttime in
+$(t_0{-}24\,\text{h}, t_0]$. Time-safety was verified empirically on the extracted
+laboratory events: \emph{zero} of 314{,}145 measurements have a charttime after
+$t_0$ (median lead time 1\,h). Patients are ranked by their earliest $t_0$ and
+partitioned 80/10/10 into train/validation/test, so no patient appears in more than
+one split (verified: 0 cross-split subjects, 0 duplicate studies). This ordinal-time
+construction approximates prospective deployment. The tabular preprocessor (median
+imputation, standardisation, one-hot encoding) is fit on the training split only.
+
+\subsection{Feature engineering}
+\label{subsec:features}
+\textbf{Triage features} are temperature, heart rate, respiratory rate, SpO$_2$,
+systolic and diastolic blood pressure, pain score and ESI acuity, plus the
+radiograph view and demographics. Physiologically implausible values are clipped to
+clinical ranges. For each vital a binary \emph{missingness indicator} is added and
+the value median-imputed; because ED missingness is not missing-at-random, the
+indicator itself carries information. \textbf{Laboratory features} comprise 26
+concepts (complete blood count, metabolic panel, liver panel, blood gas, lactate, and
+the inflammatory markers CRP and procalcitonin). For each study and concept we take
+the last value resolved at or before $t_0$ within the 24\,h window, and add a
+missingness flag recomputed after the cohort join.
 
 \subsection{Models}
-The image model is DenseNet-121~\citep{huang2017densenet}, ImageNet-initialised,
-multilabel-pretrained on 182{,}637 non-ED MIMIC-CXR studies, then fine-tuned for
-binary pneumonia (224\,px, class-balanced BCE). Multimodal variants concatenate
-image features with a tabular MLP over triage features (vitals, acuity, view,
-demographics, per-vital missingness flags), or fuse them via a small Transformer
-(attention ablation). The $+$labs variant appends 26 early-lab values and their
-missingness flags. Clinical baselines are logistic regression and
-XGBoost~\citep{chen2016xgboost} on triage features. A modern-backbone baseline uses a
-CheXpert-trained DenseNet-121~\citep{cohen2022torchxrayvision} zero-shot and as a
-frozen-feature linear probe. All deep models share the pretrained backbone so the
-multi-seed analysis isolates fine-tuning stochasticity; tabular preprocessing
-(median imputation, standardisation, one-hot) is fit on training data only.
+\label{subsec:models}
+The \textbf{image model} is DenseNet-121, initialised from ImageNet, multilabel-%
+pretrained on 182{,}637 non-ED MIMIC-CXR studies (14 CheXpert findings, masked
+binary cross-entropy over observed labels), then fine-tuned for binary pneumonia at
+$224\times224$ with class-balanced loss and differential learning rates
+($5\times10^{-5}$ head, $10^{-5}$ backbone). The \textbf{concatenation} model
+concatenates the 1024-d image embedding with a 128-d tabular-MLP embedding
+$[e_v; e_t]$ and applies a fully connected head; the \textbf{attention} model fuses
+the tokens $[\texttt{CLS}, e_v, e_t]$ with a two-layer Transformer and reads out the
+CLS token \citep{acosta2022multimodal}. The \textbf{$+$labs} model appends the 26 lab
+values and their flags to the tabular vector. \textbf{Clinical baselines} are
+logistic regression and XGBoost \citep{chen2016xgboost} on triage features. A
+\textbf{modern-backbone baseline} uses a CheXpert-trained DenseNet-121
+\citep{cohen2022torchxrayvision} (not trained on MIMIC), zero-shot and as a
+frozen-feature linear probe. All deep models share the multilabel-pretrained backbone
+so the multi-seed analysis isolates fine-tuning stochasticity.
 
-\subsection{Evaluation}
-Primary metrics are AUROC, AUPRC, ECE (10 uniform bins)~\citep{guo2017calibration}
-and Brier score. Each deep model is trained across five seeds
-$\{42,123,456,789,1000\}$; we report mean$\pm$SD and paired per-seed deltas against
-the image-only model on identical test rows. Within-checkpoint uncertainty uses a
-2{,}000-replicate patient-level paired bootstrap. A non-inferiority margin
-$\Delta_0{=}{-}0.05$ AUROC was pre-specified~\citep{piaggio2012noninferiority}.
-Additional analyses: ECE bin-count/scheme sensitivity, operating points at fixed
-sensitivity, subgroup metrics, a missingness-only labs ablation, and external
-validation on all NIH ChestX-ray14 radiographs~\citep{wang2017chestxray} with
-preprocessing matched to the internal evaluation transform.
+\subsection{Training and evaluation}
+\label{subsec:eval}
+Each deep model is trained across five seeds $\{42,123,456,789,1000\}$ with early
+stopping on validation AUPRC. Primary metrics are AUROC, AUPRC, ECE and Brier score,
+reported as mean$\pm$SD over seeds with paired per-seed deltas against the image-only
+model on identical test rows; within-checkpoint uncertainty uses a 2{,}000-replicate
+patient-level paired bootstrap (patients, not studies, are resampled). A
+non-inferiority margin $\Delta_0={-}0.05$ AUROC was pre-specified
+\citep{piaggio2012noninferiority}. Calibration is assessed with the ECE
+\begin{equation}
+\text{ECE} = \sum_{b=1}^{B}\frac{n_b}{n}\,\bigl|\bar p_b - \bar y_b\bigr|,
+\label{eq:ece}
+\end{equation}
+(with $B{=}10$ uniform bins; $\bar p_b, \bar y_b$ the mean predicted probability and
+observed frequency in bin $b$), the maximum calibration error, Brier score and
+reliability diagrams; ECE bin-count/scheme sensitivity is examined. Clinical utility
+uses decision-curve analysis with net benefit
+\begin{equation}
+\text{NB}(p_t) = \frac{\text{TP}}{n} - \frac{\text{FP}}{n}\cdot\frac{p_t}{1-p_t}.
+\label{eq:nb}
+\end{equation}
+Interpretability uses exact TreeSHAP \citep{chen2016xgboost} for the XGBoost baseline
+and Grad-CAM for the image branch. We additionally compute subgroup metrics (sex,
+age, race, acuity, view), operating points at fixed sensitivity, a laboratory
+\emph{missingness-only} ablation, and external validation on all 112{,}120 NIH
+ChestX-ray14 radiographs \citep{wang2017chestxray} with preprocessing matched to the
+internal transform.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Results}
 \label{sec:results}
 
-\subsection{The image dominates; fusion is discrimination-neutral}
-Across five seeds (Table~\ref{tab:main}, Fig.~\ref{fig:multiseed}), both CXR models
-beat triage-only baselines by more than 12 AUROC points. Adding triage vitals does
-not change discrimination (concat $-$ image $\Delta$AUROC $+0.004\pm0.009$; lower
-bound well inside the $-0.05$ non-inferiority margin). Attention fusion matches image
-AUROC but is severely and variably miscalibrated (ECE $0.076\pm0.042$;
-Fig.~\ref{fig:deltas}).
+\subsection{Discrimination: imaging dominates, fusion is neutral}
+\label{subsec:disc}
+Table~\ref{tab:main} and Figs.~\ref{fig:roc}--\ref{fig:multiseed} summarise the
+primary results. Both CXR models exceed the triage-only baselines by more than 12
+AUROC points, confirming that the radiograph carries the discriminative signal.
+Adding triage vitals does not change discrimination: the paired concat$-$image
+$\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$), with the effect's lower
+bound well inside the pre-specified $-0.05$ non-inferiority margin. Attention fusion
+matches image AUROC but is severely and variably miscalibrated
+(ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), illustrating that AUROC alone is
+insufficient for model selection. The precision-recall curves (Fig.~\ref{fig:pr})
+mirror the AUROC ordering at the 45.3\% prevalence.
 
 \begin{table*}[t]
 \centering
@@ -221,6 +398,22 @@ XGBoost (triage)                   & 0.611 & 0.567 & 0.046 & 0.241 \\
 \end{tabular}
 \end{table*}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig7_roc.png}
+\caption{ROC curves on the held-out test set (5-seed mean predictions for the deep
+models; AUROC of the ensemble curve shown, slightly above the per-seed means in
+Table~\ref{tab:main}).}
+\label{fig:roc}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig8_pr.png}
+\caption{Precision-recall curves at test prevalence 45.3\%.}
+\label{fig:pr}
+\end{figure}
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig1_multiseed_metrics.png}
@@ -232,84 +425,30 @@ Discrimination is stable; the image-only ECE alone varies substantially by seed.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig2_paired_deltas.png}
-\caption{Paired fusion $-$ image effects across seeds (mean$\pm$SD). Every effect
-straddles zero; the labs and lab-flags-only deltas are identical, indicating the
-labs effect is driven by missingness rather than lab values.}
+\caption{Paired fusion$-$image effects across seeds (mean$\pm$SD). Every effect
+straddles zero; the labs and lab-flags-only deltas are identical.}
 \label{fig:deltas}
 \end{figure*}
 
 \subsection{Caution 1: single-seed evaluation inflates the calibration effect}
+\label{subsec:cal}
 A single checkpoint suggested the concat model was markedly better calibrated (ECE
-0.040 vs 0.067, a 40\% reduction). Across seeds the image-only ECE alone ranges
-0.041--0.060, and the paired advantage shrinks to $\Delta$ECE $-0.013\pm0.016$ (4/5
-seeds favour concat; range crosses zero). The single-seed estimate overstated the
-benefit roughly twofold; the effect is also binning-dependent
-(Fig.~\ref{fig:ece})~\citep{nixon2019measuring}. Brier scores are essentially
-unchanged, so any effect is distributional alignment, not refinement.
-
-\subsection{Caution 2: the labs ``benefit'' is missing-data structure}
-Appending early labs gives the only seed-consistent AUROC gain (labs $-$ image
-$+0.009\pm0.005$, 5/5 seeds, range excludes zero). Three analyses show this is
-neither chemistry nor leakage. \emph{Ablation:} a model using lab \emph{missingness
-flags only} (no values) reproduces the gain exactly (flags $-$ image $+0.009$;
-Fig.~\ref{fig:deltas}); lab values add nothing further to discrimination.
-\emph{Subcohort:} on the 269 test studies that actually have labs, discrimination is
-tied (labs 0.778 vs image 0.776). \emph{Leakage audit:} 0 of 314{,}145 lab
-measurements post-$t_0$; 0 cross-split subjects; preprocessing fit on train only; the
-``any lab drawn'' indicator has near-null univariate AUROC (0.464). The gain thus
-reflects the weak complementary signal of \emph{whether} bloodwork was ordered, is
-small, and lies within the patient-level bootstrap CI.
-
-\subsection{Clinical availability of labs}
-Under time-safe matching, only 25.4\% of ED-anchored CXR studies (272/1{,}075 test)
-have any resolved lab at or before imaging; CBC and metabolic panels reach
-$\sim$25\%, but CRP and procalcitonin---the most pneumonia-specific markers---are
-present in 0.5\% and 0.6\% (Fig.~\ref{fig:labcov}). At the moment of imaging, the
-informative labs are essentially unavailable.
-
-\subsection{Operating points, subgroups, modern backbone}
-At a fixed sensitivity of 0.90, specificity is 0.31 (image) vs 0.32 (concat); at
-0.95, 0.17 vs 0.18---clinically equivalent. Subgroup AUROC reveals disparities not
-closed by fusion (Fig.~\ref{fig:subgroup}): male 0.77 vs female 0.71; White 0.75,
-Black 0.71, Hispanic 0.64 (small strata); PA view 0.75 vs AP
-0.72~\citep{seyyedkalantari2021underdiagnosis,larrazabal2020gender}. A
-CheXpert-trained DenseNet-121~\citep{cohen2022torchxrayvision}, used zero-shot (AUROC
-0.667) or as a frozen-feature linear probe (0.687), does not outperform our
-task-tuned model (0.737).
-
-\subsection{External validation}
-We evaluated the image models on all 112{,}120 radiographs of NIH
-ChestX-ray14~\citep{wang2017chestxray} (a different institution, scanner population
-and label pipeline; 1{,}431 pneumonia-positive, prevalence 1.28\%). Discrimination
-transfers with minimal loss: AUROC $0.722\pm0.005$ across five seeds (ensemble
-0.726), only 0.016 below the internal 0.737 (Fig.~\ref{fig:external}). As expected
-under the large prevalence shift ($45\%{\to}1.3\%$), prevalence-dependent metrics
-degrade (AUPRC 0.030, ECE 0.44) because probabilities are calibrated to the internal
-base rate; AUROC (prevalence-independent) is the appropriate cross-dataset metric,
-and it holds despite domain shift and NLP-derived external labels.
+0.040 vs 0.067, a 40\% reduction). Across seeds, however, the image-only ECE alone
+ranges 0.041--0.060, and the paired advantage shrinks to $\Delta$ECE $-0.013\pm0.016$
+(4/5 seeds favour concat; the range crosses zero). The single-seed estimate thus
+overstated the benefit roughly twofold. The apparent gap is also binning-dependent
+(Fig.~\ref{fig:ece}): under coarser or quantile bins it shrinks further
+\citep{nixon2019measuring}. Brier scores are essentially unchanged, so any effect is
+distributional alignment rather than refinement. Reliability diagrams
+(Fig.~\ref{fig:reliability}) show all deep models tracking the diagonal closely, with
+attention fusion the clear outlier.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.95\columnwidth]{figures/fig6_external_nih.png}
-\caption{Cross-institution generalisation: per-seed AUROC on internal MIMIC
-($n{=}1{,}075$) vs external NIH ChestX-ray14 ($n{=}112{,}120$); mean drop $-0.016$.}
-\label{fig:external}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.95\columnwidth]{figures/fig4_lab_coverage.png}
-\caption{Fraction of test studies with each lab resolved at or before $t_0$;
-pneumonia-specific markers (red) are essentially unavailable at imaging time.}
-\label{fig:labcov}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.95\columnwidth]{figures/fig3_subgroup_auroc.png}
-\caption{Subgroup AUROC (mean$\pm$SD across seeds) for image-only vs concat fusion;
-fusion does not close sex, race or view gaps.}
-\label{fig:subgroup}
+\includegraphics[width=0.95\columnwidth]{figures/fig9_reliability.png}
+\caption{Reliability diagrams (10 bins). The deep models track the diagonal;
+attention fusion systematically under-predicts.}
+\label{fig:reliability}
 \end{figure}
 
 \begin{figure}[t]
@@ -320,28 +459,221 @@ depends on the binning choice.}
 \label{fig:ece}
 \end{figure}
 
+\subsection{Caution 2: the ``labs'' benefit is missing-data structure}
+\label{subsec:labs}
+Appending early labs gives the only seed-consistent AUROC gain (labs$-$image
+$+0.009\pm0.005$, 5/5 seeds, range excluding zero). Three analyses show this is
+neither chemistry nor leakage. \emph{Ablation:} a model using laboratory
+\emph{missingness flags only} (no values) reproduces the gain exactly (flags$-$image
+$+0.009$; Fig.~\ref{fig:deltas}); the lab values add nothing further to
+discrimination. \emph{Subcohort:} on the 269 test studies that actually have labs,
+discrimination is tied (labs 0.778 vs image 0.776). \emph{Leakage audit:} 0 of
+314{,}145 lab measurements post-$t_0$; 0 cross-split subjects; preprocessing fit on
+train only; the ``any lab drawn'' indicator has near-null univariate AUROC (0.464).
+The gain therefore reflects the weak complementary signal of \emph{whether} bloodwork
+was ordered, is small, and lies within the patient-level bootstrap CI.
+
+\subsection{Clinical availability of laboratory results}
+\label{subsec:labcov}
+Under time-safe matching, only 25.4\% of ED-anchored CXR studies (272/1{,}075 test)
+have any resolved laboratory value at or before imaging (Fig.~\ref{fig:labcov}).
+Complete-blood-count and metabolic panels reach $\sim$25\%, but the most
+pneumonia-specific markers---CRP and procalcitonin---are present in only 0.5\% and
+0.6\% of studies. At the moment of imaging the informative labs are essentially
+unavailable, which explains both the small labs effect and its missingness origin.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig4_lab_coverage.png}
+\caption{Fraction of test studies with each laboratory value resolved at or before
+$t_0$; pneumonia-specific markers (red) are essentially unavailable at imaging time.}
+\label{fig:labcov}
+\end{figure}
+
+\subsection{Operating points and clinical utility}
+\label{subsec:op}
+ED triage for pneumonia prioritises sensitivity. At a fixed sensitivity of 0.90 the
+specificity is 0.31 (image) versus 0.32 (concat); at 0.95, 0.17 versus 0.18
+(Table~\ref{tab:op})---clinically equivalent operating behaviour. Decision-curve
+analysis (Fig.~\ref{fig:dca}) shows both CXR models providing substantially higher
+net benefit than the triage-only baselines and the treat-all/treat-none references
+across the clinically relevant threshold range, with the image and multimodal curves
+essentially overlapping.
+
+\begin{table}[t]
+\centering
+\caption{Operating points at fixed sensitivity (mean over 5 seeds).}
+\label{tab:op}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Model & Sens. & Spec. & PPV & NPV \\
+\midrule
+Image  & 0.90 & 0.310 & 0.520 & 0.791 \\
+Concat & 0.90 & 0.322 & 0.524 & 0.797 \\
+Image  & 0.95 & 0.173 & 0.488 & 0.808 \\
+Concat & 0.95 & 0.179 & 0.490 & 0.814 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig10_dca.png}
+\caption{Decision-curve analysis: net benefit versus threshold probability. Imaging
+models dominate the triage baselines and reference strategies.}
+\label{fig:dca}
+\end{figure}
+
+\subsection{Subgroup performance}
+\label{subsec:subgroup}
+Table~\ref{tab:subgroup} and Fig.~\ref{fig:subgroup} report subgroup AUROC.
+Performance is markedly lower for female than male patients (0.71 vs 0.77) and for
+Hispanic patients (0.64) relative to White (0.75); PA views outperform AP (0.75 vs
+0.72). Fusion does not consistently close these gaps and, in the smallest strata, can
+slightly worsen calibration. These disparities echo documented underdiagnosis biases
+in CXR models \citep{seyyedkalantari2021underdiagnosis,larrazabal2020gender} and are
+reported here as a prerequisite fairness audit rather than a solved problem; small
+minority strata carry wide confidence intervals.
+
+\begin{table}[t]
+\centering
+\caption{Subgroup AUROC (mean over 5 seeds) for image-only and concat fusion.
+Small strata (e.g.\ Hispanic, Asian) have wide CIs.}
+\label{tab:subgroup}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Subgroup & Image & Concat \\
+\midrule
+Female            & 0.713 & 0.715 \\
+Male              & 0.770 & 0.776 \\
+White             & 0.751 & 0.756 \\
+Black             & 0.710 & 0.709 \\
+Hispanic          & 0.640 & 0.655 \\
+PA view           & 0.748 & 0.758 \\
+AP view           & 0.721 & 0.715 \\
+High acuity (1--2)& 0.759 & 0.761 \\
+Lower acuity (3--5)&0.705 & 0.711 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig3_subgroup_auroc.png}
+\caption{Subgroup AUROC (mean$\pm$SD across seeds); fusion does not close sex, race
+or view gaps.}
+\label{fig:subgroup}
+\end{figure}
+
+\subsection{Interpretability}
+\label{subsec:interp}
+For the triage-only XGBoost model, exact TreeSHAP attributes the largest importance
+to SpO$_2$ (mean $|\text{SHAP}|=0.148$), followed by heart rate (0.099), temperature
+(0.078) and respiratory rate (0.062) (Table~\ref{tab:shap};
+Fig.~\ref{fig:shap})---consistent with the pathophysiology of pneumonia, in which
+alveolar consolidation impairs gas exchange. Grad-CAM on the image branch
+(Fig.~\ref{fig:gradcam}) localises activation over regions of consolidation in
+confident true positives, whereas a false positive attends to overlapping opacity and
+a false negative shows diffuse, non-localised activation.
+
+\begin{table}[t]
+\centering
+\caption{Mean $|\text{SHAP}|$ for the triage XGBoost model (test set).}
+\label{tab:shap}
+\begin{tabular}{@{}lc@{}}
+\toprule
+Feature & Mean $|\text{SHAP}|$ \\
+\midrule
+SpO$_2$          & 0.148 \\
+Heart rate       & 0.099 \\
+Temperature      & 0.078 \\
+Respiratory rate & 0.062 \\
+PA-view indicator& 0.053 \\
+Systolic BP      & 0.043 \\
+Diastolic BP     & 0.042 \\
+Acuity (ESI)     & 0.031 \\
+Pain score       & 0.012 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{figures/fig11_shap_beeswarm.png}
+\caption{SHAP summary (beeswarm) for the triage XGBoost model; low SpO$_2$ pushes
+predictions toward pneumonia.}
+\label{fig:shap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/fig12_gradcam.png}
+\caption{Grad-CAM on the image model for representative test cases: a confident true
+positive, a false positive, and a false negative.}
+\label{fig:gradcam}
+\end{figure}
+
+\subsection{Modern backbone and external validation}
+\label{subsec:ext}
+A CheXpert-trained DenseNet-121 \citep{cohen2022torchxrayvision}, used zero-shot
+(AUROC 0.667) or as a frozen-feature linear probe (0.687), does not outperform our
+task-tuned model (0.737), indicating the conclusions are not an artefact of an
+outdated backbone. On external validation against all 112{,}120 NIH ChestX-ray14
+radiographs \citep{wang2017chestxray} (a different institution, scanner population and
+label pipeline; prevalence 1.28\%), discrimination transfers with minimal loss:
+AUROC $0.722\pm0.005$ across five seeds (ensemble 0.726), only 0.016 below the
+internal 0.737 (Fig.~\ref{fig:external}). As expected under the large prevalence shift
+($45\%\to1.3\%$), prevalence-dependent metrics degrade (AUPRC 0.030, ECE 0.44)
+because probabilities are calibrated to the internal base rate; AUROC, which is
+prevalence-independent, is the appropriate cross-dataset metric, and it holds despite
+domain shift and NLP-derived external labels.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig6_external_nih.png}
+\caption{Cross-institution generalisation: per-seed AUROC on internal MIMIC
+($n{=}1{,}075$) versus external NIH ChestX-ray14 ($n{=}112{,}120$); mean drop
+$-0.016$.}
+\label{fig:external}
+\end{figure}
+
 % ═════════════════════════════════════════════════════════════════════
 \section{Discussion}
 \label{sec:discussion}
 The chest radiograph carries the discriminative signal for radiographic pneumonia in
-this ED cohort; immediately available structured clinical context---triage vitals,
-and even a broad early-lab panel---does not add reliable discrimination, and the
-image model generalises externally with minimal loss. This is a well-powered
-negative answer to a specific, clinically motivated question, accompanied by two
-transferable methodological cautions. Reporting calibration or small discrimination
-effects from a single training run can overstate them (here $\sim$2$\times$);
-multi-seed replication should be standard. And where clinical inputs are heavily and
-non-randomly missing, a multimodal model can exploit missingness structure and
-present a spurious benefit that neither reflects the measured values nor
-generalises---a failure mode distinct from data leakage, which our audits explicitly
-excluded.
+this ED cohort. Immediately available structured clinical context---triage vitals,
+and even a broad early-laboratory panel---does not add reliable discrimination, and
+the image model generalises externally with minimal loss. The asymmetry is
+intuitive: the radiograph encodes the outcome (radiographic consolidation) almost
+directly, whereas vital signs and labs encode severity and physiological perturbation
+that are correlated with, but not specific to, pneumonia.
+
+Two findings generalise beyond this application. First, a calibration advantage that
+appears substantial from a single training run (a 40\% ECE reduction) is roughly
+halved and becomes seed-fragile under five-seed replication; single-seed calibration
+claims should be treated with caution, and multi-seed replication should be standard.
+Second, where clinical inputs are heavily and non-randomly missing, a multimodal
+model can exploit missingness structure and present a spurious benefit that neither
+reflects the measured values (the lab-present subcohort shows no value effect) nor
+constitutes leakage (temporal, split and preprocessing audits are clean). The
+missingness-only ablation makes this mechanism explicit and is, to our knowledge, a
+rarely reported control in clinical multimodal studies. Both cautions are
+actionable and inexpensive.
+
+\paragraph{Comparison to related work.} Unlike prior multimodal CXR studies that
+report single-run gains on ICU or inpatient cohorts
+\citep{hayat2022medfuse,soenksen2022multimodal}, we evaluate ED pneumonia under a
+verified time-safety constraint with multi-seed replication and explicit audits, and
+reach a negative but well-powered conclusion on discrimination. Direct numerical
+comparison across cohorts and label definitions is uninformative; the methodological
+contribution is the rigour of the evaluation and the two cautions.
 
 \paragraph{Limitations.} Training and multimodal evaluation are single-institution
 (MIMIC) and retrospective; external validation confirms the image branch generalises
 to NIH but is necessarily limited to imaging, as no external dataset links ED triage
 to the CXR, and probabilities require recalibration to the target base rate before
-deployment (the \texttt{u\_ignore} policy also raises internal evaluation prevalence
-to 45.3\%). The lab-present subcohort is small ($n{=}269$); the modern-backbone
+deployment (the \emph{u\_ignore} policy also raises internal evaluation prevalence to
+45.3\%). The lab-present subcohort is small ($n{=}269$); the modern-backbone
 comparison uses frozen features rather than end-to-end fine-tuning; and NIH labels
 are NLP-derived, adding label noise to the external estimate.
 
@@ -351,36 +683,33 @@ are NLP-derived, adding label noise to the external estimate.
 Under strict time-safety and multi-seed evaluation, fusing immediately available
 clinical context with the chest radiograph does not reliably improve pneumonia
 discrimination, and the one apparent gain is an artefact of missing-data structure.
-The image model itself is robust and generalises across institutions. Beyond the
-negative result, the study offers two reusable cautions---single-seed calibration
-inflation and missingness-as-signal---for the growing field of clinical multimodal
-AI.
+The image model itself is robust and generalises across institutions with an AUROC
+drop of only 0.016. Beyond the negative result, the study contributes a reproducible,
+time-safe multimodal ED pipeline and two reusable cautions---single-seed calibration
+inflation and missingness-as-signal---for the growing field of clinical multimodal AI.
+Future work includes end-to-end fine-tuning of modern foundation backbones,
+multi-site validation, and prospective evaluation with recalibration to the local
+base rate.
 
 % ─────────────────────────────────────────────────────────────────────
 \section*{Declarations}
-
-\paragraph{Acknowledgements.} The authors thank the MIT Laboratory for
-Computational Physiology and PhysioNet for maintaining and distributing the MIMIC
-databases, and the U.S. National Institutes of Health for the ChestX-ray14 dataset.
-
+\paragraph{Acknowledgements.} The authors thank the MIT Laboratory for Computational
+Physiology and PhysioNet for maintaining and distributing the MIMIC databases, and the
+U.S. National Institutes of Health for the ChestX-ray14 dataset.
 \paragraph{Authors' contributions.} YAD designed and implemented the data pipeline,
-trained all models, and performed the analyses. AME conceptualised and supervised
-the study and contributed to the manuscript. MM and SS contributed to methodology,
-interpretation, and critical revision. All authors read and approved the final
+trained all models and performed the analyses. AME conceptualised and supervised the
+study and contributed to the manuscript. MM and SS contributed to methodology,
+interpretation and critical revision. All authors read and approved the final
 manuscript.
-
 \paragraph{Funding.} The authors received no specific funding for this work.
-
 \paragraph{Conflict of interest.} The authors declare no competing interests.
-
-\paragraph{Ethics approval.} All data are publicly available and de-identified
-(MIMIC under PhysioNet's credentialed Data Use Agreement; NIH ChestX-ray14 public
-release). No additional ethical approval was required; procedures followed the
-Declaration of Helsinki.
-
+\paragraph{Ethics approval.} All data are publicly available and de-identified (MIMIC
+under PhysioNet's credentialed Data Use Agreement; NIH ChestX-ray14 public release).
+No additional ethical approval was required; procedures followed the Declaration of
+Helsinki.
 \paragraph{Data and code availability.} MIMIC and NIH ChestX-ray14 are publicly
-available (MIMIC via PhysioNet credentialing). All pipeline, training, and evaluation
-code is available at \url{https://github.com/wa5rx3/MultiModalPneumonia}. Every
+available (MIMIC via PhysioNet credentialing). All pipeline, training and evaluation
+code is available at \url{https://github.com/wa5rx3/MultiModalPneumonia}; every
 reported number is regenerated by a named script tied to the fixed temporal split.
 
 % ─────────────────────────────────────────────────────────────────────
