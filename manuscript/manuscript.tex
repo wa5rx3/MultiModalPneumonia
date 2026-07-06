@@ -687,6 +687,40 @@ $-0.016$.}
 \label{fig:external}
 \end{figure}
 
+\subsection{Label-policy sensitivity}
+\label{subsec:labelpol}
+CheXpert uncertain labels can be excluded (\emph{u\_ignore}, our primary policy),
+mapped to negative (\emph{u\_zero}) or positive (\emph{u\_one}); each changes the
+cohort size and prevalence (Table~\ref{tab:labelpol}). The \emph{u\_zero} policy
+sharply lowers AUROC and AUPRC because treating uncertain studies as negative
+injects label noise and false negatives, whereas \emph{u\_one} inflates prevalence
+to 69.8\% and thus raises both metrics; \emph{u\_ignore} is intermediate and the
+most defensible. Critically, the image and concat models remain essentially
+equivalent under every policy, confirming that the discrimination-neutrality of
+fusion is not an artefact of the uncertainty-handling choice.
+
+\begin{table}[t]
+\centering
+\caption{Label-policy sensitivity (seed 42): AUROC/AUPRC for image and concat under
+three CheXpert uncertainty policies. Test size and prevalence differ by policy.}
+\label{tab:labelpol}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Model & Policy & Test $n$ & AUROC & AUPRC \\
+\midrule
+\multirow{3}{*}{Image}
+ & u\_ignore & 1{,}075 & 0.739 & 0.724 \\
+ & u\_zero   & 1{,}944 & 0.597 & 0.342 \\
+ & u\_one    & 1{,}944 & 0.761 & 0.873 \\
+\addlinespace
+\multirow{3}{*}{Concat}
+ & u\_ignore & 1{,}075 & 0.736 & 0.714 \\
+ & u\_zero   & 1{,}944 & 0.595 & 0.357 \\
+ & u\_one    & 1{,}944 & 0.765 & 0.876 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % ═════════════════════════════════════════════════════════════════════
 \section{Discussion}
 \label{sec:discussion}
