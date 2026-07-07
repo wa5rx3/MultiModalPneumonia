@@ -30,8 +30,8 @@
 \begin{document}
 
 \title{Does Structured Triage Context Help a Chest-Radiograph Pneumonia Model?
-A Time-Safe, Multi-Seed, Externally-Validated Multimodal Study
-with Missing-Data Cautions}
+A Time-Safe, Replicated, Externally Validated Multimodal Study
+with Cautions on Calibration and Missing Data}
 
 \titlerunning{Multimodal Pneumonia Detection in the Emergency Department}
 
@@ -55,7 +55,7 @@ with Missing-Data Cautions}
        \email{} % TODO: institutional email
   \and
   Arafat Md Easin
-    \at Department of Software Technology and Methodology, Faculty of Informatics,
+    \at Department of Data Science and Engineering, Faculty of Informatics,
        E\"{o}tv\"{o}s Lor\'{a}nd University, P\'{a}zm\'{a}ny P\'{e}ter S\'{e}t\'{a}ny 1/C,
        Budapest 1117, Hungary \\
        \email{arafatmdeasin@inf.elte.hu}
@@ -76,43 +76,43 @@ with Missing-Data Cautions}
 \maketitle
 
 \begin{abstract}
-\textbf{Background:} Emergency-department (ED) triage records structured vital
-signs before chest imaging, motivating multimodal models that fuse the chest
-radiograph (CXR) with clinical context for pneumonia detection. Whether such fusion
-helps, under strict time-safety and rigorous multi-seed evaluation, remains
-unclear, and prior studies often report single-run results without leakage or
-missing-data audits.
-\textbf{Methods:} We construct a temporally safe cohort by linking MIMIC-CXR-JPG,
-MIMIC-IV and MIMIC-IV-ED, anchoring every feature at the CXR acquisition time $t_0$
-and admitting only measurements resolved at or before $t_0$. On a patient-level
-temporal split (test $n{=}1{,}075$; prevalence 45.3\%) we train image-only,
-concatenation- and attention-fusion, and clinical-baseline models across five random
-seeds, and add a time-safe early-laboratory panel as a third modality. We formalise
-the procedure as a reusable evaluation protocol, TEMPO (time-safe, equivalence-tested,
-missingness-audited, patient-level, out-of-sample). We report AUROC, AUPRC, expected
-calibration error (ECE) and Brier score as mean$\pm$SD over seeds with paired per-seed
-deltas and patient-level bootstrap intervals, test discrimination equivalence against
-the margin with two one-sided tests (TOST), and add decision-curve and subgroup
-analyses, SHAP and Grad-CAM interpretability, external validation on NIH ChestX-ray14,
-and explicit temporal, split and preprocessing leakage audits.
-\textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, far above
-triage-only baselines (0.61). Adding triage vitals leaves discrimination unchanged
-($\Delta$AUROC $+0.004\pm0.009$; equivalence to image-only confirmed by TOST against a
+\textbf{Background:} On arrival at the emergency department (ED), triage nurses record
+vital signs before any chest imaging is ordered. This has motivated multimodal models
+that combine the chest radiograph (CXR) with clinical context to detect pneumonia. It
+remains unclear whether such fusion actually helps once the features are restricted to
+what was available at the moment of prediction and the results are repeated across
+training runs, because earlier studies often report a single run and omit audits for
+leakage and missing data.
+\textbf{Methods:} We built a cohort that respects timing by linking MIMIC-CXR-JPG,
+MIMIC-IV and MIMIC-IV-ED, anchoring every feature to the moment the radiograph was
+acquired ($t_0$) and admitting only measurements resolved at or before $t_0$. Splitting
+by patient and by time (test $n{=}1{,}075$; prevalence 45.3\%), we trained an image
+model, concatenation and attention fusion models, and clinical baselines over five
+random seeds, and added an early laboratory panel as a third modality. We present the
+procedure as a reusable protocol, TEMPO (time-safe, equivalence-tested,
+missingness-audited, patient-level, out-of-sample). Alongside AUROC, AUPRC, expected
+calibration error (ECE) and Brier score, reported as mean$\pm$SD over seeds with paired
+deltas and patient-level bootstrap intervals, we test equivalence against the margin
+with two one-sided tests (TOST) and report decision-curve, subgroup, interpretability
+(SHAP and Grad-CAM) and external analyses on NIH ChestX-ray14, together with explicit
+temporal, split and preprocessing audits.
+\textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, well above
+the triage baselines (0.61). Adding triage vitals leaves discrimination unchanged
+($\Delta$AUROC $+0.004\pm0.009$; TOST confirms equivalence to the image model against a
 pre-specified $\pm0.05$ margin, with 80\% power to detect a difference of 0.010), and a
-MedFuse-style late-fusion design is likewise neutral. A
-calibration advantage reported from a single checkpoint (ECE 0.040 vs 0.067) shrinks
-to $\Delta$ECE $-0.013\pm0.016$ across seeds; single-seed evaluation overstated it
-$\sim$2$\times$. Adding early labs yields a small, seed-consistent AUROC gain
-($+0.009\pm0.005$) that an ablation shows is reproduced exactly by lab
-\emph{missingness indicators alone}, with no contribution from lab values, and is not
-leakage. Externally, discrimination transfers with minimal loss (AUROC
+late-fusion design in the style of MedFuse behaves the same way. A calibration
+advantage that looked large in one run (ECE 0.040 vs 0.067) falls to
+$\Delta$ECE $-0.013\pm0.016$ once averaged over seeds, so a single run overstated it
+roughly twofold. Early labs give a small but consistent gain ($+0.009\pm0.005$) that an
+ablation traces entirely to which labs were ordered rather than to their values, and
+that is not leakage. On external data the image model transfers with little loss (AUROC
 $0.722\pm0.005$ on 112{,}120 NIH radiographs).
-\textbf{Conclusion:} The chest radiograph carries the discriminative signal;
-immediately available clinical context does not reliably add discrimination, and
-naive multimodal fusion can appear beneficial for reasons that will not generalise.
-We offer two transferable cautions for machine reasoning in clinical multimodal AI:
-single-seed calibration inflation (unstable machine confidence), and missingness
-masquerading as multimodal benefit (reasoning from absence).
+\textbf{Conclusion:} The radiograph carries the signal that separates pneumonia from
+its absence; the clinical context available at triage does not reliably add to it, and
+a naive fusion model can look helpful for reasons that will not hold up. We draw two
+cautions for clinical multimodal AI: a single training run can inflate an apparent
+calibration gain, and a model can lean on the pattern of which measurements are missing
+and pass it off as a benefit of the added modality.
 \keywords{Pneumonia detection \and Chest radiograph \and Multimodal fusion \and
 Emergency department triage \and Reasoning under uncertainty \and Calibration \and
 Informative missingness \and Equivalence testing \and Reproducibility \and External
@@ -122,72 +122,71 @@ validation}
 % ═════════════════════════════════════════════════════════════════════
 \section{Introduction}
 \label{sec:introduction}
-Pneumonia is an acute lower respiratory tract infection and a leading cause of
-emergency-department (ED) presentation, hospital admission and death worldwide
+Pneumonia is an acute lower respiratory tract infection and one of the leading reasons
+for emergency department (ED) presentation, hospital admission and death worldwide
 \citep{metlay2019idsa}. The frontal chest radiograph (CXR) is the recommended
-first-line imaging investigation, but its clinical value is bottlenecked by
-radiologist availability during peak ED demand. Automated CXR analysis that produces
-\emph{well-calibrated} probability estimates is therefore an attractive
-decision-support tool, and deep convolutional networks now approach radiologist-level
-performance on several radiographic findings \citep{huang2017densenet}.
+first-line investigation, yet its value in the ED is limited by how quickly a
+radiologist can read it during busy periods. An automated reader that returns well
+calibrated probabilities is therefore appealing for decision support, and deep
+convolutional networks now approach expert performance on many radiographic findings
+\citep{huang2017densenet}.
 
-A structurally appealing but underused source of complementary information is the ED
-triage record. On arrival, a triage nurse records vital signs (temperature, heart
-rate, respiratory rate, peripheral oxygen saturation (SpO$_2$), blood pressure, a
-pain score) and an acuity level, \emph{before} any imaging is ordered. Multimodal
-models that fuse the CXR with this immediately available context are widely proposed
-\citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the
-intuition that combining the two streams should better reflect the clinical picture
-at the moment of decision. This intuition mirrors clinical cognition: a physician
-integrates the radiographic image with physiological context rather than reading
-either in isolation. Whether a machine learner realises the same integration benefit,
-however, is an empirical question that turns on how much \emph{non-redundant}
-information each modality carries about the target.
+An appealing but underused source of complementary information is the ED triage record.
+On arrival a nurse records vital signs (temperature, heart rate, respiratory rate,
+peripheral oxygen saturation (SpO$_2$), blood pressure and a pain score) together with
+an acuity level, all \emph{before} imaging is ordered. Combining the radiograph with
+this readily available context is widely proposed
+\citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the intuition
+that the two together should better reflect the clinical picture at the moment of
+decision. The intuition mirrors how clinicians work: a physician reads the image
+alongside the patient's physiology rather than in isolation. Whether a model gains the
+same benefit is an empirical question, and it depends on how much information each
+modality carries that the other does not.
 
-Three methodological issues, however, recur across this literature and motivate the
-present study. First, \emph{temporal safety}: clinical variables are frequently
-included without verifying they were actually available at prediction time, risking
-optimistic leakage from information generated after the decision point. Second,
-\emph{single-seed reporting}: calibration and small discrimination effects are often
-reported from a single training run, although both are sensitive to training
-stochasticity \citep{guo2017calibration,nixon2019measuring}. Third, \emph{missing
-data}: clinical inputs in the ED are heavily and non-randomly missing, so a model may
-exploit \emph{whether} a measurement exists rather than its value, an effect that
-can masquerade as a genuine multimodal benefit.
+Three recurring problems in this literature motivate our study. The first is timing:
+clinical variables are often included without checking that they were actually
+available when the prediction is made, which risks leaking information generated after
+the decision point. The second is reliance on a single run: calibration and small
+differences in discrimination are frequently reported from one training seed, even
+though both are sensitive to training randomness
+\citep{guo2017calibration,nixon2019measuring}. The third is missing data: clinical
+inputs in the ED are missing often and not at random, so a model can learn from
+\emph{whether} a measurement was taken rather than from its value, which can look like
+a genuine benefit of the extra modality.
 
-We address a deliberately conditional question, \emph{when, if ever, does
-immediately available clinical context help a CXR pneumonia model?}, under strict
-time-safety, with multi-seed replication and explicit missing-data and leakage
-audits, and report in line with prediction-model and medical-imaging guidance
-\citep{collins2024tripodai,tejani2024claim}. Our contribution is not a new
-architecture but a rigorous, reproducible, externally-validated evaluation protocol,
-which we call \textbf{TEMPO} (Time-safe, Equivalence-tested, Missingness-audited,
-Patient-level, Out-of-sample; Algorithm~\ref{alg:tempo}), that operationalises
-existing reporting guidance for the specific hazards of clinical multimodal fusion and
-yields a clear answer and two transferable cautions:
+We therefore ask a deliberately conditional question: \emph{when, if ever, does the
+clinical context available at triage help a CXR pneumonia model?} We answer it under a
+verified timing constraint, with replication across seeds and explicit audits for
+missing data and leakage, following current reporting guidance for prediction models
+and medical imaging \citep{collins2024tripodai,tejani2024claim}. Rather than a new
+architecture, our contribution is a careful and reproducible evaluation, validated on
+external data, which we call \textbf{TEMPO} (Time-safe, Equivalence-tested,
+Missingness-audited, Patient-level, Out-of-sample; Algorithm~\ref{alg:tempo}). It
+adapts established reporting guidance to the particular hazards of clinical multimodal
+fusion, and it yields a clear answer together with two transferable cautions:
 
 \begin{itemize}
-\item A \textbf{temporally safe, reproducible multimodal ED cohort} linking three
-  MIMIC databases at the CXR acquisition time $t_0$, with every feature verified to
-  precede imaging (0 of 314{,}145 laboratory values post-$t_0$).
-\item A \textbf{multi-seed evaluation} (five seeds) of image-only, triage-fusion and
-  laboratory-fusion models with paired bootstrap comparisons, showing that
-  immediately available clinical context is \emph{discrimination-neutral}.
-\item A \textbf{decision heuristic for when fusion helps}: multimodal CXR fusion adds
-  discriminative value when the target lies partly outside the image (prognosis,
-  screening), but not when the image essentially defines the label (radiographic
-  diagnosis), which reconciles our negative result with the positive results reported
-  for prognostic tasks and guides where fusion is worth the added complexity.
-\item \textbf{Caution 1 (single-seed calibration inflation):} a calibration advantage
-  that appears large from one checkpoint shrinks roughly twofold and becomes
-  seed-fragile under replication.
-\item \textbf{Caution 2 (missingness as signal):} a small ``labs'' gain that is
-  reproduced entirely by laboratory \emph{missingness indicators}, not the measured
-  values, and is not attributable to leakage.
+\item A \textbf{time-safe, reproducible multimodal ED cohort} that links three MIMIC
+  databases at the radiograph acquisition time $t_0$, with every feature checked to
+  precede imaging (none of 314{,}145 laboratory values fall after $t_0$).
+\item An \textbf{evaluation across five seeds} of the image model, triage fusion and
+  laboratory fusion, compared with a paired bootstrap, which shows that the clinical
+  context available at triage does not improve discrimination.
+\item A \textbf{rule of thumb for when fusion helps}: combining the radiograph with
+  clinical data adds value when the target lies partly outside the image, as in
+  prognosis or screening, but not when the image itself defines the label, as in
+  radiographic diagnosis. This reconciles our negative result with the gains reported
+  for prognostic tasks and indicates where fusion is worth the extra complexity.
+\item \textbf{Caution 1 (single-run calibration inflation):} a calibration advantage
+  that looks large from one training run shrinks by about half and becomes unstable
+  once the run is repeated across seeds.
+\item \textbf{Caution 2 (missingness as signal):} a small gain from laboratory data
+  that an ablation reproduces entirely from the \emph{missingness indicators}, with no
+  contribution from the measured values, and that is not leakage.
 \item \textbf{External validation} of the image model on 112{,}120 NIH ChestX-ray14
-  radiographs, showing cross-institution generalisation with an AUROC drop of only
-  $0.016$, together with subgroup, decision-curve, interpretability and
-  modern-backbone analyses.
+  radiographs, where it generalises across institutions with an AUROC drop of only
+  $0.016$, together with subgroup, decision-curve, interpretability and modern-backbone
+  analyses.
 \end{itemize}
 
 % ═════════════════════════════════════════════════════════════════════
@@ -324,7 +323,7 @@ missingness attribution
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Datasets and how they are used}
+\subsection{Dataset description}
 \label{subsec:datasets}
 The task is binary radiographic-pneumonia classification of a frontal ED CXR. Each
 of the three MIMIC components plays a distinct role. MIMIC-CXR-JPG supplies the
@@ -673,7 +672,7 @@ attention fusion systematically under-predicts.}
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\columnwidth]{figures/fig5_ece_bin_sensitivity.png}
-\caption{ECE under different binning schemes; the image--concat calibration gap
+\caption{ECE under different binning schemes; the gap between the image and concat
 depends on the binning choice.}
 \label{fig:ece}
 \end{figure}
@@ -911,107 +910,103 @@ intuitive: the radiograph encodes the outcome (radiographic consolidation) almos
 directly, whereas vital signs and labs encode severity and physiological perturbation
 that are correlated with, but not specific to, pneumonia.
 
-Two findings generalise beyond this application. First, a calibration advantage that
-appears substantial from a single training run (a 40\% ECE reduction) is roughly
-halved and becomes seed-fragile under five-seed replication; single-seed calibration
-claims should be treated with caution, and multi-seed replication should be standard.
-Second, where clinical inputs are heavily and non-randomly missing, a multimodal
-model can exploit missingness structure and present a spurious benefit that neither
-reflects the measured values (the lab-present subcohort shows no value effect) nor
-constitutes leakage (temporal, split and preprocessing audits are clean). The
-missingness-only ablation makes this mechanism explicit and is, to our knowledge, a
-rarely reported control in clinical multimodal studies. Both cautions are
-actionable and inexpensive.
+Two findings carry beyond this particular task. First, a calibration advantage that
+looks large in a single run (a 40\% reduction in ECE) is roughly halved and becomes
+unstable once we average over five seeds; calibration claims from one run should be
+read with caution, and replication across seeds ought to be routine. Second, when
+clinical inputs are missing often and not at random, a fusion model can exploit the
+pattern of missingness and show a benefit that reflects neither the measured values
+(the subcohort with labs present shows no effect of the values) nor leakage (the
+temporal, split and preprocessing audits are clean). The ablation that keeps only the
+missingness indicators makes this mechanism explicit, and to our knowledge it is
+rarely reported in clinical multimodal studies. Both cautions are easy and cheap to
+apply.
 
-\paragraph{A cognitive-computation view.} Multimodal fusion is at heart a machine
-analogue of clinical cognition: integrating heterogeneous evidence, an image,
-physiological signals, and even what was and was not measured, into a single judgement
-under uncertainty. Framed this way, our two cautions are about machine \emph{reasoning}
-rather than bookkeeping. Caution 1 concerns the reliability of the machine's expressed
-confidence: a calibration estimate from one training run is an unstable read on how far
-the model should be trusted, so uncertainty must be characterised across replicates
-before it can inform a decision. Caution 2 concerns reasoning from \emph{absence}: an ED
-record is missing not at random, and a learner readily treats the mere presence of a
-measurement as evidence, echoing the clinician's inference that ``a test was ordered''
-is itself informative, but conflating that ordering signal with physiological content.
-Recognising when integrated evidence genuinely adds information, and when apparent gains
-instead reflect confidence instability or the structure of missingness, is a general
-concern for cognitively inspired decision-support systems well beyond this radiographic
-task.
+\paragraph{A cognitive-computation view.} Fusion is, in effect, a machine version of
+clinical reasoning: it brings together different kinds of evidence, the image, the
+physiological signals, and even what was and was not measured, into one judgement under
+uncertainty. Seen this way, our two cautions are about how the machine reasons rather
+than about bookkeeping. The first concerns how far its stated confidence can be
+trusted: a calibration figure from one training run is a shaky guide, so its
+uncertainty has to be measured across repeated runs before it can inform a decision.
+The second concerns reasoning from absence: an ED record is missing for reasons that
+are not random, and a model readily treats the presence of a measurement as evidence,
+much as a clinician reads ``a test was ordered'' as informative, but it confuses that
+ordering signal with the physiology it is meant to capture. Knowing when combined
+evidence truly adds information, and when an apparent gain instead reflects unstable
+confidence or the structure of missingness, matters for cognitively inspired decision
+support well beyond this radiographic task.
 
-\paragraph{When should fusion be expected to help?} Our result sharpens a practical
-heuristic. Multimodal CXR fusion has been most successful for \emph{prognostic} and
-\emph{screening} targets whose ground truth is not the radiograph itself, for example
-ICU mortality~\citep{hayat2022medfuse}, inpatient
-outcomes~\citep{soenksen2022multimodal} and ED acute-heart-failure
-screening~\citep{lee2024multimodal}, where clinical context supplies information the
+\paragraph{When does fusion help?} Our result sharpens a simple rule. Fusion of the
+radiograph with clinical data has worked best for prognostic and screening targets
+whose ground truth is not the image itself, such as ICU mortality~\citep{hayat2022medfuse},
+inpatient outcomes~\citep{soenksen2022multimodal} and screening for acute heart failure
+in the ED~\citep{lee2024multimodal}, where the clinical record supplies information the
 image cannot. Radiographic pneumonia is the opposite case: the label is defined by the
-image, so the marginal information in triage vitals or early labs is small, and our
-well-powered negative result is exactly what this heuristic predicts. The finding is
-thus not that fusion ``fails'' but that its value is conditional on the target lying
-partly outside the imaging modality, which should guide where fusion is worth the added
-complexity in ED decision support.
+image, so triage vitals and early labs have little to add, and our result is what the
+rule predicts. The point is not that fusion fails, but that its value depends on the
+target lying partly outside the image, which is a useful guide to where fusion is worth
+the extra complexity in the ED.
 
-\paragraph{Label provenance and the discrimination ceiling.} Two related objections
-deserve a direct answer. First, our CheXpert labels are derived from the radiology
-report, so the radiograph is by construction close to sufficient for the label. We
-regard this not as a confound but as the precise mechanism behind our thesis: when the
-reference standard is defined \emph{on} the image, extra-image clinical context has
-little headroom to add, and the fusion-neutral result is what a well-specified task of
-this type should produce. If anything it makes the conclusion conservative, because a
-report-derived label maximally favours the image branch. Second, the absolute AUROC
-($\approx0.74$) is moderate; this is expected, as pneumonia is among the CheXpert
-observations with the lowest radiologist agreement (below 40\% expert agreement in the
-CheXpert benchmark~\citep{irvin2019chexpert}), so part of the ceiling is genuine label
-noise rather than limited model capacity. Crucially, that noise bounds every model
-equally and cancels in the paired fusion contrast, so it does not weaken the
-equivalence conclusion.
+\paragraph{Label provenance and the ceiling on discrimination.} Two related objections
+deserve a direct answer. First, the CheXpert labels come from the radiology report, so
+the image is by construction close to sufficient for the label. We see this not as a
+confound but as the mechanism behind our thesis: when the reference standard is read
+off the image, clinical context outside the image has little room to add, and a neutral
+result is what a well-posed task of this kind should give. If anything it makes the
+conclusion conservative, since a label taken from the report favours the image as much
+as possible. Second, the absolute AUROC (about 0.74) is moderate, which is expected:
+pneumonia is one of the CheXpert findings with the lowest reader agreement, below 40\%
+expert agreement in the CheXpert study~\citep{irvin2019chexpert}, so part of the ceiling
+is genuine label noise rather than limited model capacity. That noise affects every
+model equally and cancels in the paired comparison, so it does not weaken the
+equivalence result.
 
-\paragraph{Comparison to related work.} Prior multimodal CXR studies typically report
-single-run gains on ICU or inpatient
-cohorts~\citep{hayat2022medfuse,soenksen2022multimodal,lee2024multimodal}; we instead
-evaluate ED pneumonia under a verified time-safety constraint with multi-seed
-replication and explicit audits, and reach a negative but well-powered conclusion on
-discrimination. Our missingness finding complements the informative-missingness
-literature: where GRU-D and related models \emph{use} missingness as a predictive
-feature~\citep{che2018recurrent}, we show that in a fusion setting the same signal can
-be mistaken for a chemistry-driven gain, and we provide a simple flags-only control
-that disentangles the two. Our calibration finding aligns with benchmarks showing that
-single-model uncertainty is unreliable under distribution shift while model averaging
-is more robust~\citep{ovadia2019trust}. Direct numerical comparison across cohorts and
-label definitions is uninformative; the contribution is the rigour of the evaluation
-and the two transferable cautions.
+\paragraph{Comparison with related work.} Earlier multimodal CXR studies typically
+report gains from a single run on ICU or inpatient
+cohorts~\citep{hayat2022medfuse,soenksen2022multimodal,lee2024multimodal}. We instead
+study ED pneumonia under a verified timing constraint, with replication across seeds and
+explicit audits, and reach a negative but adequately powered conclusion about
+discrimination. Our missingness result complements the literature on informative
+missingness: where GRU-D and similar models \emph{use} missingness as a predictive
+feature~\citep{che2018recurrent}, we show that in a fusion model the same signal can be
+mistaken for a benefit from the laboratory values, and we give a simple control,
+keeping only the flags, that separates the two. Our calibration result agrees with
+benchmarks showing that the uncertainty of a single model is unreliable under
+distribution shift, whereas averaging several models is more robust~\citep{ovadia2019trust}.
+Comparing raw numbers across different cohorts and label definitions is not informative;
+the contribution is the rigour of the evaluation and the two cautions.
 
-\paragraph{Limitations.} Training and multimodal evaluation are single-institution
-(MIMIC) and retrospective. External validation confirms that the image branch
-generalises to NIH, but it is necessarily limited to imaging: to our knowledge no
-public dataset links ED triage (or early labs) to the chest radiograph, so the
-fusion branches themselves cannot yet be validated externally, and building such a
-linked multi-site resource is an important community need. The steep degradation of
-prevalence-dependent calibration on NIH ($45\%\!\to\!1.3\%$) is expected rather than a
-defect: before deployment in a population with a different base rate, a scalar
-post-hoc recalibration (temperature or Platt scaling) fit on a small labelled sample
-from the target site would restore calibrated probabilities without retraining, and
-our temperature-scaling result shows a single parameter suffices internally. The
-lab-present subcohort is small ($n{=}269$), but this reflects the clinical reality
-that structured laboratory results are rarely resolved at the exact moment of initial
-ED imaging (Section~\ref{subsec:labcov}) rather than a sampling artefact; it is the
-correct denominator for the question ``do labs help when available''. Finally, the
-\emph{u\_ignore} policy raises internal evaluation prevalence to 45.3\%, and NIH
-labels are NLP-derived, adding label noise to the external estimate.
+\paragraph{Limitations.} Training and the multimodal evaluation use a single
+institution (MIMIC) and are retrospective. The external validation confirms that the
+image model generalises to NIH, but it is limited to imaging: to our knowledge no
+public dataset links ED triage, or early labs, to the chest radiograph, so the fusion
+models themselves cannot yet be validated externally, and building such a linked
+multi-site resource is an important community need. The sharp fall in
+prevalence-dependent calibration on NIH (from 45\% to 1.3\%) is expected rather than a
+defect: before deployment in a population with a different base rate, a simple
+recalibration (temperature or Platt scaling) fitted on a small labelled sample from the
+target site would restore calibrated probabilities without retraining, and our
+temperature-scaling result shows that one parameter is enough internally. The subcohort
+with labs present is small ($n{=}269$), but this reflects the clinical reality that
+laboratory results are rarely available at the moment of the first ED radiograph
+(Section~\ref{subsec:labcov}) rather than a sampling artefact, and it is the right
+denominator for the question of whether labs help when they are available. Finally, the
+\emph{u\_ignore} policy raises the internal prevalence to 45.3\%, and the NIH labels are
+text-mined, which adds noise to the external estimate.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Conclusion}
 \label{sec:conclusion}
-Under strict time-safety and multi-seed evaluation, fusing immediately available
-clinical context with the chest radiograph does not reliably improve pneumonia
-discrimination, and the one apparent gain is an artefact of missing-data structure.
-The image model itself is robust and generalises across institutions with an AUROC
-drop of only 0.016. Beyond the negative result, the study contributes a reproducible,
-time-safe multimodal ED pipeline and two reusable cautions (single-seed calibration
-inflation and missingness-as-signal) for the growing field of clinical multimodal AI.
-Beyond the ViT-Small check reported here, future work includes end-to-end
-fine-tuning of larger medical foundation backbones, multi-site validation, and
+Under a verified timing constraint and replication across seeds, combining the clinical
+context available at triage with the chest radiograph does not reliably improve
+pneumonia discrimination, and the one apparent gain comes from the pattern of missing
+data. The image model itself is robust and generalises across institutions with an
+AUROC drop of only 0.016. Beyond the negative result, the study contributes a
+reproducible, time-safe multimodal ED pipeline and two reusable cautions, calibration
+inflation from a single run and missingness as signal, for the growing field of
+clinical multimodal AI. Building on the ViT-Small check reported here, future work
+includes fine-tuning larger medical foundation models, validation across sites, and
 prospective evaluation with recalibration to the local base rate.
 
 % ─────────────────────────────────────────────────────────────────────
