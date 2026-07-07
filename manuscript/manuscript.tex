@@ -253,20 +253,22 @@ that gap.
 \caption{Positioning against representative multimodal CXR + clinical-data studies.
 ``Time-safe'' denotes an explicitly verified constraint that all features precede
 the prediction time; ``Missingness audit'' denotes an explicit control isolating
-missingness from measured values. \checkmark: reported; --: not reported.}
+missingness from measured values; ``Fusion gain'' records whether the study reports
+multimodal fusion improving discrimination over its strongest single-modality
+baseline. \checkmark: reported; --: not reported.}
 \label{tab:related}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}llccccc@{}}
+\begin{tabular}{@{}llcccccc@{}}
 \toprule
-Study & Task & Modalities & Time-safe & Ext.\ val. & Multi-seed & Missing.\ audit \\
+Study & Task & Modalities & Time-safe & Ext.\ val. & Multi-seed & Missing.\ audit & Fusion gain \\
 \midrule
-MedFuse~\citep{hayat2022medfuse}      & ICU mortality & CXR\,+\,time-series & -- & -- & -- & partial \\
-HAIM~\citep{soenksen2022multimodal}   & Inpatient outcomes & CXR\,+\,tab/text/TS & -- & -- & -- & -- \\
-Lee et al.~\citep{lee2024multimodal}  & ED heart-failure & CXR\,+\,EHR & -- & -- & -- & -- \\
+MedFuse~\citep{hayat2022medfuse}      & ICU mortality & CXR\,+\,time-series & -- & -- & -- & partial & reported \\
+HAIM~\citep{soenksen2022multimodal}   & Inpatient outcomes & CXR\,+\,tab/text/TS & -- & -- & -- & -- & reported \\
+Lee et al.~\citep{lee2024multimodal}  & ED heart-failure & CXR\,+\,EHR & -- & -- & -- & -- & reported \\
 \textbf{This work}                    & ED pneumonia & CXR\,+\,triage\,+\,labs
-  & \checkmark & \checkmark\,(image) & \checkmark\,(5) & \checkmark\,(flags) \\
+  & \checkmark & \checkmark\,(image) & \checkmark\,(5) & \checkmark\,(flags) & neutral \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -750,7 +752,14 @@ positive, a false positive, and a false negative.}
 A CheXpert-trained DenseNet-121 \citep{cohen2022torchxrayvision}, used zero-shot
 (AUROC 0.667) or as a frozen-feature linear probe (0.687), does not outperform our
 task-tuned model (0.737), indicating the conclusions are not an artefact of an
-outdated backbone. On external validation against all 112{,}120 NIH ChestX-ray14
+outdated backbone. To test whether fusion neutrality is instead specific to the CNN
+architecture or to feature freezing, we also fine-tuned a Vision Transformer
+(ViT-Small/16, ImageNet-pretrained) end-to-end on the identical cohort and split
+(seed 42): image-only reached AUROC 0.712 and triage-concat fusion 0.696, a change of
+${-}0.015$. A contemporary transformer backbone, fully fine-tuned, therefore also
+extracts no discriminative synergy from triage vitals over imaging alone, so the
+neutrality holds across both backbone family and training regime.
+On external validation against all 112{,}120 NIH ChestX-ray14
 radiographs \citep{wang2017chestxray} (a different institution, scanner population and
 label pipeline; prevalence 1.28\%), discrimination transfers with minimal loss:
 AUROC $0.722\pm0.005$ across five seeds (ensemble 0.726), only 0.016 below the
@@ -882,9 +891,9 @@ The image model itself is robust and generalises across institutions with an AUR
 drop of only 0.016. Beyond the negative result, the study contributes a reproducible,
 time-safe multimodal ED pipeline and two reusable cautions (single-seed calibration
 inflation and missingness-as-signal) for the growing field of clinical multimodal AI.
-Future work includes end-to-end fine-tuning of modern foundation backbones,
-multi-site validation, and prospective evaluation with recalibration to the local
-base rate.
+Beyond the ViT-Small check reported here, future work includes end-to-end
+fine-tuning of larger medical foundation backbones, multi-site validation, and
+prospective evaluation with recalibration to the local base rate.
 
 % ─────────────────────────────────────────────────────────────────────
 \section*{Declarations}
