@@ -299,8 +299,9 @@ deduplication. The triage table is merged on \texttt{stay\_id}; studies are
 restricted to frontal (PA/AP) projections; CheXpert pneumonia labels are merged and
 the \emph{u\_ignore} policy applied. The temporal anchor is $t_0 =
 \text{StudyDate}+\text{StudyTime}$ from DICOM metadata. The resulting cohort
-comprises 9{,}154 ED-anchored studies; the patient-level temporal split (below)
-assigns train 7{,}144 / validation 930 / test 1{,}080 studies. Models train and
+comprises 9{,}154 ED-anchored studies (Figure~\ref{fig:cohort_flow}); the
+patient-level temporal split (below) assigns train 7{,}144 / validation 930 / test
+1{,}080 studies. Models train and
 evaluate only on radiographs present on disk in our data snapshot, yielding a
 held-out test set of $n{=}1{,}075$ (487 positive / 588 negative; prevalence 45.3\%).
 The entire pipeline is reproducible from a single entry point, emitting versioned
@@ -309,6 +310,16 @@ sizes, test-set demographics (median age 65; 55\% female; predominantly White wi
 substantial Black and Hispanic representation), the near-even PA/AP view split, and
 the triage vital-sign distributions with their missingness rates (3--8\% per vital),
 which motivate the per-vital missingness indicators.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.86\columnwidth]{figures/fig13_cohort_flow.png}
+\caption{Cohort-construction flow from the full MIMIC-CXR-JPG collection to the
+ED-anchored, time-safe evaluation set. Coloured boxes mark the raw sources (blue),
+the linked ED-anchored cohort (green) and the held-out test set actually evaluated on
+disk (orange).}
+\label{fig:cohort_flow}
+\end{figure}
 
 \begin{table*}[t]
 \centering
@@ -380,6 +391,7 @@ missingness flag recomputed after the cohort join.
 
 \subsection{Models}
 \label{subsec:models}
+Figure~\ref{fig:arch} shows the multimodal architecture.
 The \textbf{image model} is DenseNet-121, initialised from ImageNet, multilabel-%
 pretrained on 182{,}637 non-ED MIMIC-CXR studies (14 CheXpert findings, masked
 binary cross-entropy over observed labels), then fine-tuned for binary pneumonia at
@@ -410,6 +422,17 @@ logistic regression and XGBoost \citep{chen2016xgboost} on triage features. A
 \citep{cohen2022torchxrayvision} (not trained on MIMIC), zero-shot and as a
 frozen-feature linear probe. All deep models share the multilabel-pretrained backbone
 so the multi-seed analysis isolates fine-tuning stochasticity.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/fig14_architecture.png}
+\caption{Multimodal architecture. A DenseNet-121 image encoder (ImageNet then
+CheXpert multilabel pretraining) produces a 1024-d embedding $e_v$; a two-layer
+TabularMLP encodes triage vitals (optionally with early labs) to a 128-d embedding
+$e_t$. The streams are combined by concatenation or by CLS-token attention and passed
+to a classifier head that outputs the pneumonia probability.}
+\label{fig:arch}
+\end{figure*}
 
 \subsection{Training and evaluation}
 \label{subsec:eval}
