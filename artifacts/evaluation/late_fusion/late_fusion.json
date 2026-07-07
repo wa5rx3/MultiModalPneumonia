@@ -1,0 +1,76 @@
+{
+  "design": "decision-level late fusion (LR stacker on [logit img, logit triage], fit on validation)",
+  "unimodal_clinical": "triage logistic-regression baseline",
+  "per_seed": [
+    {
+      "seed": 42,
+      "late_auroc": 0.7395444830909778,
+      "img_auroc": 0.7391987595859699,
+      "late_auprc": 0.7182692133426531,
+      "late_ece": 0.032557100257395125,
+      "delta_auroc": 0.00034572350500783333
+    },
+    {
+      "seed": 123,
+      "late_auroc": 0.7390311360683904,
+      "img_auroc": 0.7382174635768064,
+      "late_auprc": 0.7075777837758107,
+      "late_ece": 0.03498027899568203,
+      "delta_auroc": 0.0008136724915840388
+    },
+    {
+      "seed": 456,
+      "late_auroc": 0.7341246560225734,
+      "img_auroc": 0.7349208677310761,
+      "late_auprc": 0.7149559846716163,
+      "late_ece": 0.03648429101356197,
+      "delta_auroc": -0.0007962117085027476
+    },
+    {
+      "seed": 789,
+      "late_auroc": 0.7347078461774854,
+      "img_auroc": 0.7341351324924221,
+      "late_auprc": 0.7115900797011165,
+      "late_ece": 0.04400870556240171,
+      "delta_auroc": 0.0005727136850632863
+    },
+    {
+      "seed": 1000,
+      "late_auroc": 0.7406514967383258,
+      "img_auroc": 0.740232437944377,
+      "late_auprc": 0.7160534216050205,
+      "late_ece": 0.032961805419542994,
+      "delta_auroc": 0.00041905879394876777
+    }
+  ],
+  "late_auroc_mean_sd": [
+    0.7376119236195505,
+    0.0029825599705774774
+  ],
+  "img_auroc_mean_sd": [
+    0.7373409322661303,
+    0.002679295575296109
+  ],
+  "delta_auroc_mean_sd": [
+    0.0002709913534202357,
+    0.000622890524075911
+  ],
+  "late_ece_mean_sd": [
+    0.03619843624971676,
+    0.004644917483606329
+  ],
+  "mean_stacker_coef_[img,triage]": [
+    0.7586971631070628,
+    0.5189249162721656
+  ],
+  "ensemble_tost_late_minus_image": {
+    "obs_delta": 0.0032023076170919484,
+    "boot_se": 0.006147669661839012,
+    "p_tost": 1.3466650385175546e-14,
+    "equivalent_at_05": true,
+    "ci90": [
+      -0.006577279096664385,
+      0.013172655604392075
+    ]
+  }
+}

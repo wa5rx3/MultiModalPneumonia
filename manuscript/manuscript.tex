@@ -420,6 +420,10 @@ mixes the $[\texttt{CLS},e_v,e_t]$ tokens; the \texttt{CLS} output feeds the
 classifier \citep{acosta2022multimodal}. The \textbf{$+$labs} model appends the 26 lab
 values and their flags to the tabular vector. \textbf{Clinical baselines} are
 logistic regression and XGBoost \citep{chen2016xgboost} on triage features. A
+\textbf{late-fusion baseline} fuses at the decision level rather than the feature
+level: the independently trained image and triage-logistic models each emit a
+probability and a logistic meta-learner combines them, fit on the validation split, a
+static analogue of the MedFuse late-fusion design~\citep{hayat2022medfuse}. A
 \textbf{modern-backbone baseline} uses a CheXpert-trained DenseNet-121
 \citep{cohen2022torchxrayvision} (not trained on MIMIC), zero-shot and as a
 frozen-feature linear probe. All deep models share the multilabel-pretrained backbone
@@ -484,7 +488,13 @@ equivalence margin; the two one-sided tests both reject at $p<0.001$, so fusion 
 formally equivalent to imaging in discrimination. Because the two models share the
 backbone and their predictions are highly correlated, this paired comparison is
 well powered: the minimal AUROC difference detectable at 80\% power is $0.010$, five
-times smaller than the margin, so the null is not a power artefact. Attention fusion
+times smaller than the margin, so the null is not a power artefact. Nor is neutrality
+specific to our feature-level design: a MedFuse-style decision-level late-fusion
+baseline, in which the independently trained image and triage models are combined by a
+logistic meta-learner fit on the validation split, is likewise neutral
+($\Delta$AUROC $+0.000\pm0.001$ across seeds; equivalence holds by TOST) even though
+the meta-learner assigns the triage stream a non-trivial weight, so no fusion design
+we tried, early or late, recovers a discriminative gain. Attention fusion
 matches image AUROC but is severely and variably miscalibrated
 (ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), illustrating that AUROC alone is
 insufficient for model selection. The precision-recall curves (Fig.~\ref{fig:pr})
