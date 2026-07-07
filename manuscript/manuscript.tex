@@ -256,17 +256,19 @@ the prediction time; ``Missingness audit'' denotes an explicit control isolating
 missingness from measured values. \checkmark: reported; --: not reported.}
 \label{tab:related}
 \footnotesize
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llccccc@{}}
 \toprule
-Study & Task & Modalities & Time-safe & External val. & Multi-seed & Missingness audit \\
+Study & Task & Modalities & Time-safe & Ext.\ val. & Multi-seed & Missing.\ audit \\
 \midrule
-MedFuse~\citep{hayat2022medfuse}      & ICU mortality / phenotyping & CXR + time-series & -- & -- & -- & partial (async.) \\
-HAIM~\citep{soenksen2022multimodal}   & Inpatient outcomes (11 tasks) & CXR + tab. + text + TS & -- & -- & -- & -- \\
-Lee et al.~\citep{lee2024multimodal}  & ED heart-failure screening & CXR + EHR & -- & -- & -- & -- \\
-\textbf{This work}                    & ED pneumonia diagnosis & CXR + triage + labs
-  & \checkmark & \checkmark\,(image) & \checkmark\,(5 seeds) & \checkmark\,(flags-only) \\
+MedFuse~\citep{hayat2022medfuse}      & ICU mortality & CXR\,+\,time-series & -- & -- & -- & partial \\
+HAIM~\citep{soenksen2022multimodal}   & Inpatient outcomes & CXR\,+\,tab/text/TS & -- & -- & -- & -- \\
+Lee et al.~\citep{lee2024multimodal}  & ED heart-failure & CXR\,+\,EHR & -- & -- & -- & -- \\
+\textbf{This work}                    & ED pneumonia & CXR\,+\,triage\,+\,labs
+  & \checkmark & \checkmark\,(image) & \checkmark\,(5) & \checkmark\,(flags) \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table*}
 
 % ═════════════════════════════════════════════════════════════════════
@@ -411,7 +413,7 @@ so the multi-seed analysis isolates fine-tuning stochasticity.
 
 \subsection{Training and evaluation}
 \label{subsec:eval}
-Each deep model is trained across five seeds $\{42,123,456,789,1000\}$ with early
+Each deep model is trained across five random seeds (42, 123, 456, 789, 1000) with early
 stopping on validation AUPRC. Primary metrics are AUROC, AUPRC, ECE and Brier score,
 reported as mean$\pm$SD over seeds with paired per-seed deltas against the image-only
 model on identical test rows; within-checkpoint uncertainty uses a 2{,}000-replicate
