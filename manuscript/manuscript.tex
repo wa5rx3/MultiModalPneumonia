@@ -498,7 +498,10 @@ we tried, early or late, recovers a discriminative gain. Attention fusion
 matches image AUROC but is severely and variably miscalibrated
 (ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), illustrating that AUROC alone is
 insufficient for model selection. The precision-recall curves (Fig.~\ref{fig:pr})
-mirror the AUROC ordering at the 45.3\% prevalence.
+mirror the AUROC ordering at the 45.3\% prevalence. The neutrality also has a
+representational counterpart: in a t-SNE of the learned embeddings
+(Fig.~\ref{fig:tsne}), the triage embedding is not aligned with the label and the
+fused representation is essentially the image embedding.
 
 \begin{table*}[t]
 \centering
@@ -549,6 +552,20 @@ Discrimination is stable; the image-only ECE alone varies substantially by seed.
 \caption{Paired fusion$-$image effects across seeds (mean$\pm$SD). Every effect
 straddles zero; the labs and lab-flags-only deltas are identical.}
 \label{fig:deltas}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig15_tsne.png}
+\caption{t-SNE of the learned representations on the test set ($n{=}1{,}075$),
+coloured by pneumonia label. The image embedding $e_v$ (left) carries a moderate
+label gradient, consistent with its AUROC. The triage embedding $e_t$ (centre) forms
+its own structure driven by vital-sign patterns, but that structure is not aligned
+with the label. The fused vector $[e_v; e_t]$ (right) is essentially the image
+embedding: appending the triage stream does not reorganise the representation into
+better class-separated geometry, the representational counterpart of the
+fusion-neutral discrimination result.}
+\label{fig:tsne}
 \end{figure*}
 
 \subsection{Feature ablation}
