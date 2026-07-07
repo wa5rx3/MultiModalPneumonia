@@ -523,31 +523,30 @@ internal transform.
 
 \subsection{Discrimination: imaging dominates, fusion is neutral}
 \label{subsec:disc}
-Table~\ref{tab:main} and Figs.~\ref{fig:roc}--\ref{fig:multiseed} summarise the
-primary results. Both CXR models exceed the triage-only baselines by more than 12
-AUROC points, confirming that the radiograph carries the discriminative signal.
-Adding triage vitals does not change discrimination: the paired concat$-$image
-$\Delta$AUROC is $+0.004\pm0.009$ across seeds (range $[-0.007,+0.014]$). On the
-patient-level paired bootstrap of the seed-averaged models the delta is $+0.006$ with
-a 90\% CI of $[+0.000,+0.012]$, lying entirely inside the pre-specified $\pm0.05$
-equivalence margin; the two one-sided tests both reject at $p<0.001$, so fusion is
-formally equivalent to imaging in discrimination. Because the two models share the
-backbone and their predictions are highly correlated, this paired comparison is
-well powered: the minimal AUROC difference detectable at 80\% power is $0.010$, five
-times smaller than the margin, so the null is not a power artefact. Nor is neutrality
-specific to our feature-level design: a MedFuse-style decision-level late-fusion
-baseline, in which the independently trained image and triage models are combined by a
-logistic meta-learner fit on the validation split, is likewise neutral
-($\Delta$AUROC $+0.000\pm0.001$ across seeds; equivalence holds by TOST) even though
-the meta-learner assigns the triage stream a non-trivial weight, so no fusion design
-we tried, early or late, recovers a discriminative gain. Attention fusion
-matches image AUROC but is severely and variably miscalibrated
-(ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), illustrating that AUROC alone is
-insufficient for model selection. The precision-recall curves (Fig.~\ref{fig:pr})
-mirror the AUROC ordering at the 45.3\% prevalence. The neutrality also has a
-representational counterpart: in a t-SNE of the learned embeddings
-(Fig.~\ref{fig:tsne}), the triage embedding is not aligned with the label and the
-fused representation is essentially the image embedding.
+Table~\ref{tab:main} and Figs.~\ref{fig:roc}--\ref{fig:multiseed} summarise the primary
+results. Both CXR models beat the triage baselines by more than 12 AUROC points, which
+confirms that the radiograph carries the signal that discriminates. Adding triage
+vitals does not change discrimination: across seeds the paired concat$-$image
+$\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$). On a paired bootstrap over
+patients of the seed-averaged models the delta is $+0.006$, with a 90\% confidence
+interval of $[+0.000,+0.012]$ that lies entirely inside the pre-specified $\pm0.05$
+margin; both one-sided tests reject at $p<0.001$, so fusion is formally equivalent to
+imaging in discrimination. Because the two models share a backbone and their
+predictions are strongly correlated, the paired comparison has good power: the smallest
+AUROC difference we could detect at 80\% power is $0.010$, five times below the margin,
+so the null is not an artefact of low power. The result does not depend on our choice of
+feature-level fusion either. A late-fusion baseline in the style of MedFuse, which
+combines the separately trained image and triage models with a logistic meta-learner
+fitted on the validation split, is also neutral ($\Delta$AUROC $+0.000\pm0.001$ across
+seeds; TOST again confirms equivalence), even though the meta-learner gives the triage
+stream a real weight. No fusion we tried, whether early or late, recovers a gain in
+discrimination. Attention fusion matches the image AUROC but is badly and unevenly
+calibrated (ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), a reminder that AUROC alone is
+not enough for choosing a model. The precision-recall curves (Fig.~\ref{fig:pr}) follow
+the same ordering at the 45.3\% prevalence. The result also shows in the
+representations: in a t-SNE of the learned embeddings (Fig.~\ref{fig:tsne}), the triage
+embedding is not aligned with the label and the fused representation is essentially the
+image embedding.
 
 \begin{table*}[t]
 \centering
