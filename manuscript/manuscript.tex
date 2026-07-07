@@ -15,9 +15,12 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{textcomp}
 \usepackage{multirow}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{xurl}
 \usepackage[round]{natbib}   % required by spbasic; compact (Author et al. Year) cites
 \usepackage{hyperref}
+\hypersetup{hidelinks}   % no coloured boxes/text around links for a clean submission PDF
 % Let long DOIs/URLs in the two-column bibliography break instead of overflowing.
 \Urlmuskip=0mu plus 1mu\relax
 \emergencystretch=2em
@@ -84,14 +87,19 @@ MIMIC-IV and MIMIC-IV-ED, anchoring every feature at the CXR acquisition time $t
 and admitting only measurements resolved at or before $t_0$. On a patient-level
 temporal split (test $n{=}1{,}075$; prevalence 45.3\%) we train image-only,
 concatenation- and attention-fusion, and clinical-baseline models across five random
-seeds, and add a time-safe early-laboratory panel as a third modality. We report
-AUROC, AUPRC, expected calibration error (ECE) and Brier score as mean$\pm$SD over
-seeds with paired per-seed deltas, patient-level bootstrap intervals, decision-curve
-and subgroup analyses, SHAP and Grad-CAM interpretability, external validation on
-NIH ChestX-ray14, and explicit temporal, split and preprocessing leakage audits.
+seeds, and add a time-safe early-laboratory panel as a third modality. We formalise
+the procedure as a reusable evaluation protocol, TEMPO (time-safe, equivalence-tested,
+missingness-audited, patient-level, out-of-sample). We report AUROC, AUPRC, expected
+calibration error (ECE) and Brier score as mean$\pm$SD over seeds with paired per-seed
+deltas and patient-level bootstrap intervals, test discrimination equivalence against
+the margin with two one-sided tests (TOST), and add decision-curve and subgroup
+analyses, SHAP and Grad-CAM interpretability, external validation on NIH ChestX-ray14,
+and explicit temporal, split and preprocessing leakage audits.
 \textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, far above
 triage-only baselines (0.61). Adding triage vitals leaves discrimination unchanged
-($\Delta$AUROC $+0.004\pm0.009$, within a pre-specified $\pm0.05$ margin). A
+($\Delta$AUROC $+0.004\pm0.009$; equivalence to image-only confirmed by TOST against a
+pre-specified $\pm0.05$ margin, with 80\% power to detect a difference of 0.010), and a
+MedFuse-style late-fusion design is likewise neutral. A
 calibration advantage reported from a single checkpoint (ECE 0.040 vs 0.067) shrinks
 to $\Delta$ECE $-0.013\pm0.016$ across seeds; single-seed evaluation overstated it
 $\sim$2$\times$. Adding early labs yields a small, seed-consistent AUROC gain
@@ -102,11 +110,13 @@ $0.722\pm0.005$ on 112{,}120 NIH radiographs).
 \textbf{Conclusion:} The chest radiograph carries the discriminative signal;
 immediately available clinical context does not reliably add discrimination, and
 naive multimodal fusion can appear beneficial for reasons that will not generalise.
-We offer two transferable cautions for clinical multimodal AI: single-seed
-calibration inflation, and missingness masquerading as multimodal benefit.
+We offer two transferable cautions for machine reasoning in clinical multimodal AI:
+single-seed calibration inflation (unstable machine confidence), and missingness
+masquerading as multimodal benefit (reasoning from absence).
 \keywords{Pneumonia detection \and Chest radiograph \and Multimodal fusion \and
-Emergency department triage \and Calibration \and Reproducibility \and Missing data
-\and External validation}
+Emergency department triage \and Reasoning under uncertainty \and Calibration \and
+Informative missingness \and Equivalence testing \and Reproducibility \and External
+validation}
 \end{abstract}
 
 % ═════════════════════════════════════════════════════════════════════
@@ -128,7 +138,11 @@ pain score) and an acuity level, \emph{before} any imaging is ordered. Multimoda
 models that fuse the CXR with this immediately available context are widely proposed
 \citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the
 intuition that combining the two streams should better reflect the clinical picture
-at the moment of decision.
+at the moment of decision. This intuition mirrors clinical cognition: a physician
+integrates the radiographic image with physiological context rather than reading
+either in isolation. Whether a machine learner realises the same integration benefit,
+however, is an empirical question that turns on how much \emph{non-redundant}
+information each modality carries about the target.
 
 Three methodological issues, however, recur across this literature and motivate the
 present study. First, \emph{temporal safety}: clinical variables are frequently
@@ -146,7 +160,10 @@ immediately available clinical context help a CXR pneumonia model?}, under stric
 time-safety, with multi-seed replication and explicit missing-data and leakage
 audits, and report in line with prediction-model and medical-imaging guidance
 \citep{collins2024tripodai,tejani2024claim}. Our contribution is not a new
-architecture but a rigorous, reproducible, externally-validated evaluation that
+architecture but a rigorous, reproducible, externally-validated evaluation protocol,
+which we call \textbf{TEMPO} (Time-safe, Equivalence-tested, Missingness-audited,
+Patient-level, Out-of-sample; Algorithm~\ref{alg:tempo}), that operationalises
+existing reporting guidance for the specific hazards of clinical multimodal fusion and
 yields a clear answer and two transferable cautions:
 
 \begin{itemize}
@@ -276,6 +293,36 @@ Lee et al.~\citep{lee2024multimodal}  & ED heart-failure & CXR\,+\,EHR & -- & --
 % ═════════════════════════════════════════════════════════════════════
 \section{Materials and Methods}
 \label{sec:methods}
+The study instantiates the TEMPO protocol (Algorithm~\ref{alg:tempo}); the following
+subsections detail each step, and Figure~\ref{fig:cohort_flow} shows the data flow it
+produces.
+
+\begin{algorithm}[t]
+\caption{TEMPO: time-safe, equivalence-tested, missingness-audited evaluation of
+clinical multimodal fusion.}
+\label{alg:tempo}
+\begin{algorithmic}[1]
+\Require imaging $+$ multi-source clinical records; per-instance prediction time
+$t_0$; equivalence margin $\Delta_0$; seed set $S$
+\State Anchor each instance at $t_0$; admit a clinical feature only if its timestamp
+$\le t_0$, and verify empirically that no feature post-dates $t_0$ \Comment{time-safety}
+\State Split at the \emph{patient} level and temporally (order by earliest $t_0$); fit
+all preprocessing on the training split only
+\For{each seed $s \in S$}
+  \State train the image-only and fusion models; store test predictions on identical rows
+\EndFor
+\State Aggregate per-seed metrics (mean\,$\pm$\,SD) and paired fusion$-$image deltas;
+quantify uncertainty by a patient-level paired bootstrap
+\State \textbf{Equivalence:} TOST of the paired AUROC delta against $\pm\Delta_0$;
+report the effect detectable at 80\% power
+\State \textbf{Missingness audit:} refit fusion with missingness \emph{indicators only}
+(no values); attribute any gain to structure vs.\ measured values
+\State Report calibration with multi-seed spread and bootstrap CIs; validate the
+transferable branch on an external dataset
+\Ensure discrimination/calibration verdict with an equivalence decision and a
+missingness attribution
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Datasets and how they are used}
 \label{subsec:datasets}
@@ -875,6 +922,22 @@ constitutes leakage (temporal, split and preprocessing audits are clean). The
 missingness-only ablation makes this mechanism explicit and is, to our knowledge, a
 rarely reported control in clinical multimodal studies. Both cautions are
 actionable and inexpensive.
+
+\paragraph{A cognitive-computation view.} Multimodal fusion is at heart a machine
+analogue of clinical cognition: integrating heterogeneous evidence, an image,
+physiological signals, and even what was and was not measured, into a single judgement
+under uncertainty. Framed this way, our two cautions are about machine \emph{reasoning}
+rather than bookkeeping. Caution 1 concerns the reliability of the machine's expressed
+confidence: a calibration estimate from one training run is an unstable read on how far
+the model should be trusted, so uncertainty must be characterised across replicates
+before it can inform a decision. Caution 2 concerns reasoning from \emph{absence}: an ED
+record is missing not at random, and a learner readily treats the mere presence of a
+measurement as evidence, echoing the clinician's inference that ``a test was ordered''
+is itself informative, but conflating that ordering signal with physiological content.
+Recognising when integrated evidence genuinely adds information, and when apparent gains
+instead reflect confidence instability or the structure of missingness, is a general
+concern for cognitively inspired decision-support systems well beyond this radiographic
+task.
 
 \paragraph{When should fusion be expected to help?} Our result sharpens a practical
 heuristic. Multimodal CXR fusion has been most successful for \emph{prognostic} and
