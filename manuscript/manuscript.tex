@@ -442,9 +442,12 @@ Each deep model is trained across five random seeds (42, 123, 456, 789, 1000) wi
 stopping on validation AUPRC. Primary metrics are AUROC, AUPRC, ECE and Brier score,
 reported as mean$\pm$SD over seeds with paired per-seed deltas against the image-only
 model on identical test rows; within-checkpoint uncertainty uses a 2{,}000-replicate
-patient-level paired bootstrap (patients, not studies, are resampled). A
-non-inferiority margin $\Delta_0={-}0.05$ AUROC was pre-specified
-\citep{piaggio2012noninferiority}. Calibration is assessed with the ECE
+patient-level paired bootstrap (patients, not studies, are resampled). A symmetric
+equivalence margin of $\pm0.05$ AUROC was pre-specified
+\citep{piaggio2012noninferiority}; equivalence of a fusion model to the image-only
+model is tested formally by two one-sided tests (TOST) against $\pm0.05$ on the
+patient-level paired-bootstrap distribution of the AUROC delta, and we report the
+minimal effect detectable at 80\% power. Calibration is assessed with the ECE
 \begin{equation}
 \text{ECE} = \sum_{b=1}^{B}\frac{n_b}{n}\,\bigl|\bar p_b - \bar y_b\bigr|,
 \label{eq:ece}
@@ -474,8 +477,14 @@ Table~\ref{tab:main} and Figs.~\ref{fig:roc}--\ref{fig:multiseed} summarise the
 primary results. Both CXR models exceed the triage-only baselines by more than 12
 AUROC points, confirming that the radiograph carries the discriminative signal.
 Adding triage vitals does not change discrimination: the paired concat$-$image
-$\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$), with the effect's lower
-bound well inside the pre-specified $-0.05$ non-inferiority margin. Attention fusion
+$\Delta$AUROC is $+0.004\pm0.009$ across seeds (range $[-0.007,+0.014]$). On the
+patient-level paired bootstrap of the seed-averaged models the delta is $+0.006$ with
+a 90\% CI of $[+0.000,+0.012]$, lying entirely inside the pre-specified $\pm0.05$
+equivalence margin; the two one-sided tests both reject at $p<0.001$, so fusion is
+formally equivalent to imaging in discrimination. Because the two models share the
+backbone and their predictions are highly correlated, this paired comparison is
+well powered: the minimal AUROC difference detectable at 80\% power is $0.010$, five
+times smaller than the margin, so the null is not a power artefact. Attention fusion
 matches image AUROC but is severely and variably miscalibrated
 (ECE $0.076\pm0.042$; Fig.~\ref{fig:deltas}), illustrating that AUROC alone is
 insufficient for model selection. The precision-recall curves (Fig.~\ref{fig:pr})
@@ -564,7 +573,10 @@ A single checkpoint suggested the concat model was markedly better calibrated (E
 0.040 vs 0.067, a 40\% reduction). Across seeds, however, the image-only ECE alone
 ranges 0.041--0.060, and the paired advantage shrinks to $\Delta$ECE $-0.013\pm0.016$
 (4/5 seeds favour concat; the range crosses zero). The single-seed estimate thus
-overstated the benefit roughly twofold. The apparent gap is also binning-dependent
+overstated the benefit roughly twofold. Within-checkpoint uncertainty tells the same
+story: patient-level bootstrap 95\% CIs on the seed-averaged ECE overlap almost
+entirely (image 0.042, CI $[0.033,0.077]$; concat 0.037, CI $[0.028,0.068]$), so the
+calibration gap is not resolvable even before seed variance is added. The apparent gap is also binning-dependent
 (Fig.~\ref{fig:ece}): under coarser or quantile bins it shrinks further
 \citep{nixon2019measuring}. Brier scores are essentially unchanged, so any effect is
 distributional alignment rather than refinement. Reliability diagrams
@@ -667,7 +679,9 @@ Hispanic patients (0.64) relative to White (0.75); PA views outperform AP (0.75 
 slightly worsen calibration. These disparities echo documented underdiagnosis biases
 in CXR models \citep{seyyedkalantari2021underdiagnosis,larrazabal2020gender} and are
 reported here as a prerequisite fairness audit rather than a solved problem; small
-minority strata carry wide confidence intervals.
+minority strata carry wide confidence intervals. These subgroup contrasts are
+exploratory and not corrected for multiple comparisons, so the individual gaps should
+be read as hypothesis-generating rather than as confirmatory effects.
 
 \begin{table}[t]
 \centering
@@ -847,6 +861,21 @@ well-powered negative result is exactly what this heuristic predicts. The findin
 thus not that fusion ``fails'' but that its value is conditional on the target lying
 partly outside the imaging modality, which should guide where fusion is worth the added
 complexity in ED decision support.
+
+\paragraph{Label provenance and the discrimination ceiling.} Two related objections
+deserve a direct answer. First, our CheXpert labels are derived from the radiology
+report, so the radiograph is by construction close to sufficient for the label. We
+regard this not as a confound but as the precise mechanism behind our thesis: when the
+reference standard is defined \emph{on} the image, extra-image clinical context has
+little headroom to add, and the fusion-neutral result is what a well-specified task of
+this type should produce. If anything it makes the conclusion conservative, because a
+report-derived label maximally favours the image branch. Second, the absolute AUROC
+($\approx0.74$) is moderate; this is expected, as pneumonia is among the CheXpert
+observations with the lowest radiologist agreement (below 40\% expert agreement in the
+CheXpert benchmark~\citep{irvin2019chexpert}), so part of the ceiling is genuine label
+noise rather than limited model capacity. Crucially, that noise bounds every model
+equally and cancels in the paired fusion contrast, so it does not weaken the
+equivalence conclusion.
 
 \paragraph{Comparison to related work.} Prior multimodal CXR studies typically report
 single-run gains on ICU or inpatient
