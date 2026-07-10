@@ -1,0 +1,29 @@
+{
+  "icd_coverage": "99.7%",
+  "icd_test_prevalence": 0.193,
+  "chexpert_test_prevalence": 0.453,
+  "labels": {
+    "radiographic_chexpert": {
+      "image_auroc": 0.743,
+      "triage_auroc": 0.606,
+      "fusion_auroc": 0.743,
+      "fusion_minus_image": 0.0001,
+      "delta_95ci": [
+        -0.0078,
+        0.0074
+      ],
+      "p_delta_le_0": 0.503
+    },
+    "clinical_icd": {
+      "image_auroc": 0.784,
+      "triage_auroc": 0.688,
+      "fusion_auroc": 0.806,
+      "fusion_minus_image": 0.0227,
+      "delta_95ci": [
+        0.007,
+        0.0385
+      ],
+      "p_delta_le_0": 0.0015
+    }
+  }
+}
