@@ -1,0 +1,70 @@
+{
+  "pneumonia": {
+    "image_finding": "Pneumonia",
+    "clinical_test_pos": 204,
+    "radiographic": {
+      "image_auroc": 0.728,
+      "triage_auroc": 0.62,
+      "fusion_auroc": 0.733,
+      "fusion_minus_image": 0.0043,
+      "ci95": [
+        -0.0055,
+        0.0138
+      ],
+      "p_le0": 0.193
+    },
+    "clinical": {
+      "image_auroc": 0.765,
+      "triage_auroc": 0.705,
+      "fusion_auroc": 0.796,
+      "fusion_minus_image": 0.0304,
+      "ci95": [
+        0.0115,
+        0.0498
+      ],
+      "p_le0": 0.002
+    },
+    "interaction_clinical_minus_radiographic": {
+      "estimate": 0.0261,
+      "ci95": [
+        0.0051,
+        0.0476
+      ],
+      "p_le0": 0.006
+    }
+  },
+  "heart_failure": {
+    "image_finding": "Edema",
+    "clinical_test_pos": 54,
+    "radiographic": {
+      "image_auroc": 0.909,
+      "triage_auroc": 0.647,
+      "fusion_auroc": 0.909,
+      "fusion_minus_image": 0.0001,
+      "ci95": [
+        -0.0015,
+        0.002
+      ],
+      "p_le0": 0.4525
+    },
+    "clinical": {
+      "image_auroc": 0.858,
+      "triage_auroc": 0.752,
+      "fusion_auroc": 0.878,
+      "fusion_minus_image": 0.0208,
+      "ci95": [
+        0.0009,
+        0.0439
+      ],
+      "p_le0": 0.0185
+    },
+    "interaction_clinical_minus_radiographic": {
+      "estimate": 0.0207,
+      "ci95": [
+        0.0004,
+        0.044
+      ],
+      "p_le0": 0.0225
+    }
+  }
+}
