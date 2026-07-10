@@ -713,10 +713,10 @@ multimodal-concat model is the best calibrated: its curve tracks the diagonal ac
 whole probability range (ECE 0.040). The image-only model is moderately overconfident
 between 0.5 and 0.8, where its curve sits below the diagonal (ECE 0.067), and the
 attention fusion model is the clear outlier, sitting well above the diagonal and
-systematically under-predicting (ECE 0.132). The maximum calibration error tells a
-complementary story: the triage baselines look well calibrated on average (ECE 0.037 to
-0.046) but carry large worst-bin errors (MCE up to 0.489), so they can be badly wrong for
-some patients even when their mean calibration looks good. These differences matter in
+systematically under-predicting (ECE 0.132). The maximum calibration error is less
+reassuring: the triage baselines look well calibrated on average (ECE 0.037 to 0.046) but
+carry large worst-bin errors (MCE up to 0.489), so they can be badly wrong for some
+patients even when their mean calibration looks good. These differences matter in
 the emergency department: an overconfident model can attach falsely reassuring low
 probabilities to genuine pneumonia, while a badly under-confident model inflates apparent
 risk and erodes trust in the tool, so calibration, and not discrimination alone, has to
@@ -871,17 +871,16 @@ class-activation-mapping variants, CAM~\citep{zhou2016cam},
 Grad-CAM~\citep{selvaraju2017gradcam}, Grad-CAM++~\citep{chattopadhyay2018gradcampp},
 Score-CAM~\citep{wang2020scorecam}, Smooth Grad-CAM++~\citep{omeiza2019smoothgradcampp}
 and XGrad-CAM~\citep{fu2020xgradcam}, on confident true positives
-(Fig.~\ref{fig:gradcam}). The methods broadly agree, concentrating on the mid and lower
-lung zones where consolidation is expected rather than on the image borders or hardware,
-which supports the model attending to plausible anatomy. They differ mainly in sharpness:
-CAM, Grad-CAM, XGrad-CAM and Grad-CAM++ give the tightest, most focal maps, Score-CAM is
-similar but smoother, and Smooth Grad-CAM++ is the most diffuse, spreading activation
-across both lung fields. In some cases the activation extends over the perihilar and
-mediastinal region rather than staying strictly within the lung parenchyma, a known
-limitation of gradient-based saliency on radiographs~\citep{arun2021saliency} that should
-temper any anatomical reading of these maps. Across methods the maps are consistent and
-anatomically plausible, but the choice of variant changes how tightly the supporting
-evidence is localised.
+(Fig.~\ref{fig:gradcam}). The methods largely agree with one another and avoid the image
+borders and hardware markers, so the model is not keying on obvious artefacts. Their
+focus, however, sits on the central chest, the perihilar and mediastinal region together
+with the medial lung, rather than tightly on the peripheral opacity a radiologist would
+mark. The variants differ mainly in sharpness, with CAM, Grad-CAM, XGrad-CAM and
+Grad-CAM++ the most focal and Smooth Grad-CAM++ the most diffuse, but all share this
+central emphasis. This matches reports that saliency maps for chest-radiograph
+classifiers often localise the abnormality poorly~\citep{arun2021saliency}: the maps show
+roughly where the model looks, not a reliable outline of disease, and are better read as
+a coarse sanity check than as evidence of clinically precise reasoning.
 
 \begin{table}[t]
 \centering
@@ -917,8 +916,10 @@ predictions toward pneumonia.}
 \includegraphics[width=\textwidth]{figures/fig18_cam_grid.png}
 \caption{Class-activation maps for the image model on four confident true-positive
 radiographs (rows; $p$ is the predicted pneumonia probability). Columns compare the
-original image with six saliency variants. The methods agree on lung-zone localisation
-and differ mainly in sharpness, with Smooth Grad-CAM++ the most diffuse.}
+original image with six saliency variants. The methods agree with one another and
+concentrate on the central chest (perihilar and mediastinal region and medial lung)
+rather than the peripheral opacity; they differ mainly in sharpness, with Smooth
+Grad-CAM++ the most diffuse.}
 \label{fig:gradcam}
 \end{figure*}
 
