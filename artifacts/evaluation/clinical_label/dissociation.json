@@ -5,25 +5,25 @@
   "labels": {
     "radiographic_chexpert": {
       "image_auroc": 0.743,
-      "triage_auroc": 0.606,
-      "fusion_auroc": 0.743,
-      "fusion_minus_image": 0.0001,
+      "triage_auroc": 0.62,
+      "fusion_auroc": 0.746,
+      "fusion_minus_image": 0.0029,
       "delta_95ci": [
-        -0.0078,
-        0.0074
+        -0.0053,
+        0.011
       ],
-      "p_delta_le_0": 0.503
+      "p_delta_le_0": 0.259
     },
     "clinical_icd": {
       "image_auroc": 0.784,
-      "triage_auroc": 0.688,
-      "fusion_auroc": 0.806,
-      "fusion_minus_image": 0.0227,
+      "triage_auroc": 0.703,
+      "fusion_auroc": 0.808,
+      "fusion_minus_image": 0.0243,
       "delta_95ci": [
-        0.007,
-        0.0385
+        0.0093,
+        0.039
       ],
-      "p_delta_le_0": 0.0015
+      "p_delta_le_0": 0.0
     }
   }
 }

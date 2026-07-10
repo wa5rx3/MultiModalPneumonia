@@ -25,6 +25,12 @@ from src.training.train_multimodal_pneumonia import (
 warnings.filterwarnings("ignore")
 KEYS = ["subject_id", "study_id", "dicom_id"]
 SEEDS = [42, 123, 456, 789, 1000]
+# physiology-only triage features (race/gender excluded: demographics carry no signal here,
+# AUROC 0.52, and using race to predict a diagnosis raises a fairness confound)
+PHYS_NUM = ["temperature", "heartrate", "resprate", "o2sat", "sbp", "dbp", "pain", "acuity",
+            "temperature_missing", "heartrate_missing", "resprate_missing", "o2sat_missing",
+            "sbp_missing", "dbp_missing", "pain_missing", "acuity_missing"]
+PHYS_CAT = []
 DIAG = "D:/mimic_iv_ed/diagnosis.csv.gz"
 TABLE = "artifacts/manifests/cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet"
 OUT = Path("artifacts/evaluation/clinical_label/dissociation.json")
@@ -78,15 +84,15 @@ def boot_delta(y, img, fus, subj):
 def main():
     d = pd.read_parquet(TABLE)
     d, stays = icd_pneumonia_label(d)
-    pre = build_tabular_preprocessor(TRIAGE_NUMERIC_COLS, TRIAGE_CATEGORICAL_COLS)
+    pre = build_tabular_preprocessor(PHYS_NUM, PHYS_CAT)
     tr = d[d.temporal_split == "train"]
-    pre.fit(prepare_tabular_df(tr))
+    pre.fit(prepare_tabular_df(tr, PHYS_NUM, PHYS_CAT))
     imv, imt = ens("val"), ens("test")
     vak = d[d.temporal_split == "validate"].merge(imv, on=KEYS)
     tek = d[d.temporal_split == "test"].merge(imt, on=KEYS)
-    Xtr = pre.transform(prepare_tabular_df(tr))
-    Xva = pre.transform(prepare_tabular_df(vak))
-    Xte = pre.transform(prepare_tabular_df(tek))
+    Xtr = pre.transform(prepare_tabular_df(tr, PHYS_NUM, PHYS_CAT))
+    Xva = pre.transform(prepare_tabular_df(vak, PHYS_NUM, PHYS_CAT))
+    Xte = pre.transform(prepare_tabular_df(tek, PHYS_NUM, PHYS_CAT))
 
     res = {"icd_coverage": f"{100*d.stay_id.isin(stays).mean():.1f}%",
            "icd_test_prevalence": round(float(tek.icd.mean()), 3),
