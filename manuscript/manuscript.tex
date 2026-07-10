@@ -97,10 +97,10 @@ with two one-sided tests (TOST) and report decision-curve, subgroup, interpretab
 (SHAP and Grad-CAM) and external analyses on NIH ChestX-ray14, together with explicit
 temporal, split and preprocessing audits.
 \textbf{Results:} A fine-tuned DenseNet-121 reaches AUROC $0.737\pm0.003$, well above
-the triage baselines (0.61). Adding triage vitals leaves discrimination unchanged
-($\Delta$AUROC $+0.004\pm0.009$; TOST confirms equivalence to the image model against a
-pre-specified $\pm0.05$ margin, with 80\% power to detect a difference of 0.010), and a
-late-fusion design in the style of MedFuse behaves the same way. A calibration
+the triage baselines (0.61). Adding triage vitals leaves discrimination within a
+pre-specified $\pm0.05$ margin ($\Delta$AUROC $+0.004\pm0.009$; hierarchical-bootstrap 95\%
+CI $[-0.016,+0.022]$, TOST-equivalent, adequately powered with a minimal detectable effect
+of 0.029), and a late-fusion design in the style of MedFuse behaves the same way. A calibration
 advantage that looked large in one run (ECE 0.040 vs 0.067) falls to
 $\Delta$ECE $-0.013\pm0.016$ once averaged over seeds, so a single run overstated it
 roughly twofold. Early labs give a small but consistent gain ($+0.009\pm0.005$) that an
@@ -380,7 +380,9 @@ disk (orange).}
 \begin{table*}[t]
 \centering
 \caption{Cohort characteristics. Splits are patient-level and temporally ordered;
-demographic and vital-sign statistics are for the test split.}
+demographic and vital-sign statistics are for the test split. The test split contains
+1,080 studies; 1,075 are evaluated (5 radiographs are absent from our disk snapshot), so
+all model metrics use $n{=}1{,}075$.}
 \label{tab:cohort}
 \footnotesize
 \begin{minipage}[t]{0.46\textwidth}\centering
@@ -504,13 +506,15 @@ reported as mean$\pm$SD over seeds with paired per-seed deltas against the image
 model on identical test rows; within-checkpoint uncertainty uses a 2{,}000-replicate
 patient-level paired bootstrap (patients, not studies, are resampled). A symmetric
 equivalence margin of $\pm0.05$ AUROC was pre-specified
-\citep{piaggio2012noninferiority}; we chose 0.05 because a difference below it is small
-relative to the seed-to-seed and cross-institution variation the image model already
-shows (Table~\ref{tab:main}; a 0.016 external drop) and is unlikely to change the
-operating-point behaviour a clinician would act on. Equivalence of a fusion model to the
-image-only model is tested formally by two one-sided tests (TOST) against $\pm0.05$ on
-the patient-level paired-bootstrap distribution of the AUROC delta, and we report the
-minimal effect detectable at 80\% power. Calibration is assessed with the ECE
+\citep{piaggio2012noninferiority,lakens2017equivalence}; we take 0.05 as a conservative
+upper bound on a change that could plausibly alter a clinical decision at the operating
+points we consider. We acknowledge this is a generous margin, and therefore also report
+the minimal detectable effect so the reader can judge the test's resolution independently
+of the margin. Equivalence of a fusion model to the image-only model is tested by two
+one-sided tests (TOST) against $\pm0.05$; to reflect the uncertainty a single deployed
+model would face, the delta distribution and the 80\%-power minimal detectable effect are
+estimated by a \emph{hierarchical} bootstrap that resamples both the training seed and the
+patients (rather than the seed-averaged ensemble, which would understate the variance). Calibration is assessed with the ECE
 \begin{equation}
 \text{ECE} = \sum_{b=1}^{B}\frac{n_b}{n}\,\bigl|\bar p_b - \bar y_b\bigr|,
 \label{eq:ece}
@@ -539,15 +543,16 @@ internal transform.
 Table~\ref{tab:main} and Figs.~\ref{fig:training}--\ref{fig:multiseed} summarise the
 primary results. Both CXR models beat the triage baselines by more than 12 AUROC points, which
 confirms that the radiograph carries the signal that discriminates. Adding triage
-vitals does not change discrimination: across seeds the paired concat$-$image
-$\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$). On a paired bootstrap over
-patients of the seed-averaged models the delta is $+0.006$, with a 90\% confidence
-interval of $[+0.000,+0.012]$ that lies entirely inside the pre-specified $\pm0.05$
-margin; both one-sided tests reject at $p<0.001$, so fusion is formally equivalent to
-imaging in discrimination. Because the two models share a backbone and their
-predictions are strongly correlated, the paired comparison has good power: the smallest
-AUROC difference we could detect at 80\% power is $0.010$, five times below the margin,
-so the null is not an artefact of low power. The result does not depend on our choice of
+vitals leaves discrimination within the pre-specified margin: across seeds the paired
+concat$-$image $\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$). A hierarchical
+bootstrap that resamples both the training seed and the patients, so that it reflects the
+variance a single deployed model would show, gives a 95\% CI of $[-0.016,+0.022]$; this
+includes zero and lies entirely inside the pre-specified $\pm0.05$ equivalence margin, so
+the two one-sided tests reject and concat fusion is statistically equivalent to, and not
+significantly different from, the image model. The comparison is adequately powered: the
+smallest AUROC difference detectable at 80\% power is $0.029$, still below the margin, so
+the equivalence is not an artefact of low power. Equivalence here means that any effect is
+smaller than $\pm0.05$, not that it is exactly zero. The result does not depend on our choice of
 feature-level fusion either. A late-fusion baseline in the style of MedFuse, which
 combines the separately trained image and triage models with a logistic meta-learner
 fitted on the validation split, is also neutral ($\Delta$AUROC $+0.000\pm0.001$ across
@@ -725,26 +730,33 @@ probabilities to genuine pneumonia, while a badly under-confident model inflates
 risk and erodes trust in the tool, so calibration, and not discrimination alone, has to
 be checked before any deployment.
 
-\emph{Caution 1: a single run inflates the calibration effect.} The single checkpoint in
-Figure~\ref{fig:reliability} suggested the concat model was markedly better calibrated
-than the image model (ECE 0.040 vs 0.067, a 40\% reduction). Across seeds, however, the image-only ECE alone
-ranges 0.041--0.060, and the paired advantage shrinks to $\Delta$ECE $-0.013\pm0.016$
-(4/5 seeds favour concat; the range crosses zero). The single-seed estimate thus
-overstated the benefit roughly twofold. Within-checkpoint uncertainty tells the same
+\emph{Caution 1: a single run inflates the calibration effect.} The canonical fine-tuned
+checkpoints (the models behind our headline numbers, shown in Figure~\ref{fig:reliability})
+suggested the concat model was markedly better calibrated than the image model (ECE 0.040
+vs 0.067, a 40\% gap). That single-checkpoint comparison does not survive replication. The
+image checkpoint's ECE of 0.067 in fact sits at the high (worse) end of what training
+stochasticity produces: across five seeds the image-only ECE ranges 0.041--0.060 (mean
+0.053) and the concat ECE 0.023--0.056 (mean 0.040), so the paired advantage shrinks to
+$\Delta$ECE $-0.013\pm0.016$ (4/5 seeds favour concat; the range crosses zero). A single
+run therefore overstated the benefit by roughly twofold, and the specific checkpoint used
+happened to land among the least-calibrated image runs, which is itself the caution in
+miniature. Within-checkpoint uncertainty tells the same
 story: patient-level bootstrap 95\% CIs on the seed-averaged ECE overlap almost
 entirely (image 0.042, CI $[0.033,0.077]$; concat 0.037, CI $[0.028,0.068]$), so the
 calibration gap is not resolvable even before seed variance is added. The apparent gap is also binning-dependent
 (Fig.~\ref{fig:ece}): under coarser or quantile bins it shrinks further
 \citep{nixon2019measuring}. Brier scores are essentially unchanged, so any effect is
-distributional alignment rather than refinement. The attention fusion model's
-miscalibration, in contrast, is consistent across seeds (ECE $0.076\pm0.042$, the worst
-of any model), so it reflects a genuine defect of that design and not a single-run
-artefact. Finally, a simple post-hoc correction removes
-what remains of the gap: temperature scaling of the image model (optimal $T=1.37$,
-fit on the validation logits) lowers its test ECE from 0.060 to 0.042, matching the
-concat model's 0.040. The modest calibration difference therefore does not motivate
-multimodal fusion on calibration grounds, since a single-parameter recalibration of
-the image model alone recovers it~\citep{ovadia2019trust}.
+distributional alignment rather than refinement. The attention fusion model, by
+contrast, is the most variable of all: its ECE ranges from 0.029 to 0.144 across seeds
+(mean $0.076\pm0.042$), better calibrated than the image model in one run and far worse
+in another, so its miscalibration is unstable rather than a fixed property of the design.
+A simple post-hoc rescaling does not explain the single-checkpoint gap either: temperature
+scaling of the image model (optimal $T=1.21$, fit on the validation logits) leaves its
+test ECE essentially unchanged (0.067 to 0.065, and no better on a patient-level
+bootstrap), so the apparent gap is not a scale mismatch that recalibration removes. The
+lesson of Caution~1 is therefore not that the difference is trivially fixable but that it
+does not survive replication: a single checkpoint suggests a large, robust-looking
+calibration advantage that averaging over seeds reveals to be fragile~\citep{ovadia2019trust}.
 
 \begin{figure}[t]
 \centering
@@ -771,8 +783,9 @@ was ordered, is small, and lies within the patient-level bootstrap CI.
 \subsection{Clinical availability of laboratory results}
 \label{subsec:labcov}
 Under time-safe matching, only about a quarter of ED-anchored CXR studies have any
-resolved laboratory value at or before imaging (25.4\% of the full cohort; 269 of
-the 1{,}075 test studies, 25.0\%; Fig.~\ref{fig:labcov}).
+resolved laboratory value at or before imaging (25.4\% of the full cohort; 272 of
+the 1{,}075 test studies, 25.3\%, of which 269 have a radiograph on disk and form the
+lab-present evaluation subcohort; Fig.~\ref{fig:labcov}).
 Complete-blood-count and metabolic panels reach $\sim$25\%, but the most
 pneumonia-specific markers (CRP and procalcitonin) are present in only 0.5\% and
 0.6\% of studies. At the moment of imaging the informative labs are essentially
@@ -1146,10 +1159,11 @@ public dataset links ED triage, or early labs, to the chest radiograph, so the f
 models themselves cannot yet be validated externally, and building such a linked
 multi-site resource is an important community need. The sharp fall in
 prevalence-dependent calibration on NIH (from 45\% to 1.3\%) is expected rather than a
-defect: before deployment in a population with a different base rate, a simple
-recalibration (temperature or Platt scaling) fitted on a small labelled sample from the
-target site would restore calibrated probabilities without retraining, and our
-temperature-scaling result shows that one parameter is enough internally. The subcohort
+defect: before deployment in a population with a different base rate, a recalibration
+fitted on a small labelled sample from the target site (temperature scaling for sharpness
+together with an intercept or prior correction for the base-rate shift) would be needed to
+restore calibrated probabilities without retraining; a single temperature is not
+sufficient on its own, as our internal check left the image ECE essentially unchanged. The subcohort
 with labs present is small ($n{=}269$), but this reflects the clinical reality that
 laboratory results are rarely available at the moment of the first ED radiograph
 (Section~\ref{subsec:labcov}) rather than a sampling artefact, and it is the right

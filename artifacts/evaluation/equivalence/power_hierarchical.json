@@ -1,0 +1,24 @@
+{
+  "per_seed_delta": [
+    -0.0034,
+    0.0047,
+    0.0092,
+    0.0145,
+    -0.0066
+  ],
+  "per_seed_delta_mean": 0.0037,
+  "per_seed_delta_sd": 0.0087,
+  "mixed_bootstrap_se": 0.0103,
+  "mde_80pct_power": 0.0289,
+  "mixed_ci95": [
+    -0.016,
+    0.022
+  ],
+  "mixed_ci90": [
+    -0.0133,
+    0.0198
+  ],
+  "tost_p": 0.0,
+  "equivalent_at_05": true,
+  "margin": 0.05
+}
