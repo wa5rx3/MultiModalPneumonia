@@ -880,7 +880,13 @@ Grad-CAM++ the most focal and Smooth Grad-CAM++ the most diffuse, but all share 
 central emphasis. This matches reports that saliency maps for chest-radiograph
 classifiers often localise the abnormality poorly~\citep{arun2021saliency}: the maps show
 roughly where the model looks, not a reliable outline of disease, and are better read as
-a coarse sanity check than as evidence of clinically precise reasoning.
+a coarse sanity check than as evidence of clinically precise reasoning. The central focus
+does raise the question of whether the model leans on non-pathological cues rather than
+the consolidation itself. The best evidence against a purely spurious signal is that the
+image model transfers to a different institution (AUROC 0.722 on NIH,
+Section~\ref{subsec:ext}), which a model relying on dataset-specific artefacts would not
+do; but the imperfect localisation is a further reason to treat saliency maps as a weak
+form of evidence.
 
 \begin{table}[t]
 \centering
