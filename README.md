@@ -1,34 +1,35 @@
 # Multimodal Pneumonia Detection
 
-BSc thesis project. The question: does adding structured ED triage data (vitals, acuity, missingness flags) to a chest X-ray model actually improve pneumonia detection, or does the image already capture everything useful?
+BSc thesis project, extended into a journal manuscript. The question: does adding structured ED triage data (vitals, acuity, missingness flags) to a chest X-ray model actually improve pneumonia detection, or does the image already capture everything useful?
 
-Short answer: calibration improves, discrimination does not.
+Short answer: under multi-seed evaluation, discrimination does not improve, and the one apparent calibration gain is fragile across seeds and is recovered by a single-parameter recalibration of the image model alone.
 
 **Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV v2.2 + MIMIC-IV-ED v2.2 (PhysioNet credentialed access required)  
-**Cohort:** 9,137 ED-anchored studies, 80/10/10 patient-level temporal split, test set n = 1,075  
-**Backbone:** DenseNet-121 pretrained on the multilabel CheXpert-style task using 41,214 non-ED MIMIC-CXR-JPG studies, then fine-tuned for binary pneumonia
+**Cohort:** 9,154 ED-anchored studies, patient-level temporal 80/10/10 split (train 7,144 / val 930 / test 1,080); evaluated test set n = 1,075 (prevalence 45.3%)  
+**Backbone:** DenseNet-121 pretrained on the multilabel CheXpert-style task using 182,637 non-ED MIMIC-CXR-JPG studies, then fine-tuned for binary pneumonia
 
 ---
 
 ## Results
 
-Test set metrics (`u_ignore` label policy, 2,000-replicate patient-level paired bootstrap).
+Test-set performance, mean ± SD over five random seeds (`u_ignore` label policy; patient-level paired bootstrap for within-checkpoint intervals).
 
 | Model | AUROC | AUPRC | ECE |
 |---|---|---|---|
 | Logistic Regression (triage only) | 0.606 | 0.548 | 0.037 |
 | XGBoost (triage only) | 0.611 | 0.567 | 0.046 |
-| Image-only DenseNet-121 | **0.746** | **0.724** | 0.067 |
-| Multimodal — Concat MLP | 0.736 | 0.714 | **0.040** |
-| Multimodal — Attention Fusion | 0.737 | 0.710 | 0.132 |
+| Image-only DenseNet-121 | 0.737 ± 0.003 | 0.719 ± 0.004 | 0.053 ± 0.008 |
+| Multimodal — concat (triage) | 0.741 ± 0.006 | 0.715 ± 0.005 | 0.040 ± 0.014 |
+| Multimodal — attention (triage) | 0.738 ± 0.006 | 0.713 ± 0.012 | 0.076 ± 0.042 |
+| Multimodal — concat (+ labs) | 0.747 ± 0.004 | 0.724 ± 0.004 | 0.043 ± 0.011 |
 
-The multimodal concat model does not significantly outperform image-only on discrimination (ΔAUROC = −0.009, 95% CI [−0.023, +0.005], P(Δ>0) = 0.10). The meaningful difference is calibration: ECE drops from 0.067 to 0.040, a 40% reduction. Paired bootstrap on ΔECE gives 95% CI [−0.041, +0.003] with P(ΔECE<0) = 0.961 — strong directional evidence, borderline by a zero-exclusion CI criterion. Post-hoc temperature scaling on the image model (T = 1.21) reduces image ECE only to 0.065, so the calibration gap is not recoverable via a single-scalar correction. Both deep-learning models beat the triage-only baselines by a large margin (P(Δ>0) = 1.0).
+Adding triage vitals does not change discrimination: the paired concat − image ΔAUROC is +0.004 ± 0.009 across seeds, and a two-one-sided test (TOST) against a ±0.05 margin confirms equivalence (90% bootstrap CI [+0.000, +0.012]). Both deep models beat the triage-only baselines by more than 12 AUROC points.
 
-Attention fusion matched image-only on AUROC but was severely miscalibrated (ECE 0.132), making it unsuitable at this feature-set size.
+A calibration advantage that looks large from a single checkpoint (image ECE 0.067 vs concat 0.040) shrinks to ΔECE −0.013 ± 0.016 across five seeds, and temperature scaling of the image model alone (T = 1.37) lowers its ECE from 0.060 to 0.042, matching concat. The calibration gap therefore does not motivate fusion. Attention fusion matches image AUROC but is badly and consistently miscalibrated (single-checkpoint ECE 0.132).
 
-Internal note on non-ED generalization: running the image model on non-ED MIMIC-CXR (n = 9,589) gives AUROC 0.534 [0.520, 0.548]. The backbone was pretrained on this population so this is not an independent test.
+The small `+labs` gain (+0.009 ± 0.005) is reproduced entirely by laboratory missingness indicators, not the measured values (flags-only ablation), and is not leakage. The image model externally validates on NIH ChestX-ray14 (AUROC 0.722 ± 0.005, 112,120 radiographs).
 
-All numbers, CIs, and pairwise comparisons: [`artifacts/evaluation/final_publication_report.json`](artifacts/evaluation/final_publication_report.json)
+Multi-seed metrics, bootstrap deltas and equivalence tests: `artifacts/evaluation/multiseed/` and `artifacts/evaluation/equivalence/`.
 
 ---
 
