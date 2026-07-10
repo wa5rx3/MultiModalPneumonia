@@ -246,7 +246,15 @@ consistent with rather than contradictory to this body of work: pneumonia is def
 room for clinical context to add discriminative signal. This distinction, that fusion
 tends to help when the target lies partly outside the image but not when the image is
 essentially the target, is a useful lens on when multimodal CXR fusion should be
-expected to help.
+expected to help. Much recent work develops more elaborate fusion architectures aimed at
+practical obstacles such as missing modalities and modal inconsistency, for example
+DrFuse, which disentangles shared from modality-specific representations for EHR and CXR
+fusion~\citep{yao2024drfuse}, and general flexible-fusion networks that handle
+heterogeneous inputs~\citep{hemker2024healnet}. Our contribution is orthogonal to these:
+we do not propose another fusion mechanism but ask, under a strict protocol, whether the
+clinical modality carries non-redundant discriminative signal for this task in the first
+place, and we show that the pattern of missingness such methods must handle can itself
+masquerade as a fusion benefit.
 
 Two further literatures frame our cautions. \emph{Informative missingness}, the
 observation that missing values and their patterns correlate with the label, is well
@@ -525,8 +533,8 @@ internal transform.
 
 \subsection{Discrimination: imaging dominates, fusion is neutral}
 \label{subsec:disc}
-Table~\ref{tab:main} and Figs.~\ref{fig:roc}--\ref{fig:multiseed} summarise the primary
-results. Both CXR models beat the triage baselines by more than 12 AUROC points, which
+Table~\ref{tab:main} and Figs.~\ref{fig:training}--\ref{fig:multiseed} summarise the
+primary results. Both CXR models beat the triage baselines by more than 12 AUROC points, which
 confirms that the radiograph carries the signal that discriminates. Adding triage
 vitals does not change discrimination: across seeds the paired concat$-$image
 $\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$). On a paired bootstrap over
@@ -667,12 +675,48 @@ No missingness flags                      & 0.752 & 0.734 \\
 
 \subsection{Calibration analysis}
 \label{subsec:cal}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig17_reliability_grid.png}
+\caption{Reliability diagrams for all five model variants on the test set
+($n{=}1{,}075$, 10 uniform bins, single checkpoint). The dashed diagonal is perfect
+calibration; a curve below it is overconfident, above it under-confident. The
+multimodal-concat model tracks the diagonal most closely (ECE 0.040); the image-only
+model is moderately overconfident in the mid-range (0.067); the attention fusion model
+is markedly under-confident (0.132). Shaded area is the deviation from the diagonal;
+bars show the distribution of predicted probabilities.}
+\label{fig:reliability}
+\end{figure*}
+
+\begin{table}[t]
+\centering
+\caption{Calibration metrics on the test set (single checkpoint, $n{=}1{,}075$, 10
+uniform bins; lower is better). The concat model is best calibrated; attention fusion is
+the worst; the triage baselines have low ECE but a large worst-bin error (MCE).}
+\label{tab:calib}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & ECE & MCE & Brier \\
+\midrule
+Image-only         & 0.067 & 0.165 & 0.206 \\
+Multimodal-concat  & 0.040 & 0.131 & 0.207 \\
+Attention fusion   & 0.132 & 0.190 & 0.224 \\
+XGBoost (triage)   & 0.046 & 0.289 & 0.241 \\
+LR (triage)        & 0.037 & 0.489 & 0.242 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Figure~\ref{fig:reliability} shows reliability diagrams for all five variants on the
-held-out test set. The multimodal-concat model is the best calibrated: its curve tracks
-the diagonal across the whole probability range (ECE 0.040). The image-only model is
-moderately overconfident between 0.5 and 0.8, where its curve sits below the diagonal
-(ECE 0.067), and the attention fusion model is the clear outlier, sitting well above the
-diagonal and systematically under-predicting (ECE 0.132). These differences matter in
+held-out test set, and Table~\ref{tab:calib} reports their calibration metrics. The
+multimodal-concat model is the best calibrated: its curve tracks the diagonal across the
+whole probability range (ECE 0.040). The image-only model is moderately overconfident
+between 0.5 and 0.8, where its curve sits below the diagonal (ECE 0.067), and the
+attention fusion model is the clear outlier, sitting well above the diagonal and
+systematically under-predicting (ECE 0.132). The maximum calibration error tells a
+complementary story: the triage baselines look well calibrated on average (ECE 0.037 to
+0.046) but carry large worst-bin errors (MCE up to 0.489), so they can be badly wrong for
+some patients even when their mean calibration looks good. These differences matter in
 the emergency department: an overconfident model can attach falsely reassuring low
 probabilities to genuine pneumonia, while a badly under-confident model inflates apparent
 risk and erodes trust in the tool, so calibration, and not discrimination alone, has to
@@ -698,19 +742,6 @@ fit on the validation logits) lowers its test ECE from 0.060 to 0.042, matching 
 concat model's 0.040. The modest calibration difference therefore does not motivate
 multimodal fusion on calibration grounds, since a single-parameter recalibration of
 the image model alone recovers it~\citep{ovadia2019trust}.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.92\textwidth]{figures/fig17_reliability_grid.png}
-\caption{Reliability diagrams for all five model variants on the test set
-($n{=}1{,}075$, 10 uniform bins, single checkpoint). The dashed diagonal is perfect
-calibration; a curve below it is overconfident, above it under-confident. The
-multimodal-concat model tracks the diagonal most closely (ECE 0.040); the image-only
-model is moderately overconfident in the mid-range (0.067); the attention fusion model
-is markedly under-confident (0.132). Shaded area is the deviation from the diagonal;
-bars show the distribution of predicted probabilities.}
-\label{fig:reliability}
-\end{figure*}
 
 \begin{figure}[t]
 \centering
