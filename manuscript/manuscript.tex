@@ -504,9 +504,12 @@ reported as mean$\pm$SD over seeds with paired per-seed deltas against the image
 model on identical test rows; within-checkpoint uncertainty uses a 2{,}000-replicate
 patient-level paired bootstrap (patients, not studies, are resampled). A symmetric
 equivalence margin of $\pm0.05$ AUROC was pre-specified
-\citep{piaggio2012noninferiority}; equivalence of a fusion model to the image-only
-model is tested formally by two one-sided tests (TOST) against $\pm0.05$ on the
-patient-level paired-bootstrap distribution of the AUROC delta, and we report the
+\citep{piaggio2012noninferiority}; we chose 0.05 because a difference below it is small
+relative to the seed-to-seed and cross-institution variation the image model already
+shows (Table~\ref{tab:main}; a 0.016 external drop) and is unlikely to change the
+operating-point behaviour a clinician would act on. Equivalence of a fusion model to the
+image-only model is tested formally by two one-sided tests (TOST) against $\pm0.05$ on
+the patient-level paired-bootstrap distribution of the AUROC delta, and we report the
 minimal effect detectable at 80\% power. Calibration is assessed with the ECE
 \begin{equation}
 \text{ECE} = \sum_{b=1}^{B}\frac{n_b}{n}\,\bigl|\bar p_b - \bar y_b\bigr|,
@@ -882,11 +885,14 @@ classifiers often localise the abnormality poorly~\citep{arun2021saliency}: the 
 roughly where the model looks, not a reliable outline of disease, and are better read as
 a coarse sanity check than as evidence of clinically precise reasoning. The central focus
 does raise the question of whether the model leans on non-pathological cues rather than
-the consolidation itself. The best evidence against a purely spurious signal is that the
-image model transfers to a different institution (AUROC 0.722 on NIH,
-Section~\ref{subsec:ext}), which a model relying on dataset-specific artefacts would not
-do; but the imperfect localisation is a further reason to treat saliency maps as a weak
-form of evidence.
+the consolidation itself, a well-documented failure mode for chest-radiograph
+classifiers~\citep{zech2018variable,degrave2021shortcuts}. The strongest evidence against
+a purely spurious signal here is that the image model transfers to a different institution
+(AUROC 0.722 on NIH, Section~\ref{subsec:ext}), which a model relying on dataset-specific
+artefacts would not do; the pneumonia-detection failure that \citet{zech2018variable}
+reported was precisely a failure of cross-site transfer, so our external result speaks
+directly to that concern. The imperfect localisation nonetheless remains a reason to treat
+these saliency maps as weak evidence.
 
 \begin{table}[t]
 \centering
@@ -1147,9 +1153,20 @@ temperature-scaling result shows that one parameter is enough internally. The su
 with labs present is small ($n{=}269$), but this reflects the clinical reality that
 laboratory results are rarely available at the moment of the first ED radiograph
 (Section~\ref{subsec:labcov}) rather than a sampling artefact, and it is the right
-denominator for the question of whether labs help when they are available. Finally, the
-\emph{u\_ignore} policy raises the internal prevalence to 45.3\%, and the NIH labels are
-text-mined, which adds noise to the external estimate.
+denominator for the question of whether labs help when they are available. The
+\emph{u\_ignore} policy also raises the internal prevalence to 45.3\%, higher than a
+typical ED pneumonia base rate; this is a property of the labelled evaluation subset
+rather than a population estimate, and because AUROC is prevalence-independent and the
+external validation probes a very different base rate (1.3\%), the discrimination
+conclusion does not depend on it, while the prevalence-dependent metrics (AUPRC, PPV)
+should be read at the local deployment prevalence. The NIH labels are text-mined, which
+adds noise to the external estimate. Finally, we did not run an exhaustive hyperparameter
+search over the fusion branch; the neutrality is nonetheless unlikely to reflect
+under-tuning, since it holds across two feature-level fusion designs (concatenation and
+attention), a decision-level late-fusion baseline whose meta-learner gives the triage
+stream a real weight, restricted and expanded tabular feature sets (Table~\ref{tab:ablation}),
+and the addition of a full early-laboratory panel, none of which recovers a discriminative
+gain.
 
 % ═════════════════════════════════════════════════════════════════════
 \section{Conclusion}
