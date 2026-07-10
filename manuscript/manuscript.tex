@@ -478,10 +478,12 @@ so the multi-seed analysis isolates fine-tuning stochasticity.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.82\textwidth]{figures/fig14_architecture.png}
-\caption{Multimodal architecture. A DenseNet-121 image encoder (ImageNet then
-CheXpert multilabel pretraining) produces a 1024-d embedding $e_v$; a two-layer
-TabularMLP encodes triage vitals (optionally with early labs) to a 128-d embedding
-$e_t$. The streams are combined by concatenation or by CLS-token attention and passed
+\caption{Multimodal pipeline, from inputs to prediction. Both inputs are anchored at the
+radiograph acquisition time $t_0$ so that no feature post-dates the prediction. A
+DenseNet-121 image encoder (ImageNet then CheXpert multilabel pretraining) produces a
+1024-d embedding $e_v$; a two-layer TabularMLP encodes triage vitals, optionally with
+early labs, to a 128-d embedding $e_t$. The streams are combined by one of three fusion
+strategies, concatenation, CLS-token attention or decision-level late fusion, and passed
 to a classifier head that outputs the pneumonia probability.}
 \label{fig:arch}
 \end{figure*}
@@ -548,6 +550,18 @@ representations: in a t-SNE of the learned embeddings (Fig.~\ref{fig:tsne}), the
 embedding is not aligned with the label and the fused representation is essentially the
 image embedding.
 
+\paragraph{Training dynamics.} Figure~\ref{fig:training} shows the fine-tuning curves.
+All three models reach their best validation AUPRC within the first one or two epochs,
+which reflects the strong pretrained initialisation (ImageNet then CheXpert) and the low
+backbone learning rate: little needs to change for the model to perform near its ceiling.
+The curves also show where the models struggle. The image-only model overfits, its
+training loss falling toward zero while validation loss climbs steadily and validation
+AUPRC decays after the second epoch, so early stopping is essential. The attention fusion
+model converges earliest but is the least stable: its validation loss rises sharply (to
+about 2.9) and its validation AUPRC oscillates from epoch to epoch, consistent with the
+poor and variable calibration it shows in Table~\ref{tab:main}. Selecting on validation
+AUPRC stops each model before these failure modes take over.
+
 \begin{table*}[t]
 \centering
 \caption{Multi-seed test-set performance (mean$\pm$SD over 5 seeds; $n{=}1{,}075$;
@@ -566,6 +580,18 @@ XGBoost (triage)                   & 0.611 & 0.567 & 0.046 & 0.241 \\
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig16_training_curves.png}
+\caption{Fine-tuning curves for the image-only, multimodal-concat and attention fusion
+models: training and validation loss (left axis) and validation AUPRC (right axis) per
+epoch, with the best epoch marked. Validation AUPRC peaks within the first one or two
+epochs, reflecting the strong pretrained initialisation. The image-only model overfits
+(validation loss rises as training loss falls); the attention fusion model converges
+earliest but its validation loss and AUPRC are the most unstable.}
+\label{fig:training}
+\end{figure*}
 
 \begin{figure}[t]
 \centering
@@ -639,10 +665,22 @@ No missingness flags                      & 0.752 & 0.734 \\
 \end{tabular}
 \end{table}
 
-\subsection{Caution 1: single-seed evaluation inflates the calibration effect}
+\subsection{Calibration analysis}
 \label{subsec:cal}
-A single checkpoint suggested the concat model was markedly better calibrated (ECE
-0.040 vs 0.067, a 40\% reduction). Across seeds, however, the image-only ECE alone
+Figure~\ref{fig:reliability} shows reliability diagrams for all five variants on the
+held-out test set. The multimodal-concat model is the best calibrated: its curve tracks
+the diagonal across the whole probability range (ECE 0.040). The image-only model is
+moderately overconfident between 0.5 and 0.8, where its curve sits below the diagonal
+(ECE 0.067), and the attention fusion model is the clear outlier, sitting well above the
+diagonal and systematically under-predicting (ECE 0.132). These differences matter in
+the emergency department: an overconfident model can attach falsely reassuring low
+probabilities to genuine pneumonia, while a badly under-confident model inflates apparent
+risk and erodes trust in the tool, so calibration, and not discrimination alone, has to
+be checked before any deployment.
+
+\emph{Caution 1: a single run inflates the calibration effect.} The single checkpoint in
+Figure~\ref{fig:reliability} suggested the concat model was markedly better calibrated
+than the image model (ECE 0.040 vs 0.067, a 40\% reduction). Across seeds, however, the image-only ECE alone
 ranges 0.041--0.060, and the paired advantage shrinks to $\Delta$ECE $-0.013\pm0.016$
 (4/5 seeds favour concat; the range crosses zero). The single-seed estimate thus
 overstated the benefit roughly twofold. Within-checkpoint uncertainty tells the same
@@ -651,22 +689,28 @@ entirely (image 0.042, CI $[0.033,0.077]$; concat 0.037, CI $[0.028,0.068]$), so
 calibration gap is not resolvable even before seed variance is added. The apparent gap is also binning-dependent
 (Fig.~\ref{fig:ece}): under coarser or quantile bins it shrinks further
 \citep{nixon2019measuring}. Brier scores are essentially unchanged, so any effect is
-distributional alignment rather than refinement. Reliability diagrams
-(Fig.~\ref{fig:reliability}) show all deep models tracking the diagonal closely, with
-attention fusion the clear outlier. Finally, a simple post-hoc correction removes
+distributional alignment rather than refinement. The attention fusion model's
+miscalibration, in contrast, is consistent across seeds (ECE $0.076\pm0.042$, the worst
+of any model), so it reflects a genuine defect of that design and not a single-run
+artefact. Finally, a simple post-hoc correction removes
 what remains of the gap: temperature scaling of the image model (optimal $T=1.37$,
 fit on the validation logits) lowers its test ECE from 0.060 to 0.042, matching the
 concat model's 0.040. The modest calibration difference therefore does not motivate
 multimodal fusion on calibration grounds, since a single-parameter recalibration of
 the image model alone recovers it~\citep{ovadia2019trust}.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.95\columnwidth]{figures/fig9_reliability.png}
-\caption{Reliability diagrams (10 bins). The deep models track the diagonal;
-attention fusion systematically under-predicts.}
+\includegraphics[width=0.92\textwidth]{figures/fig17_reliability_grid.png}
+\caption{Reliability diagrams for all five model variants on the test set
+($n{=}1{,}075$, 10 uniform bins, single checkpoint). The dashed diagonal is perfect
+calibration; a curve below it is overconfident, above it under-confident. The
+multimodal-concat model tracks the diagonal most closely (ECE 0.040); the image-only
+model is moderately overconfident in the mid-range (0.067); the attention fusion model
+is markedly under-confident (0.132). Shaded area is the deviation from the diagonal;
+bars show the distribution of predicted probabilities.}
 \label{fig:reliability}
-\end{figure}
+\end{figure*}
 
 \begin{figure}[t]
 \centering
@@ -791,10 +835,22 @@ For the triage-only XGBoost model, exact TreeSHAP attributes the largest importa
 to SpO$_2$ (mean $|\text{SHAP}|=0.148$), followed by heart rate (0.099), temperature
 (0.078) and respiratory rate (0.062) (Table~\ref{tab:shap};
 Fig.~\ref{fig:shap}), consistent with the pathophysiology of pneumonia, in which
-alveolar consolidation impairs gas exchange. Grad-CAM on the image branch
-(Fig.~\ref{fig:gradcam}) localises activation over regions of consolidation in
-confident true positives, whereas a false positive attends to overlapping opacity and
-a false negative shows diffuse, non-localised activation.
+alveolar consolidation impairs gas exchange. For the image branch we compare six
+class-activation-mapping variants, CAM~\citep{zhou2016cam},
+Grad-CAM~\citep{selvaraju2017gradcam}, Grad-CAM++~\citep{chattopadhyay2018gradcampp},
+Score-CAM~\citep{wang2020scorecam}, Smooth Grad-CAM++~\citep{omeiza2019smoothgradcampp}
+and XGrad-CAM~\citep{fu2020xgradcam}, on confident true positives
+(Fig.~\ref{fig:gradcam}). The methods broadly agree, concentrating on the mid and lower
+lung zones where consolidation is expected rather than on the image borders or hardware,
+which supports the model attending to plausible anatomy. They differ mainly in sharpness:
+CAM, Grad-CAM, XGrad-CAM and Grad-CAM++ give the tightest, most focal maps, Score-CAM is
+similar but smoother, and Smooth Grad-CAM++ is the most diffuse, spreading activation
+across both lung fields. In some cases the activation extends over the perihilar and
+mediastinal region rather than staying strictly within the lung parenchyma, a known
+limitation of gradient-based saliency on radiographs~\citep{arun2021saliency} that should
+temper any anatomical reading of these maps. Across methods the maps are consistent and
+anatomically plausible, but the choice of variant changes how tightly the supporting
+evidence is localised.
 
 \begin{table}[t]
 \centering
@@ -825,13 +881,15 @@ predictions toward pneumonia.}
 \label{fig:shap}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.85\columnwidth]{figures/fig12_gradcam.png}
-\caption{Grad-CAM on the image model for representative test cases: a confident true
-positive, a false positive, and a false negative.}
+\includegraphics[width=\textwidth]{figures/fig18_cam_grid.png}
+\caption{Class-activation maps for the image model on four confident true-positive
+radiographs (rows; $p$ is the predicted pneumonia probability). Columns compare the
+original image with six saliency variants. The methods agree on lung-zone localisation
+and differ mainly in sharpness, with Smooth Grad-CAM++ the most diffuse.}
 \label{fig:gradcam}
-\end{figure}
+\end{figure*}
 
 \subsection{Modern backbone and external validation}
 \label{subsec:ext}
@@ -863,6 +921,67 @@ domain shift and NLP-derived external labels.
 $-0.016$.}
 \label{fig:external}
 \end{figure}
+
+\subsection{Ablation study}
+\label{subsec:ablationstudy}
+Table~\ref{tab:components} isolates the contribution of each component of the pipeline,
+from the single-modality baselines to the full model. The image-only model already
+reaches AUROC 0.737, whereas the metadata-only triage baseline reaches only 0.606, so the
+radiograph, not the clinical data, carries the discriminative signal. Adding the triage
+stream by early fusion (concat, 0.741) or by decision-level late fusion (0.738), and
+adding the early-laboratory panel (full model, 0.747), leaves AUROC within the image-only
+model's confidence interval. The ablation quantifies each component's contribution and
+shows that the imaging component dominates while the fusion components add little,
+consistent with the equivalence result in Section~\ref{subsec:disc}.
+
+\begin{table}[t]
+\centering
+\caption{Component ablation (multi-seed means, matching Table~\ref{tab:main}; clinical
+baseline single-fit). Imaging dominates; adding the clinical stream, by early or late
+fusion, or the laboratory panel, does not improve discrimination.}
+\label{tab:components}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Configuration & AUROC & AUPRC & ECE \\
+\midrule
+Metadata-only (triage)  & 0.606 & 0.548 & 0.037 \\
+Image-only              & $0.737\pm0.003$ & $0.719\pm0.004$ & $0.053\pm0.008$ \\
+Late fusion             & $0.738\pm0.003$ & $0.714\pm0.004$ & $0.036\pm0.005$ \\
+Early fusion (concat)   & $0.741\pm0.006$ & $0.715\pm0.005$ & $0.040\pm0.014$ \\
+Full ($+$labs)          & $0.747\pm0.004$ & $0.724\pm0.004$ & $0.043\pm0.011$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Finally, we place the image model against published results on the external set
+(Table~\ref{tab:sota}). On ChestX-ray14 our model reaches pneumonia AUROC 0.722, close to
+models trained directly on that dataset (CheXNet~\citep{rajpurkar2017chexnet} 0.768; Yao
+et al.~\citep{yao2017learning} 0.713; Wang et al.~\citep{wang2017chestxray} 0.633). This
+comparison must be read with care: those numbers are \emph{in-domain}, the
+models being trained and tested on ChestX-ray14, whereas ours is a \emph{cross-dataset
+transfer} from MIMIC with no adaptation, a harder setting. That our transfer AUROC lands
+within this range, above two of the three in-domain baselines, indicates the image model
+generalises rather than fitting one institution's distribution.
+
+\begin{table}[t]
+\centering
+\caption{Pneumonia AUROC on NIH ChestX-ray14. Published models are trained and tested on
+ChestX-ray14 (in-domain); ours is trained on MIMIC and evaluated on ChestX-ray14 without
+adaptation (cross-dataset transfer), a harder setting.}
+\label{tab:sota}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llc@{}}
+\toprule
+Model & Setting & AUROC \\
+\midrule
+Wang et al.\ 2017     & in-domain & 0.633 \\
+Yao et al.\ 2017      & in-domain & 0.713 \\
+CheXNet               & in-domain & 0.768 \\
+This work (image)     & transfer  & 0.722 \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 \subsection{Label-policy sensitivity}
 \label{subsec:labelpol}

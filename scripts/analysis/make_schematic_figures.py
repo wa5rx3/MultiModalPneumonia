@@ -52,20 +52,27 @@ def cohort_flow():
 
 
 def architecture():
-    fig, ax = plt.subplots(figsize=(7.8, 4.4)); ax.axis("off")
-    ax.set_xlim(0, 13); ax.set_ylim(0, 7)
-    box(ax, 0.3, 4.6, 2.1, 1.2, "Chest\nradiograph", fc=GREY, fs=9)
-    box(ax, 0.3, 1.2, 2.1, 1.2, "Triage vitals\n(+ early labs)", fc=GREY, fs=9)
-    box(ax, 3.1, 4.6, 2.6, 1.2, "DenseNet-121\n(ImageNet$\\to$CheXpert)", fc=BLUE, fs=8.5)
-    box(ax, 3.1, 1.2, 2.6, 1.2, "TabularMLP\n(2 layers)", fc=GREEN, fs=9)
-    box(ax, 6.4, 4.75, 1.5, 0.9, "$e_v$\n1024-d", fc="white", fs=8.5)
-    box(ax, 6.4, 1.35, 1.5, 0.9, "$e_t$\n128-d", fc="white", fs=8.5)
-    box(ax, 8.5, 3.05, 1.6, 1.3, "Fusion\n(concat /\nattention)", fc=ORANGE, fs=8.5)
-    box(ax, 10.5, 3.05, 2.2, 1.3, "$\\hat p$\n(pneumonia)", fc="white", fs=9, bold=True)
-    arrow(ax, 2.4, 5.2, 3.1, 5.2); arrow(ax, 2.4, 1.8, 3.1, 1.8)
-    arrow(ax, 5.7, 5.2, 6.4, 5.2); arrow(ax, 5.7, 1.8, 6.4, 1.8)
-    arrow(ax, 7.9, 5.2, 8.7, 4.35); arrow(ax, 7.9, 1.8, 8.7, 3.05)
-    arrow(ax, 10.1, 3.7, 10.5, 3.7)
+    fig, ax = plt.subplots(figsize=(8.6, 4.7)); ax.axis("off")
+    ax.set_xlim(0, 13.5); ax.set_ylim(0, 7)
+    # inputs (time-safe, anchored at t0)
+    box(ax, 0.2, 4.55, 2.3, 1.25, "Chest radiograph\n(frontal, PA/AP)", fc=GREY, fs=8.5)
+    box(ax, 0.2, 1.15, 2.3, 1.25, "Triage vitals\n+ early labs", fc=GREY, fs=8.5)
+    ax.text(1.35, 0.55, "inputs anchored at $t_0$ (time-safe)", ha="center",
+            fontsize=8, style="italic", color="#555")
+    # encoders
+    box(ax, 3.1, 4.55, 2.7, 1.25, "DenseNet-121\n(ImageNet$\\to$CheXpert)", fc=BLUE, fs=8.5)
+    box(ax, 3.1, 1.15, 2.7, 1.25, "TabularMLP\n(2 layers, BN, dropout)", fc=GREEN, fs=8)
+    # embeddings
+    box(ax, 6.4, 4.7, 1.5, 0.95, "$e_v$\n1024-d", fc="white", fs=8.5)
+    box(ax, 6.4, 1.3, 1.5, 0.95, "$e_t$\n128-d", fc="white", fs=8.5)
+    # fusion (three strategies) + output
+    box(ax, 8.5, 2.85, 2.1, 1.7, "Fusion\nconcat /\nattention /\nlate", fc=ORANGE, fs=8.5)
+    box(ax, 11.1, 3.1, 2.2, 1.25, "$\\hat p$\n(pneumonia)", fc="white", fs=9, bold=True)
+    # arrows
+    arrow(ax, 2.5, 5.18, 3.1, 5.18); arrow(ax, 2.5, 1.78, 3.1, 1.78)
+    arrow(ax, 5.8, 5.18, 6.4, 5.18); arrow(ax, 5.8, 1.78, 6.4, 1.78)
+    arrow(ax, 7.9, 5.18, 8.6, 4.2); arrow(ax, 7.9, 1.78, 8.6, 3.15)
+    arrow(ax, 10.6, 3.7, 11.1, 3.7)
     fig.tight_layout(); fig.savefig(OUT / "fig14_architecture.png", dpi=200, bbox_inches="tight"); plt.close(fig)
 
 
