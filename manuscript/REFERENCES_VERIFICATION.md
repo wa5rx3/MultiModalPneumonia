@@ -24,6 +24,10 @@ the specific claim it is cited for. Status below; nothing is filler or fabricate
 | omeiza2019smoothgradcampp | Smooth Grad-CAM++ (Omeiza et al.) | arXiv:1908.01224 (2019) | CAM-variant grid |
 | fu2020xgradcam | Axiom-based Grad-CAM / XGrad-CAM (Fu et al.) | BMVC 2020; arXiv:2008.02312 | CAM-variant grid |
 | arun2021saliency | Trustworthiness of Saliency Maps (Arun et al.) | Radiology: AI 3(6):e200267 (2021); 10.1148/ryai.2021200267 | saliency-map limitation caveat |
+| zech2018variable | Variable generalization of pneumonia CXR model (Zech et al.) | PLOS Medicine 15(11):e1002683 (2018); 10.1371/journal.pmed.1002683 | shortcut learning; motivates external validation (same NIH set) |
+| degrave2021shortcuts | AI COVID detection selects shortcuts (DeGrave et al.) | Nature Machine Intelligence 3:610-619 (2021); 10.1038/s42256-021-00338-7 | shortcut learning in CXR |
+| yao2024drfuse | DrFuse (Yao et al.) | AAAI 2024, vol 38:16416-16424; 10.1609/aaai.v38i15.29578 | recent EHR+CXR fusion positioning |
+| hemker2024healnet | HEALNet (Hemker et al.) | NeurIPS 2024 | recent flexible multimodal fusion positioning |
 
 Note: the HAIM authors' GitHub readme mislabels the venue as "Nature Machine
 Intelligence"; the actual publication is npj Digital Medicine (nature.com
