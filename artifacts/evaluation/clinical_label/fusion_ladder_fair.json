@@ -1,0 +1,128 @@
+{
+  "radiographic": {
+    "test_pos": 487,
+    "test_n": 1075,
+    "prevalence": 0.453,
+    "image_auroc": 0.736,
+    "triage_auroc": 0.62,
+    "fusion_auroc": 0.741,
+    "fusion_minus_image": 0.0052,
+    "ci95": [
+      -0.0047,
+      0.0155
+    ],
+    "p_le0": 0.156
+  },
+  "ed_diagnosis": {
+    "test_pos": 686,
+    "test_n": 9002,
+    "prevalence": 0.076,
+    "image_auroc": 0.805,
+    "triage_auroc": 0.729,
+    "fusion_auroc": 0.831,
+    "fusion_minus_image": 0.0262,
+    "ci95": [
+      0.0174,
+      0.035
+    ],
+    "p_le0": 0.0
+  },
+  "discharge_diagnosis": {
+    "test_pos": 816,
+    "test_n": 9002,
+    "prevalence": 0.091,
+    "image_auroc": 0.828,
+    "triage_auroc": 0.75,
+    "fusion_auroc": 0.847,
+    "fusion_minus_image": 0.0188,
+    "ci95": [
+      0.0107,
+      0.0262
+    ],
+    "p_le0": 0.0
+  },
+  "ed_antibiotic": {
+    "test_pos": 2311,
+    "test_n": 9002,
+    "prevalence": 0.257,
+    "image_auroc": 0.701,
+    "triage_auroc": 0.699,
+    "fusion_auroc": 0.745,
+    "fusion_minus_image": 0.0441,
+    "ci95": [
+      0.0334,
+      0.0543
+    ],
+    "p_le0": 0.0
+  },
+  "admission": {
+    "test_pos": 5061,
+    "test_n": 9002,
+    "prevalence": 0.562,
+    "image_auroc": 0.78,
+    "triage_auroc": 0.71,
+    "fusion_auroc": 0.793,
+    "fusion_minus_image": 0.0136,
+    "ci95": [
+      0.009,
+      0.0178
+    ],
+    "p_le0": 0.0
+  },
+  "icu_transfer": {
+    "test_pos": 1209,
+    "test_n": 9002,
+    "prevalence": 0.134,
+    "image_auroc": 0.836,
+    "triage_auroc": 0.802,
+    "fusion_auroc": 0.86,
+    "fusion_minus_image": 0.0239,
+    "ci95": [
+      0.018,
+      0.0299
+    ],
+    "p_le0": 0.0
+  },
+  "hospital_mortality": {
+    "test_pos": 174,
+    "test_n": 9002,
+    "prevalence": 0.019,
+    "image_auroc": 0.888,
+    "triage_auroc": 0.835,
+    "fusion_auroc": 0.906,
+    "fusion_minus_image": 0.0182,
+    "ci95": [
+      0.0105,
+      0.0258
+    ],
+    "p_le0": 0.0
+  },
+  "mortality_30d": {
+    "test_pos": 360,
+    "test_n": 9002,
+    "prevalence": 0.04,
+    "image_auroc": 0.847,
+    "triage_auroc": 0.761,
+    "fusion_auroc": 0.86,
+    "fusion_minus_image": 0.013,
+    "ci95": [
+      0.0062,
+      0.0201
+    ],
+    "p_le0": 0.0005
+  },
+  "culture_confirmed": {
+    "test_pos": 252,
+    "test_n": 9002,
+    "prevalence": 0.028,
+    "image_auroc": 0.865,
+    "triage_auroc": 0.78,
+    "fusion_auroc": 0.878,
+    "fusion_minus_image": 0.0131,
+    "ci95": [
+      0.0053,
+      0.022
+    ],
+    "p_le0": 0.0015
+  }
+}
