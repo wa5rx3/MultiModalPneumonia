@@ -1,0 +1,50 @@
+{
+  "labels": {
+    "radiographic_chexpert": {
+      "image_auroc": 0.743,
+      "image_ci95": [
+        0.712,
+        0.771
+      ],
+      "triage_auroc": 0.62,
+      "triage_ci95": [
+        0.585,
+        0.651
+      ],
+      "fusion_auroc": 0.746,
+      "fusion_ci95": [
+        0.717,
+        0.774
+      ],
+      "fusion_minus_image": 0.0029,
+      "delong_z": 0.691,
+      "delong_p": 0.4896,
+      "permutation_p": 0.0032,
+      "ambiguous_band_gain": 0.016,
+      "permutation_p_fdr": 0.0032
+    },
+    "clinical_icd": {
+      "image_auroc": 0.784,
+      "image_ci95": [
+        0.749,
+        0.818
+      ],
+      "triage_auroc": 0.703,
+      "triage_ci95": [
+        0.664,
+        0.742
+      ],
+      "fusion_auroc": 0.808,
+      "fusion_ci95": [
+        0.775,
+        0.84
+      ],
+      "fusion_minus_image": 0.0243,
+      "delong_z": 3.182,
+      "delong_p": 0.0015,
+      "permutation_p": 0.0,
+      "ambiguous_band_gain": 0.1263,
+      "permutation_p_fdr": 0.0
+    }
+  }
+}
