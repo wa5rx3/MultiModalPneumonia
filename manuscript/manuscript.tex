@@ -516,6 +516,41 @@ to a classifier head that outputs the pneumonia probability.}
 \label{fig:arch}
 \end{figure*}
 
+\subsection{Two target labels and the fusion contrast}
+\label{subsec:twolabels}
+The central experiment holds the image model fixed and changes only the label it is scored
+against. The \textbf{radiographic label} is the CheXpert reading of the report
+(Section~\ref{sec:background}), a description of the film. The \textbf{clinical label} is
+taken from the MIMIC-IV-ED discharge diagnosis: a study is positive if the ED stay carries
+an ICD code for pneumonia (ICD-10 J12--J18, ICD-9 480--486), keyed on \texttt{stay\_id}.
+This label is assigned from the clinical record and never reads the image. It covers 99.7\%
+of the cohort. The two labels agree only moderately: clinical prevalence in the test set is
+19\% against 45\% radiographic, and 36\% of CheXpert-positive studies are ICD-positive, so
+they are not interchangeable targets.
+
+To isolate the label as the only moving part we use a controlled late fusion. The image
+signal is the five-seed image ensemble, held fixed. The clinical signal is a logistic model
+on the physiological triage vitals alone; race and sex are excluded, because they carry no
+signal here (race-only AUROC 0.52) and using them to predict a diagnosis would introduce a
+fairness confound. A logistic meta-learner combines the two probabilities, fit on the
+validation split, and is evaluated against each label on the identical test rows. For each
+label we report the fusion-minus-image change in AUROC with a 2{,}000-replicate
+patient-clustered bootstrap, the DeLong test, and a permutation test that shuffles the
+triage prediction across patients. The dissociation itself is tested directly with an
+\emph{interaction} test: on each bootstrap draw we compute both the clinical and the
+radiographic delta on the same resampled patients and take their difference, so its 95\%
+interval measures whether the clinical gain genuinely exceeds the radiographic one.
+
+We check that the pattern is not specific to pneumonia by repeating the contrast for heart
+failure, pairing the multilabel model's Edema score (its radiographic finding) with the ED
+diagnosis of heart failure (ICD I50, 428). We also test robustness to the diagnosis code
+set, decompose the change into a pairwise redundancy-versus-complementarity account, read
+off which vitals drive each label from the triage-model coefficients, and ask whether adding
+pre-imaging chief-complaint symptom flags enlarges the clinical gain. The ED diagnosis codes
+the presenting complaint, which limits the contrast to conditions common enough at
+presentation; pneumonia and heart failure qualify, and a broader survey is left to future
+work.
+
 \subsection{Training and evaluation}
 \label{subsec:eval}
 Each deep model is trained across five random seeds (42, 123, 456, 789, 1000) with early
@@ -556,10 +591,123 @@ internal transform.
 \section{Results}
 \label{sec:results}
 
-\subsection{Discrimination: imaging dominates, fusion is neutral}
+\subsection{The dissociation: fusion value depends on label provenance}
+\label{subsec:dissociation}
+The same triage vitals, added to the same image model, give opposite answers depending on
+which label they are scored against (Fig.~\ref{fig:forest}, Table~\ref{tab:dissociation}).
+Against the radiographic CheXpert label the image ensemble reaches AUROC 0.743 and fusion
+moves it to 0.746, a change of $+0.003$ (95\% CI $[-0.005,+0.011]$; DeLong $p{=}0.49$) that
+is indistinguishable from no effect. Against the clinical ICD label the same image ensemble
+scores 0.784, the triage vitals alone reach 0.703, and fusion raises discrimination to
+0.808, a change of $+0.024$ (95\% CI $[0.010,0.039]$; DeLong $p{=}0.0015$). The gap between
+the two gains is the effect of interest, and it is significant on its own: resampling
+patients and taking the difference of the two deltas gives an interaction of $+0.022$ (95\%
+CI $[0.007,0.036]$, $p{=}0.002$). A model that looks useless for the radiographic sign is
+useful for the clinical diagnosis, and the difference is not attributable to sampling noise.
+
+The pattern is not specific to pneumonia. Repeating the contrast for heart failure, with the
+multilabel model's Edema score as the image signal, gives the same shape: fusion is flat
+against the radiographic Edema label ($+0.000$, 95\% CI $[-0.002,+0.002]$) and positive
+against the clinical heart-failure diagnosis ($+0.021$, 95\% CI $[0.001,0.044]$), with an
+interaction of $+0.021$ (95\% CI $[0.000,0.044]$). The clinical gain also survives the
+choices a sceptical reader would question. It holds across all five image seeds (per-seed
+clinical $\Delta$ $0.024\pm0.002$, radiographic $\Delta$ near zero), it is stable when the
+pneumonia code set is narrowed to bacterial and viral codes or widened to include influenza
+and aspiration ($\Delta$ from $+0.026$ to $+0.035$, all $p<0.001$), and it is not
+demographic: race alone predicts neither label above chance and adds no fusion gain.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.86\textwidth]{figures/fig19_dissociation.png}
+\caption{The dissociation. Change in test AUROC from adding physiology-only triage vitals to
+a fixed image model, by target label, with patient-clustered 95\% intervals. For both
+pneumonia and heart failure the radiographic label (blue) is unchanged while the clinical
+label (orange) improves, and the interaction (teal), the clinical gain minus the radiographic
+gain on the same patients, excludes zero.}
+\label{fig:forest}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{The dissociation. For a fixed image model, adding physiology-only triage vitals by
+late fusion changes discrimination against the clinical label but not the radiographic one,
+for both conditions. $\Delta$ is the fusion-minus-image AUROC change with a patient-clustered
+95\% CI; the interaction is the clinical $\Delta$ minus the radiographic $\Delta$ on the same
+patients. Pneumonia uses the fine-tuned image ensemble; heart failure uses the multilabel
+model's Edema score.}
+\label{tab:dissociation}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}lllcccl@{}}
+\toprule
+Condition & Label & Source & Image & Triage & Fusion & $\Delta$AUROC [95\% CI] \\
+\midrule
+\multirow{3}{*}{Pneumonia}
+ & Radiographic & CheXpert & 0.743 & 0.620 & 0.746 & $+0.003$\, $[-0.005,+0.011]$ \\
+ & Clinical & ICD J12--J18 & 0.784 & 0.703 & 0.808 & $+0.024$\, $[+0.010,+0.039]$ \\
+ & \multicolumn{6}{l}{\emph{Interaction: $+0.022$ $[+0.007,+0.036]$, $p{=}0.002$;\; DeLong $p$: 0.49 radiographic, 0.0015 clinical}} \\
+\midrule
+\multirow{3}{*}{Heart failure}
+ & Radiographic & CheXpert Edema & 0.909 & 0.647 & 0.909 & $+0.000$\, $[-0.002,+0.002]$ \\
+ & Clinical & ICD I50 & 0.858 & 0.752 & 0.878 & $+0.021$\, $[+0.001,+0.044]$ \\
+ & \multicolumn{6}{l}{\emph{Interaction: $+0.021$ $[+0.000,+0.044]$}} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Mechanism: what the vitals add, and where}
+\label{subsec:mechanism}
+Two analyses explain why the clinical label rewards the vitals the radiographic label
+ignores. The first reads the triage-model coefficients for each label
+(Fig.~\ref{fig:mechanism}). The vitals that gain weight for the clinical label are the
+systemic signs of infection: the standardized coefficient on temperature rises from $0.11$
+for the radiographic label to $0.30$ for the clinical one, and triage acuity from near zero
+($-0.02$) to $0.20$. Fever and overall illness severity help identify the diagnosis but are
+invisible as a radiographic opacity, so they add nothing when the target is the film.
+
+The second decomposes the AUROC change itself (Fig.~\ref{fig:complementarity}). Over all
+positive/negative case pairs we count how many the vitals reorder correctly, pairs the image
+ranks wrongly that fusion fixes, against how many they disturb, pairs the image ranks
+correctly that fusion breaks. For the radiographic label the two nearly cancel: the vitals
+fix 1.1 pairs for each one they break, a redundant contribution that nets $+0.003$. For the
+clinical label they fix 1.71 for each one they break, a genuinely complementary contribution
+that nets $+0.024$. The gain concentrates where the image is least certain: within the middle
+tertile of image scores, fusion adds $0.126$ AUROC for the clinical label against $0.016$ for
+the radiographic one.
+
+Enriching the clinical stream sharpens the same effect. Adding six pre-imaging symptom flags
+parsed from the triage chief complaint (cough, dyspnoea, fever, chest pain, sputum,
+respiratory distress) to the vitals leaves the radiographic label neutral ($+0.005$, 95\% CI
+$[-0.004,+0.014]$) and raises the clinical gain to $+0.031$ (95\% CI $[+0.010,+0.053]$). The
+flags are recorded before imaging and encode symptoms rather than a suspected diagnosis, so
+they add clinical context without leaking the label.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig20_mechanism.png}
+\caption{Standardized triage-logistic coefficients for the clinical (orange) and radiographic
+(blue) labels. Temperature and triage acuity carry much more weight for the clinical
+diagnosis than for the radiographic sign, the physiology of systemic illness the radiograph
+does not show.}
+\label{fig:mechanism}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig21_complementarity.png}
+\caption{Pairwise decomposition of the fusion gain. For each label, the fraction of ranked
+case pairs the vitals fix (teal) versus break (grey). For the radiographic label the two
+nearly cancel (redundant); for the clinical label the vitals fix far more than they break
+(complementary).}
+\label{fig:complementarity}
+\end{figure}
+
+\subsection{Discrimination against the radiographic label}
 \label{subsec:disc}
-Table~\ref{tab:main} and Figs.~\ref{fig:training}--\ref{fig:multiseed} summarise the
-primary results. Both CXR models beat the triage baselines by more than 12 AUROC points, which
+The radiographic half of the dissociation deserves the same scrutiny as the whole
+literature gives it, and it holds up in detail. Table~\ref{tab:main} and
+Figs.~\ref{fig:training}--\ref{fig:multiseed} summarise the multi-seed results against the
+CheXpert label. Both CXR models beat the triage baselines by more than 12 AUROC points, which
 confirms that the radiograph carries the signal that discriminates. Adding triage
 vitals leaves discrimination within the pre-specified margin: across seeds the paired
 concat$-$image $\Delta$AUROC is $+0.004\pm0.009$ (range $[-0.007,+0.014]$). A hierarchical
