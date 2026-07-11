@@ -1,0 +1,86 @@
+{
+  "baseline": {
+    "radiographic_delta": 0.0029,
+    "radiographic_ci": [
+      -0.0055,
+      0.0111
+    ],
+    "clinical_delta": 0.0243,
+    "clinical_ci": [
+      0.0098,
+      0.0393
+    ],
+    "clinical_p": 0.001,
+    "triage_alone_radiographic": 0.62,
+    "triage_alone_clinical": 0.703
+  },
+  "prevalence_matched": {
+    "target_prevalence": 0.193,
+    "radiographic_pos_kept": 141,
+    "radiographic_delta_at_19pct": 0.0029,
+    "ci95": [
+      -0.0054,
+      0.0117
+    ],
+    "interaction_clinical_minus_matched_radiographic": 0.0214,
+    "note": "if the matched radiographic delta stays near zero, the interaction is not a base-rate artifact"
+  },
+  "acuity_ablation": {
+    "full_triage": {
+      "clinical_delta": 0.0243,
+      "ci95": [
+        0.0103,
+        0.0396
+      ],
+      "p_le0": 0.0015
+    },
+    "triage_minus_acuity": {
+      "clinical_delta": 0.0172,
+      "ci95": [
+        0.0038,
+        0.0309
+      ],
+      "p_le0": 0.004
+    },
+    "acuity_only": {
+      "clinical_delta": -0.0006,
+      "ci95": [
+        -0.004,
+        0.0021
+      ],
+      "p_le0": 0.5955
+    }
+  },
+  "subsets": {
+    "high_acuity(<=2)": {
+      "n": 619,
+      "clinical_pos": 113,
+      "clinical_delta": 0.0263,
+      "ci95": [
+        0.0056,
+        0.0465
+      ],
+      "p_le0": 0.004
+    },
+    "low_acuity(>=3)": {
+      "n": 456,
+      "clinical_pos": 95,
+      "clinical_delta": 0.0176,
+      "ci95": [
+        -0.0042,
+        0.0389
+      ],
+      "p_le0": 0.056
+    },
+    "admitted_only": {
+      "n": 691,
+      "clinical_pos": 168,
+      "clinical_delta": 0.0231,
+      "ci95": [
+        0.0048,
+        0.0415
+      ],
+      "p_le0": 0.006
+    }
+  }
+}
