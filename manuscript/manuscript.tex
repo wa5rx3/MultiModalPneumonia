@@ -30,7 +30,7 @@
 \begin{document}
 
 \title{Does Triage Context Help a Chest Radiograph Model for Pneumonia?
-Radiographic and Clinical Labels Give Opposite Answers}
+Radiographic and Clinical Labels Give Different Answers}
 
 \titlerunning{Multimodal Pneumonia Detection in the Emergency Department}
 
@@ -93,7 +93,7 @@ bootstrap intervals, the DeLong test, and an interaction test on the difference 
 two gains. We repeated the contrast for heart failure and report the work as
 a reusable protocol, TEMPO (time-safe, equivalence-tested, missingness-audited,
 patient-level, out-of-sample).
-\textbf{Results:} The two labels give opposite answers. Adding triage vitals leaves the
+\textbf{Results:} The two labels diverge. Adding triage vitals leaves the
 radiographic label unchanged (AUROC $0.743\rightarrow0.746$; $\Delta+0.003$, DeLong
 $p{=}0.49$) yet raises the clinical label (AUROC $0.784\rightarrow0.808$; $\Delta+0.024$,
 95\% CI $[0.009,0.039]$, DeLong $p{=}0.0015$). The gap between the two gains is itself
@@ -110,8 +110,8 @@ seeds, and a fusion model can lean on which measurements are missing rather than
 values.
 \textbf{Conclusion:} Whether clinical context helps a chest-radiograph model depends on
 the provenance of the label it is scored against. A target read from the image makes the
-same triage information look useless, while a clinically defined target makes it valuable.
-Studies of multimodal fusion should state where their label comes from, because that
+same triage information look redundant, while a clinically defined target makes it modestly
+useful. Studies of multimodal fusion should state where their label comes from, because that
 choice can decide the result.
 \keywords{Pneumonia detection \and Chest radiograph \and Multimodal fusion \and
 Emergency department triage \and Label provenance \and Redundancy and complementarity \and
@@ -535,7 +535,7 @@ an ICD code for pneumonia (ICD-10 J12--J18 or J69.0, ICD-9 480--486 or 507.0), k
 \texttt{stay\_id}. It is taken from the coded discharge diagnosis rather than the radiology
 report, so unlike the CheXpert label it is not read from the image. It covers 99.7\% of the
 cohort. The two labels agree only moderately: clinical prevalence in the test set is
-19\% against 45\% radiographic, and 36\% of CheXpert-positive studies are ICD-positive, so
+19\% against 45\% radiographic, and 38\% of CheXpert-positive studies are ICD-positive, so
 they are not interchangeable targets.
 
 To isolate the label as the only moving part we use a controlled late fusion. The image
@@ -607,7 +607,7 @@ internal transform.
 
 \subsection{The dissociation: fusion value depends on label provenance}
 \label{subsec:dissociation}
-The same triage vitals, added to the same image model, give opposite answers depending on
+The same triage vitals, added to the same image model, give different answers depending on
 which label they are scored against (Fig.~\ref{fig:forest}, Table~\ref{tab:dissociation}).
 Against the radiographic CheXpert label the image ensemble reaches AUROC 0.743 and fusion
 moves it to 0.746, a change of $+0.003$ (95\% CI $[-0.005,+0.011]$; DeLong $p{=}0.49$) that
@@ -616,8 +616,8 @@ scores 0.784, the triage vitals alone reach 0.703, and fusion raises discriminat
 0.808, a change of $+0.024$ (95\% CI $[0.009,0.039]$; DeLong $p{=}0.0015$). The gap between
 the two gains is the effect of interest, and it is significant on its own: resampling
 patients and taking the difference of the two deltas gives an interaction of $+0.021$ (95\%
-CI $[0.007,0.036]$, $p{=}0.002$). A model that looks useless for the radiographic sign is
-useful for the clinical diagnosis, and the difference is not attributable to sampling noise.
+CI $[0.007,0.036]$, $p{=}0.002$). A model whose triage stream looks redundant for the radiographic sign is
+modestly useful for the clinical diagnosis, and the difference is not attributable to sampling noise.
 The image model in fact scores a little higher against the clinical label (0.784) than
 against the radiographic one it was trained on (0.743); this reflects the lower prevalence
 and cleaner definition of the coded diagnosis rather than the image being sufficient for it,
@@ -771,8 +771,8 @@ The dissociation is also robust to how the image is represented. Replacing the s
 pneumonia score with the full 14-finding radiographic profile (pneumonia, cardiomegaly, edema,
 effusion, consolidation and the rest) as a strictly richer fixed image baseline, and evaluating
 on the larger ED cohort, preserves the pattern: adding triage leaves the radiographic label
-unchanged ($+0.005$, 95\% CI $[-0.005,+0.016]$, $p{=}0.16$) and raises the clinical diagnosis
-($+0.026$, 95\% CI $[0.017,0.035]$, $p<0.001$). The clinical gain is smaller against this
+unchanged (the CheXpert-labelled subset; $+0.005$, 95\% CI $[-0.005,+0.016]$, $p{=}0.16$) and
+raises the clinical diagnosis ($+0.026$, 95\% CI $[0.017,0.035]$, $p<0.001$). The clinical gain is smaller against this
 stronger baseline, which is expected once the image is better represented and is consistent with
 the redundancy the two modalities share, but it does not vanish, and the radiographic null does
 not move. The label, not the richness of the image features, drives the contrast.
@@ -1076,7 +1076,7 @@ models dominate the triage baselines and reference strategies.}
 
 \subsection{Subgroup performance}
 \label{subsec:subgroup}
-Table~\ref{tab:subgroup} and Fig.~\ref{fig:subgroup} report subgroup AUROC.
+Table~\ref{tab:subgroup} reports subgroup AUROC.
 Performance is markedly lower for female than male patients (0.71 vs 0.77) and for
 Hispanic patients (0.64) relative to White (0.75); PA views outperform AP (0.75 vs
 0.72). Fusion does not consistently close these gaps and, in the smallest strata, can
@@ -1108,14 +1108,6 @@ Lower acuity (3--5)&0.705 & 0.711 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.95\columnwidth]{figures/fig3_subgroup_auroc.png}
-\caption{Subgroup AUROC (mean$\pm$SD across seeds); fusion does not close sex, race
-or view gaps.}
-\label{fig:subgroup}
-\end{figure}
 
 \subsection{Interpretability}
 \label{subsec:interp}
@@ -1364,9 +1356,8 @@ information the image does not carry, and adds nothing when the target is the im
 The two cautions sit at the same level. Calibrated confidence has to be estimated across runs
 rather than read off one, and a model that treats the presence of a measurement as evidence,
 as clinicians sometimes do, must not confuse that ordering signal with the physiology it
-stands for. Both are questions about how a system should combine evidence and how far its
-stated confidence can be trusted, which is where cognitively motivated decision support has
-to operate.
+stands for. Both are questions of how to combine evidence and how far to trust a model's
+stated confidence.
 
 \paragraph{A practical guide for multimodal studies.} The result gives a concrete
 instruction: state where the target label comes from, and expect the value of fusion to
@@ -1397,7 +1388,7 @@ labelling problem to be corrected~\citep{jain2021visualchexbert}; the CareBench 
 clinical labels throughout and reports where fusion helps, but does not contrast label
 provenance directly~\citep{yin2026multimodal}. We take the discrepancy as the experimental
 variable and show that holding everything else fixed while changing the label flips the
-conclusion. This has practical teeth: studies of CXR pneumonia fusion routinely benchmark
+conclusion. This matters in practice: studies of CXR pneumonia fusion routinely benchmark
 against report-derived labels, so a null result in that setting may reflect the label rather
 than the modality, and our contrast shows the sign can change with the label alone. Our
 missingness result complements the literature on informative
@@ -1463,7 +1454,7 @@ two effects is significant; heart failure shows the same direction on a smaller 
 gain is carried by
 physiology the radiograph does not show, chiefly fever and acuity, and it is
 complementary rather than redundant. A label read from the image can therefore make
-useful clinical context look worthless, so studies of multimodal fusion should state
+useful clinical context look redundant, so studies of multimodal fusion should state
 where their label comes from. The image model itself is robust and generalises across
 institutions with an AUROC drop of only 0.016, and the study contributes a reproducible,
 time-safe multimodal ED pipeline together with two reusable cautions, calibration
