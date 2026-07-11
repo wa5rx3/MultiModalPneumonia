@@ -1,0 +1,177 @@
+"""Do triage vitals resolve radiographic-clinical label discordance?
+
+Two clinically framed questions the label-provenance data can answer:
+ A. Can image + triage predict whether the two labels disagree (CheXpert != ICD)?
+ B. Among radiograph-positive studies (CheXpert=1), do triage vitals help identify which are
+    clinically confirmed (ICD=1)? This is the practical case: given a film read as pneumonia,
+    can physiology separate confirmed pneumonia from radiographic-only positives?
+
+Fixed image ensemble + physiology-only triage, late fusion, patient-clustered bootstrap CIs.
+
+Output: artifacts/evaluation/clinical_label/discordance.json
+"""
+from __future__ import annotations
+
+import json
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+
+from src.training.train_multimodal_pneumonia import build_tabular_preprocessor, prepare_tabular_df
+
+warnings.filterwarnings("ignore")
+KEYS = ["subject_id", "study_id", "dicom_id"]
+SEEDS = [42, 123, 456, 789, 1000]
+PHYS = ["temperature", "heartrate", "resprate", "o2sat", "sbp", "dbp", "pain", "acuity",
+        "temperature_missing", "heartrate_missing", "resprate_missing", "o2sat_missing",
+        "sbp_missing", "dbp_missing", "pain_missing", "acuity_missing"]
+DIAG = "D:/mimic_iv_ed/diagnosis.csv.gz"
+TABLE = "artifacts/manifests/cxr_clinical_pneumonia_training_table_u_ignore_temporal.parquet"
+OUT = Path("artifacts/evaluation/clinical_label/discordance.json")
+B = 2000
+RNG = np.random.default_rng(20260721)
+
+
+def logit(p, e=1e-6):
+    p = np.clip(p, e, 1 - e)
+    return np.log(p / (1 - p))
+
+
+def ens(split):
+    dfs = [pd.read_csv(f"artifacts/models/multiseed/image_seed{s}/{split}_predictions.csv")
+           [KEYS + ["pred_prob"]].rename(columns={"pred_prob": f"p{s}"}) for s in SEEDS]
+    m = dfs[0]
+    for x in dfs[1:]:
+        m = m.merge(x, on=KEYS)
+    m["img"] = m[[f"p{s}" for s in SEEDS]].mean(axis=1)
+    return m[KEYS + ["img"] + [f"p{s}" for s in SEEDS]]
+
+
+def icd_label(table):
+    d = pd.read_csv(DIAG, usecols=["stay_id", "icd_code", "icd_version"], dtype={"icd_code": str})
+
+    def is_pneu(code, ver):
+        c = str(code).strip().upper().replace(".", "")
+        if ver == 10:
+            return c[:3] in {"J12", "J13", "J14", "J15", "J16", "J17", "J18"} or c[:4] == "J690"
+        return c[:3] in {"480", "481", "482", "483", "484", "485", "486"} or c[:4] == "5070"
+
+    d["pneu"] = [is_pneu(c, v) for c, v in zip(d.icd_code, d.icd_version)]
+    table["icd"] = table.stay_id.map(d.groupby("stay_id").pneu.max()).fillna(False).astype(int)
+    return table
+
+
+def boot(y, a, b_, subj=None):
+    """paired bootstrap of AUROC(b_) - AUROC(a); patient-clustered if subj given."""
+    da = roc_auc_score(y, b_) - roc_auc_score(y, a)
+    ds = []
+    if subj is not None:
+        u = np.unique(subj); g = [np.where(subj == x)[0] for x in u]
+        for _ in range(B):
+            ix = np.concatenate([g[i] for i in RNG.integers(0, len(u), len(u))])
+            if len(np.unique(y[ix])) > 1:
+                ds.append(roc_auc_score(y[ix], b_[ix]) - roc_auc_score(y[ix], a[ix]))
+    else:
+        n = len(y)
+        for _ in range(B):
+            ix = RNG.integers(0, n, n)
+            if len(np.unique(y[ix])) > 1:
+                ds.append(roc_auc_score(y[ix], b_[ix]) - roc_auc_score(y[ix], a[ix]))
+    ds = np.array(ds)
+    return round(float(da), 4), [round(float(np.percentile(ds, 2.5)), 4), round(float(np.percentile(ds, 97.5)), 4)], round(float((ds <= 0).mean()), 4)
+
+
+def auc_ci(y, s):
+    n = len(y)
+    obs = roc_auc_score(y, s)
+    vals = []
+    for _ in range(B):
+        ix = RNG.integers(0, n, n)
+        if len(np.unique(y[ix])) > 1:
+            vals.append(roc_auc_score(y[ix], s[ix]))
+    return round(float(obs), 3), [round(float(np.percentile(vals, 2.5)), 3), round(float(np.percentile(vals, 97.5)), 3)]
+
+
+def main():
+    d = pd.read_parquet(TABLE)
+    d = icd_label(d)
+    pre = build_tabular_preprocessor(PHYS, [])
+    tr = d[d.temporal_split == "train"]
+    pre.fit(prepare_tabular_df(tr, PHYS, []))
+    va = d[d.temporal_split == "validate"].merge(ens("val"), on=KEYS)
+    te = d[d.temporal_split == "test"].merge(ens("test"), on=KEYS)
+    Xtr = pre.transform(prepare_tabular_df(tr, PHYS, []))
+    Xva = pre.transform(prepare_tabular_df(va, PHYS, []))
+    Xte = pre.transform(prepare_tabular_df(te, PHYS, []))
+
+    res = {}
+
+    # ---- A. predict discordance (CheXpert != ICD) ----
+    tr_dis = (tr.target != tr.icd).astype(int)
+    va_dis = (va.target != va.icd).astype(int).to_numpy()
+    te_dis = (te.target != te.icd).astype(int).to_numpy()
+    tri = LogisticRegression(max_iter=2000).fit(Xtr, tr_dis)
+    tv, tt = tri.predict_proba(Xva)[:, 1], tri.predict_proba(Xte)[:, 1]
+    meta = LogisticRegression(max_iter=1000).fit(np.column_stack([logit(va.img), logit(tv)]), va_dis)
+    fus = meta.predict_proba(np.column_stack([logit(te.img), logit(tt)]))[:, 1]
+    img_auc, img_ci = auc_ci(te_dis, te.img.to_numpy())
+    tri_auc, tri_ci = auc_ci(te_dis, tt)
+    fus_auc, fus_ci = auc_ci(te_dis, fus)
+    delta, dci, dpp = boot(te_dis, te.img.to_numpy(), fus, te.subject_id.to_numpy())
+    res["A_predict_discordance"] = {
+        "test_discordant": int(te_dis.sum()), "test_n": int(len(te_dis)),
+        "prevalence": round(float(te_dis.mean()), 3),
+        "image_auroc": img_auc, "image_ci": img_ci,
+        "triage_auroc": tri_auc, "triage_ci": tri_ci,
+        "fusion_auroc": fus_auc, "fusion_ci": fus_ci,
+        "fusion_minus_image": delta, "ci95": dci,
+    }
+
+    # ---- B. within CheXpert-positive, predict ICD-positive ----
+    trp = tr[tr.target == 1]; vap = va[va.target == 1]; tep = te[te.target == 1]
+    Xtrp = pre.transform(prepare_tabular_df(trp, PHYS, []))
+    Xvap = pre.transform(prepare_tabular_df(vap, PHYS, []))
+    Xtep = pre.transform(prepare_tabular_df(tep, PHYS, []))
+    trib = LogisticRegression(max_iter=2000).fit(Xtrp, trp.icd)
+    tvb, ttb = trib.predict_proba(Xvap)[:, 1], trib.predict_proba(Xtep)[:, 1]
+    metab = LogisticRegression(max_iter=1000).fit(np.column_stack([logit(vap.img), logit(tvb)]), vap.icd)
+    fusb = metab.predict_proba(np.column_stack([logit(tep.img), logit(ttb)]))[:, 1]
+    y = tep.icd.to_numpy()
+    ia, ic = auc_ci(y, tep.img.to_numpy())
+    ta, tc = auc_ci(y, ttb)
+    fa, fc = auc_ci(y, fusb)
+    dl, dc, dp = boot(y, tep.img.to_numpy(), fusb, tep.subject_id.to_numpy())
+    # per-seed robustness: each seed's own image model as image signal, meta refit on val
+    per = []
+    for s in SEEDS:
+        mv = LogisticRegression(max_iter=1000).fit(
+            np.column_stack([logit(vap[f"p{s}"]), logit(tvb)]), vap.icd)
+        fs = mv.predict_proba(np.column_stack([logit(tep[f"p{s}"]), logit(ttb)]))[:, 1]
+        per.append(roc_auc_score(y, fs) - roc_auc_score(y, tep[f"p{s}"].to_numpy()))
+    res["B_within_radiograph_positive"] = {
+        "n_radiograph_positive": int(len(tep)), "icd_positive": int(y.sum()),
+        "prevalence": round(float(y.mean()), 3),
+        "image_auroc": ia, "image_ci": ic,
+        "triage_auroc": ta, "triage_ci": tc,
+        "fusion_auroc": fa, "fusion_ci": fc,
+        "fusion_minus_image": dl, "ci95": dc, "p_le0": dp,
+        "per_seed_delta": {"mean": round(float(np.mean(per)), 4), "sd": round(float(np.std(per)), 4),
+                           "values": [round(float(x), 4) for x in per]},
+    }
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    json.dump(res, open(OUT, "w"), indent=2)
+    a, b_ = res["A_predict_discordance"], res["B_within_radiograph_positive"]
+    print(f"A discordance (n+={a['test_discordant']}/{a['test_n']}, prev {a['prevalence']}): "
+          f"image {a['image_auroc']}{a['image_ci']} triage {a['triage_auroc']}{a['triage_ci']} "
+          f"fusion {a['fusion_auroc']}{a['fusion_ci']} delta {a['fusion_minus_image']} {a['ci95']}")
+    print(f"B within CXR+ (n={b_['n_radiograph_positive']}, ICD+ {b_['icd_positive']}, prev {b_['prevalence']}): "
+          f"image {b_['image_auroc']}{b_['image_ci']} triage {b_['triage_auroc']}{b_['triage_ci']} "
+          f"fusion {b_['fusion_auroc']}{b_['fusion_ci']} delta {b_['fusion_minus_image']} {b_['ci95']}")
+
+
+if __name__ == "__main__":
+    main()
