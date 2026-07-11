@@ -1,0 +1,24 @@
+{
+  "best_val_auprc": 0.5226259592033538,
+  "best_epoch": 3,
+  "epochs_completed": 9,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.19569893181324005,
+    "auroc": 0.7902465181876945,
+    "auprc": 0.5226259592033538,
+    "accuracy": 0.8032258064516129,
+    "f1": 0.5271317829457365,
+    "loss": 0.9899387011083506
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.19348837435245514,
+    "auroc": 0.806455727087215,
+    "auprc": 0.5214719649194616,
+    "accuracy": 0.8055813953488372,
+    "f1": 0.534521158129176,
+    "loss": 0.9580031760475215
+  },
+  "output_dir": "artifacts\\models\\clinical_label\\image_icd_seed42"
+}

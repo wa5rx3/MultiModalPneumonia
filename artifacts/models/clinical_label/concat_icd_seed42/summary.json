@@ -1,0 +1,25 @@
+{
+  "best_val_auprc": 0.5449100920327113,
+  "best_epoch": 1,
+  "epochs_completed": 7,
+  "val_metrics": {
+    "n": 930,
+    "positive_rate": 0.19569893181324005,
+    "auroc": 0.8025871187635893,
+    "auprc": 0.5449100920327113,
+    "accuracy": 0.7559139784946236,
+    "f1": 0.5180467091295117,
+    "loss": 0.8894302536875515
+  },
+  "test_metrics": {
+    "n": 1075,
+    "positive_rate": 0.19348837435245514,
+    "auroc": 0.7989918818206017,
+    "auprc": 0.5022995502024131,
+    "accuracy": 0.7525581395348837,
+    "f1": 0.5128205128205128,
+    "loss": 0.9045466916526065
+  },
+  "output_dir": "artifacts\\models\\clinical_label\\concat_icd_seed42",
+  "tabular_preprocessor_file": "artifacts\\models\\clinical_label\\concat_icd_seed42\\tabular_preprocessor.joblib"
+}
