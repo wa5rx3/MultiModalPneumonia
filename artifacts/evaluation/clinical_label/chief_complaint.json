@@ -1,0 +1,56 @@
+{
+  "symptom_prevalence_test": {
+    "cough": 0.097,
+    "dyspnea": 0.197,
+    "fever": 0.116,
+    "chest_pain": 0.108,
+    "sputum": 0.014,
+    "resp_distress": 0.02
+  },
+  "results": {
+    "radiographic_chexpert": {
+      "vitals_only": {
+        "triage_auroc": 0.62,
+        "fusion_auroc": 0.746,
+        "fusion_minus_image": 0.0029,
+        "ci95": [
+          -0.0048,
+          0.0112
+        ],
+        "p_le0": 0.233
+      },
+      "vitals_plus_symptoms": {
+        "triage_auroc": 0.635,
+        "fusion_auroc": 0.748,
+        "fusion_minus_image": 0.0053,
+        "ci95": [
+          -0.0039,
+          0.0139
+        ],
+        "p_le0": 0.1245
+      }
+    },
+    "clinical_icd": {
+      "vitals_only": {
+        "triage_auroc": 0.703,
+        "fusion_auroc": 0.808,
+        "fusion_minus_image": 0.0243,
+        "ci95": [
+          0.0098,
+          0.0393
+        ],
+        "p_le0": 0.0
+      },
+      "vitals_plus_symptoms": {
+        "triage_auroc": 0.715,
+        "fusion_auroc": 0.815,
+        "fusion_minus_image": 0.031,
+        "ci95": [
+          0.0099,
+          0.0526
+        ],
+        "p_le0": 0.001
+      }
+    }
+  }
+}
