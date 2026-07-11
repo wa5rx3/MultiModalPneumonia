@@ -86,18 +86,20 @@ MIMIC-IV-ED, anchoring every feature to the moment the radiograph was acquired (
 and admitting only measurements resolved at or before $t_0$, split by patient and by
 time. For the same patients we defined two targets: a radiographic label from the
 CheXpert reading of the report, and a clinical label from the ED discharge diagnosis
-(ICD), which never reads the image. Holding a fixed image model (a five-seed DenseNet-121
-ensemble) constant, we added physiology-only triage vitals by late fusion and measured
-the change in discrimination against each label, with patient-clustered bootstrap
-intervals, the DeLong test, a permutation test, and an interaction test on the difference
-between the two gains. We repeated the contrast for heart failure and report the work as
+(ICD), which is not derived from the radiology report. Holding a fixed image model (a
+five-seed DenseNet-121 ensemble) constant, we added physiology-only triage vitals by late
+fusion and measured the change in discrimination against each label, with patient-clustered
+bootstrap intervals, the DeLong test, and an interaction test on the difference between the
+two gains. We repeated the contrast for heart failure and report the work as
 a reusable protocol, TEMPO (time-safe, equivalence-tested, missingness-audited,
 patient-level, out-of-sample).
 \textbf{Results:} The two labels give opposite answers. Adding triage vitals leaves the
 radiographic label unchanged (AUROC $0.743\rightarrow0.746$; $\Delta+0.003$, DeLong
 $p{=}0.49$) yet raises the clinical label (AUROC $0.784\rightarrow0.808$; $\Delta+0.024$,
-95\% CI $[0.010,0.039]$, $p{=}0.002$). The gap between the two gains is itself significant
-(interaction $+0.022$, 95\% CI $[0.007,0.036]$, $p{=}0.002$) and holds for heart failure.
+95\% CI $[0.009,0.039]$, DeLong $p{=}0.0015$). The gap between the two gains is itself
+significant (interaction $+0.021$, 95\% CI $[0.007,0.036]$, $p{=}0.002$). The same pattern
+appears for heart failure, though with only 54 clinical positives it is directionally
+consistent rather than firmly powered.
 A pairwise decomposition shows the vitals are redundant for the radiographic sign but
 complementary for the clinical diagnosis, and the gain is carried by fever and triage
 acuity, signals the radiograph does not contain. The dissociation is present across all
@@ -177,18 +179,19 @@ Patient-level, Out-of-sample; Algorithm~\ref{alg:tempo}). Our contributions are:
 \item A \textbf{dissociation by label provenance.} Adding the same triage vitals to a
   fixed image model leaves the radiographic label unchanged (AUROC $0.743\rightarrow0.746$,
   $\Delta+0.003$, DeLong $p{=}0.49$) but improves the clinical label
-  ($0.784\rightarrow0.808$, $\Delta+0.024$, 95\% CI $[0.010,0.039]$). The difference
-  between the two gains is itself significant (interaction $+0.022$, 95\% CI
+  ($0.784\rightarrow0.808$, $\Delta+0.024$, 95\% CI $[0.009,0.039]$). The difference
+  between the two gains is itself significant (interaction $+0.021$, 95\% CI
   $[0.007,0.036]$, $p{=}0.002$).
 \item A \textbf{mechanism.} A pairwise decomposition shows the vitals are redundant for
   the radiographic sign but complementary for the clinical diagnosis, and the gain is
   carried by fever and triage acuity, physiological signals the radiograph does not encode.
-\item \textbf{Generality.} The same dissociation appears for heart failure, survives
-  changes to the diagnosis code set, holds across all five image seeds, and is not
-  explained by demographics.
+\item \textbf{Generality.} The pneumonia dissociation survives changes to the diagnosis
+  code set, holds across all five image seeds, and is not explained by demographics; the
+  same pattern appears for heart failure, though with far fewer clinical positives (54) that
+  condition is directionally consistent rather than firmly powered.
 \item A \textbf{methodological caution}: label provenance can decide whether multimodal
   fusion appears to help, so studies should state where their label comes from. A target
-  read from the image can make genuinely useful context look worthless.
+  read from the image can hide the value of context that a clinically defined target reveals.
 \item A \textbf{time-safe, reproducible ED cohort} linking three MIMIC databases at the
   radiograph acquisition time $t_0$ (none of 314{,}145 laboratory values fall after
   $t_0$), with two further cautions from the same data: a single training run can inflate
@@ -526,9 +529,10 @@ The central experiment holds the image model fixed and changes only the label it
 against. The \textbf{radiographic label} is the CheXpert reading of the report
 (Section~\ref{sec:background}), a description of the film. The \textbf{clinical label} is
 taken from the MIMIC-IV-ED discharge diagnosis: a study is positive if the ED stay carries
-an ICD code for pneumonia (ICD-10 J12--J18, ICD-9 480--486), keyed on \texttt{stay\_id}.
-This label is assigned from the clinical record and never reads the image. It covers 99.7\%
-of the cohort. The two labels agree only moderately: clinical prevalence in the test set is
+an ICD code for pneumonia (ICD-10 J12--J18 or J69.0, ICD-9 480--486 or 507.0), keyed on
+\texttt{stay\_id}. It is taken from the coded discharge diagnosis rather than the radiology
+report, so unlike the CheXpert label it is not read from the image. It covers 99.7\% of the
+cohort. The two labels agree only moderately: clinical prevalence in the test set is
 19\% against 45\% radiographic, and 36\% of CheXpert-positive studies are ICD-positive, so
 they are not interchangeable targets.
 
@@ -539,11 +543,15 @@ signal here (race-only AUROC 0.52) and using them to predict a diagnosis would i
 fairness confound. A logistic meta-learner combines the two probabilities, fit on the
 validation split, and is evaluated against each label on the identical test rows. For each
 label we report the fusion-minus-image change in AUROC with a 2{,}000-replicate
-patient-clustered bootstrap, the DeLong test, and a permutation test that shuffles the
-triage prediction across patients. The dissociation itself is tested directly with an
-\emph{interaction} test: on each bootstrap draw we compute both the clinical and the
+patient-clustered bootstrap and the DeLong test. The dissociation itself is tested directly
+with an \emph{interaction} test: on each bootstrap draw we compute both the clinical and the
 radiographic delta on the same resampled patients and take their difference, so its 95\%
-interval measures whether the clinical gain genuinely exceeds the radiographic one.
+interval measures whether the clinical gain genuinely exceeds the radiographic one. The two
+deltas are rank statistics on the same patient sample, so differencing them is well defined
+despite the labels differing in prevalence. The confirmatory family is small and
+pre-specified (two conditions, each with a radiographic, a clinical and an interaction
+contrast); the pneumonia contrasts survive a Benjamini-Hochberg correction, whereas the
+heart-failure interaction does not and is reported as directionally consistent.
 
 We check that the pattern is not specific to pneumonia by repeating the contrast for heart
 failure, pairing the multilabel model's Edema score (its radiographic finding) with the ED
@@ -603,22 +611,27 @@ Against the radiographic CheXpert label the image ensemble reaches AUROC 0.743 a
 moves it to 0.746, a change of $+0.003$ (95\% CI $[-0.005,+0.011]$; DeLong $p{=}0.49$) that
 is indistinguishable from no effect. Against the clinical ICD label the same image ensemble
 scores 0.784, the triage vitals alone reach 0.703, and fusion raises discrimination to
-0.808, a change of $+0.024$ (95\% CI $[0.010,0.039]$; DeLong $p{=}0.0015$). The gap between
+0.808, a change of $+0.024$ (95\% CI $[0.009,0.039]$; DeLong $p{=}0.0015$). The gap between
 the two gains is the effect of interest, and it is significant on its own: resampling
-patients and taking the difference of the two deltas gives an interaction of $+0.022$ (95\%
+patients and taking the difference of the two deltas gives an interaction of $+0.021$ (95\%
 CI $[0.007,0.036]$, $p{=}0.002$). A model that looks useless for the radiographic sign is
 useful for the clinical diagnosis, and the difference is not attributable to sampling noise.
+The image model in fact scores a little higher against the clinical label (0.784) than
+against the radiographic one it was trained on (0.743); this reflects the lower prevalence
+and cleaner definition of the coded diagnosis rather than the image being sufficient for it,
+and it is the fusion increment, not the absolute level, that separates the two labels.
 
-The pattern is not specific to pneumonia. Repeating the contrast for heart failure, with the
-multilabel model's Edema score as the image signal, gives the same shape: fusion is flat
-against the radiographic Edema label ($+0.000$, 95\% CI $[-0.002,+0.002]$) and positive
-against the clinical heart-failure diagnosis ($+0.021$, 95\% CI $[0.001,0.044]$), with an
-interaction of $+0.021$ (95\% CI $[0.000,0.044]$). The clinical gain also survives the
+The same pattern appears for heart failure, with the multilabel model's Edema score as the
+image signal: fusion is flat against the radiographic Edema label ($+0.000$, 95\% CI
+$[-0.002,+0.002]$) and positive against the clinical heart-failure diagnosis ($+0.021$, 95\%
+CI $[0.001,0.044]$), interaction $+0.021$ (95\% CI $[0.0004,0.044]$, $p{=}0.02$). With only
+54 clinical positives this condition is underpowered, so we read it as directionally
+consistent rather than a firm replication. The pneumonia gain, by contrast, survives the
 choices a sceptical reader would question. It holds across all five image seeds (per-seed
-clinical $\Delta$ $0.024\pm0.002$, radiographic $\Delta$ near zero), it is stable when the
-pneumonia code set is narrowed to bacterial and viral codes or widened to include influenza
-and aspiration ($\Delta$ from $+0.026$ to $+0.035$, all $p<0.001$), and it is not
-demographic: race alone predicts neither label above chance and adds no fusion gain.
+clinical $\Delta$ $0.027\pm0.002$, radiographic $\Delta$ $0.004\pm0.001$), it is stable when
+the code set is narrowed to exclude aspiration or widened to add influenza ($\Delta$ from
+$+0.026$ to $+0.035$, all $p<0.001$), and it is not demographic: race alone predicts neither
+label above chance (AUROC 0.52) and adds no fusion gain.
 
 \begin{figure*}[t]
 \centering
@@ -627,18 +640,22 @@ demographic: race alone predicts neither label above chance and adds no fusion g
 a fixed image model, by target label, with patient-clustered 95\% intervals. For both
 pneumonia and heart failure the radiographic label (blue) is unchanged while the clinical
 label (orange) improves, and the interaction (teal), the clinical gain minus the radiographic
-gain on the same patients, excludes zero.}
+gain on the same patients, excludes zero for pneumonia and is marginal for the smaller
+heart-failure sample.}
 \label{fig:forest}
 \end{figure*}
 
 \begin{table*}[t]
 \centering
 \caption{The dissociation. For a fixed image model, adding physiology-only triage vitals by
-late fusion changes discrimination against the clinical label but not the radiographic one,
-for both conditions. $\Delta$ is the fusion-minus-image AUROC change with a patient-clustered
-95\% CI; the interaction is the clinical $\Delta$ minus the radiographic $\Delta$ on the same
-patients. Pneumonia uses the fine-tuned image ensemble; heart failure uses the multilabel
-model's Edema score.}
+late fusion changes discrimination against the clinical label but not the radiographic one.
+$\Delta$ is the fusion-minus-image AUROC change with a patient-clustered 95\% CI; the
+interaction is the clinical $\Delta$ minus the radiographic $\Delta$ on the same patients.
+Pneumonia uses the fine-tuned image ensemble; heart failure uses the multilabel model's Edema
+score and has only 54 clinical positives, so it is underpowered. The clinical pneumonia label
+uses ICD-10 J12--J18 or J69.0 and ICD-9 480--486 or 507.0. The Triage column is a
+physiology-only logistic model, distinct from the full triage baselines in
+Table~\ref{tab:main}.}
 \label{tab:dissociation}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
@@ -648,13 +665,13 @@ Condition & Label & Source & Image & Triage & Fusion & $\Delta$AUROC [95\% CI] \
 \midrule
 \multirow{3}{*}{Pneumonia}
  & Radiographic & CheXpert & 0.743 & 0.620 & 0.746 & $+0.003$\, $[-0.005,+0.011]$ \\
- & Clinical & ICD J12--J18 & 0.784 & 0.703 & 0.808 & $+0.024$\, $[+0.010,+0.039]$ \\
- & \multicolumn{6}{l}{\emph{Interaction: $+0.022$ $[+0.007,+0.036]$, $p{=}0.002$;\; DeLong $p$: 0.49 radiographic, 0.0015 clinical}} \\
+ & Clinical & ED ICD & 0.784 & 0.703 & 0.808 & $+0.024$\, $[+0.009,+0.039]$ \\
+ & \multicolumn{6}{l}{\emph{Interaction: $+0.021$ $[+0.007,+0.036]$, $p{=}0.002$;\; DeLong $p$: 0.49 radiographic, 0.0015 clinical}} \\
 \midrule
 \multirow{3}{*}{Heart failure}
  & Radiographic & CheXpert Edema & 0.909 & 0.647 & 0.909 & $+0.000$\, $[-0.002,+0.002]$ \\
- & Clinical & ICD I50 & 0.858 & 0.752 & 0.878 & $+0.021$\, $[+0.001,+0.044]$ \\
- & \multicolumn{6}{l}{\emph{Interaction: $+0.021$ $[+0.000,+0.044]$}} \\
+ & Clinical & ED ICD I50 & 0.858 & 0.752 & 0.878 & $+0.021$\, $[+0.001,+0.044]$ \\
+ & \multicolumn{6}{l}{\emph{Interaction: $+0.021$ $[+0.0004,+0.044]$, $p{=}0.02$ (underpowered, $n{=}54$)}} \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -720,16 +737,17 @@ behind them are present.
 \centering
 \includegraphics[width=0.95\columnwidth]{figures/fig22_missingness.png}
 \caption{Fusion gain as triage vitals are progressively masked at test time (mean over 20
-masking draws). The clinical gain (orange) falls smoothly to zero as the vitals go missing;
-the radiographic label (blue) never benefits and is slightly harmed under partial missingness.
-At full masking both collapse to the image model.}
+masking draws). The clinical gain (orange) declines to zero as the vitals go missing, with a
+small negative excursion under heavy partial masking; the radiographic label (blue) never
+benefits and is slightly harmed under partial missingness. At full masking both collapse to
+the image model.}
 \label{fig:missingness}
 \end{figure}
 
 \subsection{Discrimination against the radiographic label}
 \label{subsec:disc}
-The radiographic half of the dissociation deserves the same scrutiny as the whole
-literature gives it, and it holds up in detail. Table~\ref{tab:main} and
+We examine the radiographic label with the same multi-seed rigor the literature applies to
+it, and the behaviour matches the dissociation. Table~\ref{tab:main} and
 Figs.~\ref{fig:training}--\ref{fig:multiseed} summarise the multi-seed results against the
 CheXpert label. Both CXR models beat the triage baselines by more than 12 AUROC points, which
 confirms that the radiograph carries the signal that discriminates. Adding triage
@@ -1271,14 +1289,16 @@ The value of adding clinical context to a chest-radiograph model is not a fixed 
 of the data; it depends on the label the model is asked to predict. For a fixed image model
 in this ED cohort, the same triage vitals leave discrimination unchanged against the
 radiographic reading of the film but improve it against the clinically defined diagnosis,
-and the difference between the two effects is significant. The same contrast holds for heart
-failure. This resolves an apparent contradiction in the literature: fusion has repeatedly
-helped for prognostic and outcome targets and repeatedly looked unhelpful for radiographic
-findings. Both can be true at once, because those studies differ not only in task and
-architecture but in where their label comes from.
+and the difference between the two effects is significant. The same contrast appears for
+heart failure, though that condition is too small to settle on its own. This resolves an
+apparent contradiction in the literature: fusion has repeatedly helped for prognostic and
+outcome targets and repeatedly looked unhelpful for radiographic findings. Both can be true
+at once, because those studies differ not only in task and architecture but in where their
+label comes from.
 
-The mechanism is concrete. The triage vitals that matter for the clinical label are the
-systemic signs of infection, fever and overall acuity, which do not appear as a radiographic
+The reason is visible in the vitals themselves. The triage vitals that matter for the
+clinical label are the systemic signs of infection, fever and overall acuity, which do not
+appear as a radiographic
 opacity, and a pairwise decomposition shows the vitals are redundant for the radiographic
 sign but complementary for the diagnosis. A report-derived label is close to a reading of the
 same image the model already sees, so clinical context has little room to add. A diagnosis
@@ -1300,20 +1320,17 @@ missingness indicators makes this mechanism explicit, and to our knowledge it is
 rarely reported in clinical multimodal studies. Both cautions are easy and cheap to
 apply.
 
-\paragraph{A cognitive-computation view.} Fusion is, in effect, a machine version of
-clinical reasoning: it brings together different kinds of evidence, the image, the
-physiological signals, and even what was and was not measured, into one judgement under
-uncertainty. Seen this way, our two cautions are about how the machine reasons rather
-than about bookkeeping. The first concerns how far its stated confidence can be
-trusted: a calibration figure from one training run is a shaky guide, so its
-uncertainty has to be measured across repeated runs before it can inform a decision.
-The second concerns reasoning from absence: an ED record is missing for reasons that
-are not random, and a model readily treats the presence of a measurement as evidence,
-much as a clinician reads ``a test was ordered'' as informative, but it confuses that
-ordering signal with the physiology it is meant to capture. Knowing when combined
-evidence truly adds information, and when an apparent gain instead reflects unstable
-confidence or the structure of missingness, matters for cognitively inspired decision
-support well beyond this radiographic task.
+\paragraph{A cognitive-computation view.} The finding restates a familiar principle of
+evidence integration: the value of a cue depends on the inference it serves. A clinician
+weighs the same vital signs differently when asking what the film shows and when asking what
+the patient has, and the models behave the same way. Fusion helps when the target draws on
+information the image does not carry, and adds nothing when the target is the image itself.
+The two cautions sit at the same level. Calibrated confidence has to be estimated across runs
+rather than read off one, and a model that treats the presence of a measurement as evidence,
+as clinicians sometimes do, must not confuse that ordering signal with the physiology it
+stands for. Both are questions about how a system should combine evidence and how far its
+stated confidence can be trusted, which is where cognitively motivated decision support has
+to operate.
 
 \paragraph{A practical guide for multimodal studies.} The result gives a concrete
 instruction: state where the target label comes from, and expect the value of fusion to
@@ -1344,7 +1361,10 @@ labelling problem to be corrected~\citep{jain2021visualchexbert}; the CareBench 
 clinical labels throughout and reports where fusion helps, but does not contrast label
 provenance directly~\citep{yin2026multimodal}. We take the discrepancy as the experimental
 variable and show that holding everything else fixed while changing the label flips the
-conclusion. Our missingness result complements the literature on informative
+conclusion. This has practical teeth: studies of CXR pneumonia fusion routinely benchmark
+against report-derived labels, so a null result in that setting may reflect the label rather
+than the modality, and our contrast shows the sign can change with the label alone. Our
+missingness result complements the literature on informative
 missingness: where GRU-D and similar models \emph{use} missingness as a predictive
 feature~\citep{che2018recurrent}, we show that in a fusion model the same signal can be
 mistaken for a benefit from the laboratory values, and we give a simple control,
@@ -1361,9 +1381,10 @@ public dataset links ED triage, or early labs, to the chest radiograph, so the f
 models themselves cannot yet be validated externally, and building such a linked
 multi-site resource is an important community need. The clinical label has its own
 caveat: an ICD diagnosis assigned during the encounter may be informed in part by the
-radiograph, which would tend to inflate the clinical fusion gain. The finding is
-conservative against this, because the triage vitals that drive the gain are recorded
-before imaging and cannot encode the report, and because the effect persists when the
+radiograph. This works against our result rather than for it, since image information in the
+label raises the image-only baseline and leaves less room for triage to add, so it shrinks
+the clinical gain rather than inflating it. The pre-imaging nature of the triage vitals is a
+separate safeguard, because they cannot encode the report, and the effect persists when the
 clinical stream is restricted to pre-imaging chief-complaint symptoms. A second caveat
 is that the clinical gain is not distributed equally: at a fixed operating threshold,
 fusion lowers the true-positive rate for Black patients even as it raises their AUROC, a
@@ -1401,8 +1422,9 @@ Whether the clinical context available at triage improves a chest-radiograph mod
 depends on the provenance of the label. Under a verified timing constraint and
 replication across seeds, adding triage vitals to a fixed image model does not improve
 discrimination against the radiographic reading of the film, but it does improve
-discrimination against the clinically defined diagnosis, for both pneumonia and heart
-failure, and the gap between the two effects is significant. The gain is carried by
+discrimination against the clinically defined pneumonia diagnosis, and the gap between the
+two effects is significant; heart failure shows the same direction on a smaller sample. The
+gain is carried by
 physiology the radiograph does not show, chiefly fever and acuity, and it is
 complementary rather than redundant. A label read from the image can therefore make
 useful clinical context look worthless, so studies of multimodal fusion should state
