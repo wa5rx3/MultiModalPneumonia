@@ -1,0 +1,54 @@
+{
+  "labels": {
+    "radiographic_chexpert": {
+      "triage_auroc": 0.62,
+      "image_auroc": 0.743,
+      "fusion_auroc": 0.746,
+      "triage_coefficients": {
+        "oxygen saturation": -0.26,
+        "heart rate": 0.128,
+        "respiratory rate": 0.115,
+        "temperature": 0.111,
+        "diastolic BP": -0.072,
+        "systolic BP": -0.056,
+        "triage acuity": -0.02,
+        "pain score": 0.005
+      },
+      "complementarity": {
+        "n_pairs": 286356,
+        "auroc_image": 0.7428,
+        "auroc_fusion": 0.7457,
+        "frac_pairs_image_wrong": 0.2572,
+        "fixes_per_pair": 0.0327,
+        "breaks_per_pair": 0.0298,
+        "net_gain": 0.0029,
+        "fix_to_break_ratio": 1.1
+      }
+    },
+    "clinical_icd": {
+      "triage_auroc": 0.703,
+      "image_auroc": 0.784,
+      "fusion_auroc": 0.808,
+      "triage_coefficients": {
+        "oxygen saturation": -0.37,
+        "temperature": 0.298,
+        "triage acuity": 0.202,
+        "respiratory rate": 0.195,
+        "heart rate": 0.193,
+        "diastolic BP": -0.113,
+        "systolic BP": -0.111,
+        "pain score": 0.016
+      },
+      "complementarity": {
+        "n_pairs": 180336,
+        "auroc_image": 0.7836,
+        "auroc_fusion": 0.8079,
+        "frac_pairs_image_wrong": 0.2164,
+        "fixes_per_pair": 0.0587,
+        "breaks_per_pair": 0.0343,
+        "net_gain": 0.0243,
+        "fix_to_break_ratio": 1.71
+      }
+    }
+  }
+}
