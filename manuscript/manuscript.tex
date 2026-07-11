@@ -132,8 +132,9 @@ A readily available source of context is the ED triage record. On arrival a nurs
 vital signs (temperature, heart rate, respiratory rate, peripheral oxygen saturation
 (SpO$_2$), blood pressure and a pain score) together with an acuity level, all
 \emph{before} imaging is ordered. Combining the radiograph with this context is widely
-proposed \citep{acosta2022multimodal,hayat2022medfuse,soenksen2022multimodal}, on the
-intuition that a model, like a clinician, should read the image alongside the patient's
+proposed and reviewed
+\citep{acosta2022multimodal,huang2020fusion,hayat2022medfuse,soenksen2022multimodal}, on
+the intuition that a model, like a clinician, should read the image alongside the patient's
 physiology. Whether the model actually gains from this depends on how much the vitals
 carry that the image does not, and, we argue, on a step that is easy to overlook: the
 label the model is scored against.
@@ -148,14 +149,17 @@ overall acuity, and it is recorded separately in the discharge diagnosis. Whethe
 clinical context helps may therefore turn on which of these targets a study happens to
 use, a choice that is rarely stated and, to our knowledge, never tested directly.
 
-Three further hazards make fusion results hard to trust, and we control for all of them.
-Timing: clinical variables are often included without checking that they were available
-when the prediction is made, which risks leaking information from after the decision
-point. Repetition: calibration and small differences in discrimination are usually
-reported from one training run, though both move with the random seed
-\citep{guo2017calibration,nixon2019measuring}. Missing data: ED inputs are missing often
-and not at random, so a model can learn from \emph{whether} a measurement was taken rather
-than from its value, which can look like a benefit of the added modality.
+Three further hazards make fusion results hard to trust, and audits of medical-imaging
+machine learning keep tracing failures back to them
+\citep{roberts2021pitfalls,varoquaux2022failures}; we control for all three. Timing:
+clinical variables are often included without checking that they were available when the
+prediction is made, which risks leaking information from after the decision point, a
+leading cause of irreproducible results \citep{kapoor2023leakage}. Repetition: calibration
+and small differences in discrimination are usually reported from one training run, though
+both move with the random seed \citep{guo2017calibration,nixon2019measuring}. Missing data:
+ED inputs are missing often and not at random, so a model can learn from \emph{whether} a
+measurement was taken rather than from its value, which can look like a benefit of the added
+modality.
 
 We therefore ask whether the value of triage context depends on the provenance of the
 target label, and we answer under a verified timing constraint with replication across
@@ -1265,8 +1269,9 @@ conclusion of a multimodal study.
 
 Two further findings carry beyond this task. First, a calibration advantage that
 looks large in a single run (a 40\% reduction in ECE) is roughly halved and becomes
-unstable once we average over five seeds; calibration claims from one run should be
-read with caution, and replication across seeds ought to be routine. Second, when
+unstable once we average over five seeds; since calibration is decisive for clinical use
+yet easily overstated \citep{vancalster2019calibration}, claims from one run should be read
+with caution and replication across seeds ought to be routine. Second, when
 clinical inputs are missing often and not at random, a fusion model can exploit the
 pattern of missingness and show a benefit that reflects neither the measured values
 (the subcohort with labs present shows no effect of the values) nor leakage (the

@@ -54,6 +54,23 @@ metlay2019idsa.
   confirmed from the arXiv abstract page. Cited for the complementarity framing and as the
   gap we fill (it uses ICD labels and never contrasts label provenance).
 
+## Methodological-rigor set (verified via web, 2026-07)
+All venue/volume/year/authors confirmed from publisher or indexing pages this session.
+- **huang2020fusion** — Fusion of Medical Imaging and EHR Using Deep Learning: A Systematic
+  Review and Implementation Guidelines. Huang, Pareek, Seyyedi, Banerjee, Lungren. npj Digital
+  Medicine 3:136 (2020), DOI 10.1038/s41746-020-00341-z.
+- **roberts2021pitfalls** — Common Pitfalls and Recommendations for Using ML to Detect and
+  Prognosticate for COVID-19 Using Chest Radiographs and CT Scans. Roberts et al. (AIX-COVNET).
+  Nature Machine Intelligence 3:199--217 (2021), DOI 10.1038/s42256-021-00307-0.
+- **varoquaux2022failures** — Machine Learning for Medical Imaging: Methodological Failures and
+  Recommendations for the Future. Varoquaux, Cheplygina. npj Digital Medicine 5:48 (2022),
+  DOI 10.1038/s41746-022-00592-y.
+- **kapoor2023leakage** — Leakage and the Reproducibility Crisis in Machine-Learning-Based
+  Science. Kapoor, Narayanan. Patterns 4(9):100804 (2023), DOI 10.1016/j.patter.2023.100804.
+- **vancalster2019calibration** — Calibration: The Achilles Heel of Predictive Analytics. Van
+  Calster, McLernon, van Smeden, Wynants, Steyerberg. BMC Medicine 17:230 (2019),
+  DOI 10.1186/s12916-019-1466-7.
+
 ## Removed / not carried over
 Thesis citations not used by the manuscript's current argument (e.g. DCA, Grad-CAM,
 SHAP, DeLong, Hosmer-Lemeshow) were dropped rather than cited as filler; they can be
