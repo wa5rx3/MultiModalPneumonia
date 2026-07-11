@@ -706,6 +706,26 @@ nearly cancel (redundant); for the clinical label the vitals fix far more than t
 \label{fig:complementarity}
 \end{figure}
 
+The clinical gain also tracks the observed vitals, as a real contribution should. Masking an
+increasing fraction of the triage measurements at test time, so that the model falls back on
+median imputation and the missingness flags, erodes the clinical gain smoothly to zero as the
+vitals disappear (Fig.~\ref{fig:missingness}). The radiographic label never benefits, and
+under partial missingness fusion slightly hurts it. This is the signature of a genuine
+contribution from the measured physiology rather than an artefact of the fusion step, and it
+is the constructive counterpart to the missingness caution below: the same flags that can
+masquerade as a benefit for one label carry a real one for the other only when the values
+behind them are present.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{figures/fig22_missingness.png}
+\caption{Fusion gain as triage vitals are progressively masked at test time (mean over 20
+masking draws). The clinical gain (orange) falls smoothly to zero as the vitals go missing;
+the radiographic label (blue) never benefits and is slightly harmed under partial missingness.
+At full masking both collapse to the image model.}
+\label{fig:missingness}
+\end{figure}
+
 \subsection{Discrimination against the radiographic label}
 \label{subsec:disc}
 The radiographic half of the dissociation deserves the same scrutiny as the whole
