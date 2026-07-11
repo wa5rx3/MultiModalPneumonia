@@ -41,6 +41,19 @@ huang2017densenet, chen2016xgboost, guo2017calibration, piaggio2012noninferiorit
 acosta2022multimodal, larrazabal2020gender, collins2024tripodai, tejani2024claim,
 metlay2019idsa.
 
+## Added for the label-provenance reframe (verified via web, 2026-07)
+- **jain2021visualchexbert** — VisualCheXbert: Addressing the Discrepancy Between Radiology
+  Report Labels and Image Labels. Jain, Smit, Truong, Nguyen, Huynh, M. Jain, Young, Ng,
+  Lungren, Rajpurkar. ACM CHIL 2021, pp. 105--115. DOI 10.1145/3450439.3451862 (arXiv
+  2102.11467). Author list and venue confirmed from the arXiv abstract page. Nearest prior
+  work on report-vs-image label discrepancy; cited and distinguished (they correct labels,
+  we use label provenance as an experimental variable).
+- **yin2026multimodal** — When Does Multimodal Learning Help in Healthcare? A Benchmark on
+  EHR and Chest X-Ray Fusion. Yin, Xu, Yao, Liu, Chen, Cheung, Cheung, Qin. arXiv:2602.23614,
+  submitted 27 Feb 2026 (CareBench, GitHub jakeykj/CareBench). Title, authors and date
+  confirmed from the arXiv abstract page. Cited for the complementarity framing and as the
+  gap we fill (it uses ICD labels and never contrasts label provenance).
+
 ## Removed / not carried over
 Thesis citations not used by the manuscript's current argument (e.g. DCA, Grad-CAM,
 SHAP, DeLong, Hosmer-Lemeshow) were dropped rather than cited as filler; they can be
