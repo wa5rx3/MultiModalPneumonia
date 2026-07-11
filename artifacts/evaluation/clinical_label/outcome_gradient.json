@@ -1,0 +1,67 @@
+{
+  "radiographic": {
+    "test_pos": 487,
+    "prevalence": 0.453,
+    "image_auroc": 0.743,
+    "triage_auroc": 0.62,
+    "fusion_auroc": 0.746,
+    "fusion_minus_image": 0.0029,
+    "ci95": [
+      -0.0055,
+      0.0107
+    ],
+    "p_le0": 0.244
+  },
+  "clinical": {
+    "test_pos": 208,
+    "prevalence": 0.193,
+    "image_auroc": 0.784,
+    "triage_auroc": 0.703,
+    "fusion_auroc": 0.808,
+    "fusion_minus_image": 0.0243,
+    "ci95": [
+      0.0088,
+      0.0394
+    ],
+    "p_le0": 0.0
+  },
+  "admission": {
+    "test_pos": 691,
+    "prevalence": 0.643,
+    "image_auroc": 0.673,
+    "triage_auroc": 0.717,
+    "fusion_auroc": 0.742,
+    "fusion_minus_image": 0.069,
+    "ci95": [
+      0.0334,
+      0.1023
+    ],
+    "p_le0": 0.0
+  },
+  "hospital_mortality": {
+    "test_pos": 22,
+    "prevalence": 0.02,
+    "image_auroc": 0.782,
+    "triage_auroc": 0.79,
+    "fusion_auroc": 0.838,
+    "fusion_minus_image": 0.0568,
+    "ci95": [
+      -0.0113,
+      0.1257
+    ],
+    "p_le0": 0.0485
+  },
+  "mortality_30d": {
+    "test_pos": 52,
+    "prevalence": 0.048,
+    "image_auroc": 0.713,
+    "triage_auroc": 0.665,
+    "fusion_auroc": 0.719,
+    "fusion_minus_image": 0.0062,
+    "ci95": [
+      -0.0627,
+      0.0665
+    ],
+    "p_le0": 0.4225
+  }
+}
