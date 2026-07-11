@@ -870,15 +870,17 @@ Table~\ref{tab:main}).}
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig1_multiseed_metrics.png}
 \caption{Per-model AUROC and ECE across five seeds (points, seeds; red bar, mean).
-Discrimination is stable; the image-only ECE alone varies substantially by seed.}
+Discrimination is stable across seeds; calibration (ECE) is not, most of all for the
+image-only and attention models.}
 \label{fig:multiseed}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig2_paired_deltas.png}
-\caption{Paired fusion$-$image effects across seeds (mean$\pm$SD). Every effect
-straddles zero; the labs and lab-flags-only deltas are identical.}
+\caption{Paired fusion$-$image effects across seeds (mean$\pm$SD). The triage fusion
+effects straddle zero; the small labs and lab-flags-only gains are positive and identical,
+which shows the laboratory contribution comes from the missingness flags, not the values.}
 \label{fig:deltas}
 \end{figure*}
 
