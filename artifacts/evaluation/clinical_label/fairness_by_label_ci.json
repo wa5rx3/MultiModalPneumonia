@@ -1,0 +1,112 @@
+{
+  "sex_auroc_gap_F_minus_M": {
+    "radiographic": {
+      "estimate": -0.058,
+      "ci95": [
+        -0.115,
+        0.0
+      ]
+    },
+    "clinical": {
+      "estimate": -0.004,
+      "ci95": [
+        -0.079,
+        0.066
+      ]
+    },
+    "cross_label_difference": {
+      "estimate": -0.054,
+      "ci95": [
+        -0.13,
+        0.02
+      ],
+      "p_le0": 0.9135
+    }
+  },
+  "race_auroc_by_label": {
+    "radiographic": {
+      "White": {
+        "n": 676,
+        "estimate": 0.758,
+        "ci95": [
+          0.721,
+          0.794
+        ]
+      },
+      "Black": {
+        "n": 256,
+        "estimate": 0.713,
+        "ci95": [
+          0.648,
+          0.776
+        ]
+      },
+      "Hispanic": {
+        "n": 70,
+        "estimate": 0.641,
+        "ci95": [
+          0.503,
+          0.774
+        ]
+      },
+      "Asian": {
+        "n": 36,
+        "estimate": 0.774,
+        "ci95": [
+          0.625,
+          0.944
+        ]
+      },
+      "Other": {
+        "n": 37,
+        "estimate": 0.775,
+        "ci95": [
+          0.615,
+          0.925
+        ]
+      }
+    },
+    "clinical": {
+      "White": {
+        "n": 676,
+        "estimate": 0.773,
+        "ci95": [
+          0.726,
+          0.818
+        ]
+      },
+      "Black": {
+        "n": 256,
+        "estimate": 0.765,
+        "ci95": [
+          0.681,
+          0.84
+        ]
+      },
+      "Hispanic": {
+        "n": 70,
+        "estimate": 0.855,
+        "ci95": [
+          0.726,
+          0.956
+        ]
+      },
+      "Asian": {
+        "n": 36,
+        "estimate": 0.812,
+        "ci95": [
+          0.674,
+          0.946
+        ]
+      },
+      "Other": {
+        "n": 37,
+        "estimate": 0.901,
+        "ci95": [
+          0.742,
+          1.0
+        ]
+      }
+    }
+  }
+}

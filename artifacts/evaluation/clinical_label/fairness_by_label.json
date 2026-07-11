@@ -1,0 +1,148 @@
+{
+  "radiographic": {
+    "overall_auroc": 0.743,
+    "dims": {
+      "sex": {
+        "subgroups": {
+          "F": {
+            "n": 591,
+            "auroc": 0.719,
+            "tpr": 0.764,
+            "fpr": 0.439
+          },
+          "M": {
+            "n": 484,
+            "auroc": 0.777,
+            "tpr": 0.871,
+            "fpr": 0.542
+          }
+        },
+        "auroc_gap": 0.058,
+        "auroc_worst": "F",
+        "auroc_best": "M",
+        "tpr_gap": 0.107,
+        "tpr_worst": "F",
+        "tpr_best": "M",
+        "fpr_gap": 0.103,
+        "fpr_worst": "F",
+        "fpr_best": "M"
+      },
+      "race": {
+        "subgroups": {
+          "Asian": {
+            "n": 36,
+            "auroc": 0.774,
+            "tpr": 0.895,
+            "fpr": 0.471
+          },
+          "Black": {
+            "n": 256,
+            "auroc": 0.713,
+            "tpr": 0.757,
+            "fpr": 0.451
+          },
+          "Hispanic": {
+            "n": 70,
+            "auroc": 0.641,
+            "tpr": 0.719,
+            "fpr": 0.447
+          },
+          "Other": {
+            "n": 37,
+            "auroc": 0.775,
+            "tpr": 0.789,
+            "fpr": 0.444
+          },
+          "White": {
+            "n": 676,
+            "auroc": 0.758,
+            "tpr": 0.838,
+            "fpr": 0.506
+          }
+        },
+        "auroc_gap": 0.134,
+        "auroc_worst": "Hispanic",
+        "auroc_best": "Other",
+        "tpr_gap": 0.176,
+        "tpr_worst": "Hispanic",
+        "tpr_best": "Asian",
+        "fpr_gap": 0.062,
+        "fpr_worst": "Other",
+        "fpr_best": "White"
+      }
+    }
+  },
+  "clinical": {
+    "overall_auroc": 0.784,
+    "dims": {
+      "sex": {
+        "subgroups": {
+          "F": {
+            "n": 591,
+            "auroc": 0.782,
+            "tpr": 0.781,
+            "fpr": 0.356
+          },
+          "M": {
+            "n": 484,
+            "auroc": 0.786,
+            "tpr": 0.825,
+            "fpr": 0.462
+          }
+        },
+        "auroc_gap": 0.004,
+        "auroc_worst": "F",
+        "auroc_best": "M",
+        "tpr_gap": 0.044,
+        "tpr_worst": "F",
+        "tpr_best": "M",
+        "fpr_gap": 0.106,
+        "fpr_worst": "F",
+        "fpr_best": "M"
+      },
+      "race": {
+        "subgroups": {
+          "Asian": {
+            "n": 36,
+            "auroc": 0.812,
+            "tpr": 0.857,
+            "fpr": 0.364
+          },
+          "Black": {
+            "n": 256,
+            "auroc": 0.765,
+            "tpr": 0.783,
+            "fpr": 0.39
+          },
+          "Hispanic": {
+            "n": 70,
+            "auroc": 0.855,
+            "tpr": 1.0,
+            "fpr": 0.355
+          },
+          "Other": {
+            "n": 37,
+            "auroc": 0.901,
+            "tpr": 0.875,
+            "fpr": 0.345
+          },
+          "White": {
+            "n": 676,
+            "auroc": 0.773,
+            "tpr": 0.788,
+            "fpr": 0.417
+          }
+        },
+        "auroc_gap": 0.136,
+        "auroc_worst": "Black",
+        "auroc_best": "Other",
+        "tpr_gap": 0.217,
+        "tpr_worst": "Black",
+        "tpr_best": "Hispanic",
+        "fpr_gap": 0.072,
+        "fpr_worst": "Other",
+        "fpr_best": "White"
+      }
+    }
+  }
+}
