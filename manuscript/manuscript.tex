@@ -767,6 +767,16 @@ against 0.739), so its signal is not outside the radiograph, only outside the
 radiographic-trained model. These are single-seed runs and we read them as locating the effect
 rather than as a second multi-seed estimate.
 
+The dissociation is also robust to how the image is represented. Replacing the single fine-tuned
+pneumonia score with the full 14-finding radiographic profile (pneumonia, cardiomegaly, edema,
+effusion, consolidation and the rest) as a strictly richer fixed image baseline, and evaluating
+on the larger ED cohort, preserves the pattern: adding triage leaves the radiographic label
+unchanged ($+0.005$, 95\% CI $[-0.005,+0.016]$, $p{=}0.16$) and raises the clinical diagnosis
+($+0.026$, 95\% CI $[0.017,0.035]$, $p<0.001$). The clinical gain is smaller against this
+stronger baseline, which is expected once the image is better represented and is consistent with
+the redundancy the two modalities share, but it does not vanish, and the radiographic null does
+not move. The label, not the richness of the image features, drives the contrast.
+
 \subsection{Discrimination against the radiographic label}
 \label{subsec:disc}
 We examine the radiographic label with the same multi-seed rigor the literature applies to
