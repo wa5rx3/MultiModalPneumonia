@@ -112,7 +112,7 @@ values.
 the provenance of the label it is scored against. A target read from the image makes the
 same triage information look useless, while a clinically defined target makes it valuable.
 Studies of multimodal fusion should state where their label comes from, because that
-choice, not the model, can decide the result.
+choice can decide the result.
 \keywords{Pneumonia detection \and Chest radiograph \and Multimodal fusion \and
 Emergency department triage \and Label provenance \and Redundancy and complementarity \and
 Clinical diagnosis \and Calibration \and Informative missingness \and Reproducibility}
@@ -184,7 +184,9 @@ Patient-level, Out-of-sample; Algorithm~\ref{alg:tempo}). Our contributions are:
   $[0.007,0.036]$, $p{=}0.002$).
 \item A \textbf{mechanism.} A pairwise decomposition shows the vitals are redundant for
   the radiographic sign but complementary for the clinical diagnosis, and the gain is
-  carried by fever and triage acuity, physiological signals the radiograph does not encode.
+  carried by fever and triage acuity, signals a radiographic-trained model does not capture.
+  An image model retrained on the clinical label recovers a comparable amount, so triage is
+  one route to the missing signal rather than the only one.
 \item \textbf{Generality.} The pneumonia dissociation survives changes to the diagnosis
   code set, holds across all five image seeds, and is not explained by demographics; the
   same pattern appears for heart failure, though with far fewer clinical positives (54) that
@@ -743,6 +745,27 @@ benefits and is slightly harmed under partial missingness. At full masking both 
 the image model.}
 \label{fig:missingness}
 \end{figure}
+
+\subsection{The clinical signal is reachable two ways}
+\label{subsec:earlyfusion}
+The late-fusion contrast holds the image model fixed, so the triage gain measures what a
+radiographic-trained model leaves unextracted. This raises a question the controlled design
+cannot answer: would an image model trained directly on the clinical label capture that signal
+by itself? It largely does. Retraining the image model end to end on the ICD label raises its
+test AUROC from 0.784 to 0.806 (seed 42), close to the 0.808 the fixed model reaches once
+triage is added by late fusion. Adding triage to this clinical-trained model by early
+(concatenation) fusion does not improve it further ($0.806\rightarrow0.799$, $\Delta-0.008$,
+95\% CI $[-0.027,+0.014]$), and the radiographic label stays neutral under the same
+architecture ($\Delta-0.003$). The extra clinical signal that a radiographic-trained model
+misses is therefore recoverable either by adding triage vitals or by retraining the image
+model on the clinical label; the two are largely substitutes rather than additive. This
+locates the effect precisely. The dissociation is a property of the target label, and the
+triage contribution it exposes is specific to a fixed image model that was not optimized for
+that target, not a claim that physiology carries information no image model could. Notably the
+clinical label is itself more predictable from the image than the radiographic label is (0.806
+against 0.739), so its signal is not outside the radiograph, only outside the
+radiographic-trained model. These are single-seed runs and we read them as locating the effect
+rather than as a second multi-seed estimate.
 
 \subsection{Discrimination against the radiographic label}
 \label{subsec:disc}
@@ -1303,8 +1326,11 @@ opacity, and a pairwise decomposition shows the vitals are redundant for the rad
 sign but complementary for the diagnosis. A report-derived label is close to a reading of the
 same image the model already sees, so clinical context has little room to add. A diagnosis
 recorded independently of the image rests partly on physiology the film does not carry, so
-the same context becomes useful. The discrepancy between report labels and image labels is
-itself documented~\citep{jain2021visualchexbert}; what we add is that it can decide the
+the same context becomes useful. That signal is not exclusively physiological, though: an
+image model retrained on the clinical label recovers much of it
+(Section~\ref{subsec:earlyfusion}), so triage is one route to what the radiographic-trained
+model misses rather than the only one. The discrepancy between report labels and image labels
+is itself documented~\citep{jain2021visualchexbert}; what we add is that it can decide the
 conclusion of a multimodal study.
 
 Two further findings carry beyond this task. First, a calibration advantage that
