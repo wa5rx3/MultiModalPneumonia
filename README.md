@@ -1,8 +1,8 @@
 # Multimodal Pneumonia Detection
 
-BSc thesis project, extended into a journal manuscript. The question: does adding structured ED triage data (vitals, acuity, missingness flags) to a chest X-ray model actually improve pneumonia detection, or does the image already capture everything useful?
+BSc thesis project, extended into a journal manuscript. The question: does adding structured ED triage data (vitals, acuity) to a chest X-ray model actually improve pneumonia detection?
 
-Short answer: under multi-seed evaluation, discrimination does not improve, and the one apparent calibration gain is fragile across seeds and is recovered by a single-parameter recalibration of the image model alone.
+Short answer: it depends on the label. For a fixed image model, adding physiology-only triage vitals does not improve discrimination against the radiographic (CheXpert) label read from the report, but it does improve discrimination against the clinical (ICD) diagnosis recorded independently of the image. The same contrast holds for heart failure. The value of clinical fusion is set by where the target label comes from, which is a choice most fusion studies leave unstated.
 
 **Data:** MIMIC-CXR-JPG v2.1.0 + MIMIC-IV v2.2 + MIMIC-IV-ED v2.2 (PhysioNet credentialed access required)  
 **Cohort:** 9,154 ED-anchored studies, patient-level temporal 80/10/10 split (train 7,144 / val 930 / test 1,080); evaluated test set n = 1,075 (prevalence 45.3%)  
@@ -10,9 +10,24 @@ Short answer: under multi-seed evaluation, discrimination does not improve, and 
 
 ---
 
-## Results
+## The main result: fusion value depends on label provenance
 
-Test-set performance, mean ± SD over five random seeds (`u_ignore` label policy; patient-level paired bootstrap for within-checkpoint intervals).
+Holding a fixed image model constant and adding physiology-only triage vitals by late fusion, the fusion-minus-image change in test AUROC is neutral for the radiographic label and positive for the clinical one, for both conditions:
+
+| Condition | Label | Image | Fusion | ΔAUROC [95% CI] |
+|---|---|---|---|---|
+| Pneumonia | Radiographic (CheXpert) | 0.743 | 0.746 | +0.003 [−0.005, +0.011], DeLong p=0.49 |
+| Pneumonia | Clinical (ICD J12–J18) | 0.784 | 0.808 | +0.024 [+0.010, +0.039], DeLong p=0.0015 |
+| Heart failure | Radiographic (Edema) | 0.909 | 0.909 | +0.000 [−0.002, +0.002] |
+| Heart failure | Clinical (ICD I50) | 0.858 | 0.878 | +0.021 [+0.001, +0.044] |
+
+The dissociation is tested directly with an interaction test (clinical Δ minus radiographic Δ, resampled on the same patients): pneumonia +0.022 [+0.007, +0.036] (p=0.002), heart failure +0.021 [+0.000, +0.044]. Mechanism: fever and triage acuity carry the clinical signal that the radiograph does not encode, and a pairwise decomposition shows the vitals are redundant for the radiographic label (fix/break ratio 1.1) but complementary for the clinical label (1.71). The clinical gain holds across all five image seeds, survives narrowing or widening the ICD code set (+0.026 to +0.035, all p<0.001), and is not demographic.
+
+Scripts: `scripts/analysis/` (`clinical_label_dissociation.py`, `multicondition_dissociation.py`, `dissociation_significance.py`, `flagship_interaction.py`, `mechanism_complementarity.py`, `chief_complaint_enrichment.py`, `label_robustness.py`, `fairness_utility.py`). Artifacts: `artifacts/evaluation/clinical_label/`.
+
+## Radiographic-label detail (multi-seed)
+
+Test-set performance against the radiographic label, mean ± SD over five random seeds (`u_ignore` policy; patient-level paired bootstrap for within-checkpoint intervals).
 
 | Model | AUROC | AUPRC | ECE |
 |---|---|---|---|
@@ -23,11 +38,7 @@ Test-set performance, mean ± SD over five random seeds (`u_ignore` label policy
 | Multimodal — attention (triage) | 0.738 ± 0.006 | 0.713 ± 0.012 | 0.076 ± 0.042 |
 | Multimodal — concat (+ labs) | 0.747 ± 0.004 | 0.724 ± 0.004 | 0.043 ± 0.011 |
 
-Adding triage vitals does not change discrimination: the paired concat − image ΔAUROC is +0.004 ± 0.009 across seeds, and a two-one-sided test (TOST) against a ±0.05 margin confirms equivalence (90% bootstrap CI [+0.000, +0.012]). Both deep models beat the triage-only baselines by more than 12 AUROC points.
-
-A calibration advantage that looks large from a single checkpoint (image ECE 0.067 vs concat 0.040) shrinks to ΔECE −0.013 ± 0.016 across five seeds, and temperature scaling of the image model alone (T = 1.37) lowers its ECE from 0.060 to 0.042, matching concat. The calibration gap therefore does not motivate fusion. Attention fusion matches image AUROC but is badly and consistently miscalibrated (single-checkpoint ECE 0.132).
-
-The small `+labs` gain (+0.009 ± 0.005) is reproduced entirely by laboratory missingness indicators, not the measured values (flags-only ablation), and is not leakage. The image model externally validates on NIH ChestX-ray14 (AUROC 0.722 ± 0.005, 112,120 radiographs).
+Against the radiographic label the paired concat − image ΔAUROC is +0.004 ± 0.009 across seeds, and a two-one-sided test (TOST) against a ±0.05 margin confirms equivalence. A calibration advantage that looks large from one run (image ECE 0.067 vs concat 0.040) shrinks to ΔECE −0.013 ± 0.016 across five seeds, so it does not motivate fusion. The small `+labs` gain (+0.009 ± 0.005) is reproduced entirely by laboratory missingness indicators, not the measured values (flags-only ablation), and is not leakage. The image model externally validates on NIH ChestX-ray14 (AUROC 0.722 ± 0.005, 112,120 radiographs).
 
 Multi-seed metrics, bootstrap deltas and equivalence tests: `artifacts/evaluation/multiseed/` and `artifacts/evaluation/equivalence/`.
 
