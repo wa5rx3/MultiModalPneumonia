@@ -1243,15 +1243,27 @@ Model & Policy & Test $n$ & AUROC & AUPRC \\
 % ═════════════════════════════════════════════════════════════════════
 \section{Discussion}
 \label{sec:discussion}
-The chest radiograph carries the discriminative signal for radiographic pneumonia in
-this ED cohort. Immediately available structured clinical context (triage vitals,
-and even a broad early-laboratory panel) does not add reliable discrimination, and
-the image model generalises externally with minimal loss. The asymmetry is
-intuitive: the radiograph encodes the outcome (radiographic consolidation) almost
-directly, whereas vital signs and labs encode severity and physiological perturbation
-that are correlated with, but not specific to, pneumonia.
+The value of adding clinical context to a chest-radiograph model is not a fixed property
+of the data; it depends on the label the model is asked to predict. For a fixed image model
+in this ED cohort, the same triage vitals leave discrimination unchanged against the
+radiographic reading of the film but improve it against the clinically defined diagnosis,
+and the difference between the two effects is significant. The same contrast holds for heart
+failure. This resolves an apparent contradiction in the literature: fusion has repeatedly
+helped for prognostic and outcome targets and repeatedly looked unhelpful for radiographic
+findings. Both can be true at once, because those studies differ not only in task and
+architecture but in where their label comes from.
 
-Two findings carry beyond this particular task. First, a calibration advantage that
+The mechanism is concrete. The triage vitals that matter for the clinical label are the
+systemic signs of infection, fever and overall acuity, which do not appear as a radiographic
+opacity, and a pairwise decomposition shows the vitals are redundant for the radiographic
+sign but complementary for the diagnosis. A report-derived label is close to a reading of the
+same image the model already sees, so clinical context has little room to add. A diagnosis
+recorded independently of the image rests partly on physiology the film does not carry, so
+the same context becomes useful. The discrepancy between report labels and image labels is
+itself documented~\citep{jain2021visualchexbert}; what we add is that it can decide the
+conclusion of a multimodal study.
+
+Two further findings carry beyond this task. First, a calibration advantage that
 looks large in a single run (a 40\% reduction in ECE) is roughly halved and becomes
 unstable once we average over five seeds; calibration claims from one run should be
 read with caution, and replication across seeds ought to be routine. Second, when
@@ -1278,37 +1290,36 @@ evidence truly adds information, and when an apparent gain instead reflects unst
 confidence or the structure of missingness, matters for cognitively inspired decision
 support well beyond this radiographic task.
 
-\paragraph{When does fusion help?} Our result sharpens a simple rule. Fusion of the
-radiograph with clinical data has worked best for prognostic and screening targets
-whose ground truth is not the image itself, such as ICU mortality~\citep{hayat2022medfuse},
-inpatient outcomes~\citep{soenksen2022multimodal} and screening for acute heart failure
-in the ED~\citep{lee2024multimodal}, where the clinical record supplies information the
-image cannot. Radiographic pneumonia is the opposite case: the label is defined by the
-image, so triage vitals and early labs have little to add, and our result is what the
-rule predicts. The point is not that fusion fails, but that its value depends on the
-target lying partly outside the image, which is a useful guide to where fusion is worth
-the extra complexity in the ED.
+\paragraph{A practical guide for multimodal studies.} The result gives a concrete
+instruction: state where the target label comes from, and expect the value of fusion to
+follow it. Fusion of the radiograph with clinical data has worked best for prognostic and
+screening targets whose ground truth is not the image itself, such as ICU
+mortality~\citep{hayat2022medfuse}, inpatient outcomes~\citep{soenksen2022multimodal} and
+screening for acute heart failure in the ED~\citep{lee2024multimodal}, and a recent benchmark
+finds the gains concentrate in phenotypes that need complementary
+information~\citep{yin2026multimodal}. A report-derived radiographic label sits at the other
+end: the image already accounts for it. A study that reports fusion as useless against such a
+label, without noting that the label is read from the image, risks discouraging fusion for
+the clinical targets where it does help. The reverse error is equally available, since a
+label that leaks the diagnosis into the inputs can make fusion look better than it is. Naming
+the label's provenance guards against both.
 
-\paragraph{Label provenance and the ceiling on discrimination.} Two related objections
-deserve a direct answer. First, the CheXpert labels come from the radiology report, so
-the image is by construction close to sufficient for the label. We see this not as a
-confound but as the mechanism behind our thesis: when the reference standard is read
-off the image, clinical context outside the image has little room to add, and a neutral
-result is what a well-posed task of this kind should give. If anything it makes the
-conclusion conservative, since a label taken from the report favours the image as much
-as possible. Second, the absolute AUROC (about 0.74) is moderate, which is expected:
-pneumonia is one of the CheXpert findings with the lowest reader agreement, below 40\%
-expert agreement in the CheXpert study~\citep{irvin2019chexpert}, so part of the ceiling
-is genuine label noise rather than limited model capacity. That noise affects every
-model equally and cancels in the paired comparison, so it does not weaken the
-equivalence result.
+\paragraph{On the moderate absolute performance.} The absolute AUROC against the radiographic
+label (about 0.74) is moderate, which is expected: pneumonia is among the CheXpert findings
+with the lowest reader agreement, below 40\% expert agreement in the CheXpert
+study~\citep{irvin2019chexpert}, so part of the ceiling is genuine label noise rather than
+limited model capacity. That noise affects every model equally and cancels in the paired
+comparison, so it does not weaken either the radiographic equivalence or the clinical gain.
 
 \paragraph{Comparison with related work.} Earlier multimodal CXR studies typically
 report gains from a single run on ICU or inpatient
-cohorts~\citep{hayat2022medfuse,soenksen2022multimodal,lee2024multimodal}. We instead
-study ED pneumonia under a verified timing constraint, with replication across seeds and
-explicit audits, and reach a negative but adequately powered conclusion about
-discrimination. Our missingness result complements the literature on informative
+cohorts~\citep{hayat2022medfuse,soenksen2022multimodal,lee2024multimodal}, and evaluate
+against a single label. VisualCheXbert treats the report-versus-image label discrepancy as a
+labelling problem to be corrected~\citep{jain2021visualchexbert}; the CareBench benchmark uses
+clinical labels throughout and reports where fusion helps, but does not contrast label
+provenance directly~\citep{yin2026multimodal}. We take the discrepancy as the experimental
+variable and show that holding everything else fixed while changing the label flips the
+conclusion. Our missingness result complements the literature on informative
 missingness: where GRU-D and similar models \emph{use} missingness as a predictive
 feature~\citep{che2018recurrent}, we show that in a fusion model the same signal can be
 mistaken for a benefit from the laboratory values, and we give a simple control,
@@ -1323,7 +1334,17 @@ institution (MIMIC) and are retrospective. The external validation confirms that
 image model generalises to NIH, but it is limited to imaging: to our knowledge no
 public dataset links ED triage, or early labs, to the chest radiograph, so the fusion
 models themselves cannot yet be validated externally, and building such a linked
-multi-site resource is an important community need. The sharp fall in
+multi-site resource is an important community need. The clinical label has its own
+caveat: an ICD diagnosis assigned during the encounter may be informed in part by the
+radiograph, which would tend to inflate the clinical fusion gain. The finding is
+conservative against this, because the triage vitals that drive the gain are recorded
+before imaging and cannot encode the report, and because the effect persists when the
+clinical stream is restricted to pre-imaging chief-complaint symptoms. A second caveat
+is that the clinical gain is not distributed equally: at a fixed operating threshold,
+fusion lowers the true-positive rate for Black patients even as it raises their AUROC, a
+threshold-calibration effect that would need per-subgroup operating points before
+deployment. The subgroup counts are small, so this is a caution to act on rather than a
+firm estimate. The sharp fall in
 prevalence-dependent calibration on NIH (from 45\% to 1.3\%) is expected rather than a
 defect: before deployment in a population with a different base rate, a recalibration
 fitted on a small labelled sample from the target site (temperature scaling for sharpness
@@ -1351,16 +1372,21 @@ gain.
 % ═════════════════════════════════════════════════════════════════════
 \section{Conclusion}
 \label{sec:conclusion}
-Under a verified timing constraint and replication across seeds, combining the clinical
-context available at triage with the chest radiograph does not reliably improve
-pneumonia discrimination, and the one apparent gain comes from the pattern of missing
-data. The image model itself is robust and generalises across institutions with an
-AUROC drop of only 0.016. Beyond the negative result, the study contributes a
-reproducible, time-safe multimodal ED pipeline and two reusable cautions, calibration
-inflation from a single run and missingness as signal, for the growing field of
-clinical multimodal AI. Building on the ViT-Small check reported here, future work
-includes fine-tuning larger medical foundation models, validation across sites, and
-prospective evaluation with recalibration to the local base rate.
+Whether the clinical context available at triage improves a chest-radiograph model
+depends on the provenance of the label. Under a verified timing constraint and
+replication across seeds, adding triage vitals to a fixed image model does not improve
+discrimination against the radiographic reading of the film, but it does improve
+discrimination against the clinically defined diagnosis, for both pneumonia and heart
+failure, and the gap between the two effects is significant. The gain is carried by
+physiology the radiograph does not show, chiefly fever and acuity, and it is
+complementary rather than redundant. A label read from the image can therefore make
+useful clinical context look worthless, so studies of multimodal fusion should state
+where their label comes from. The image model itself is robust and generalises across
+institutions with an AUROC drop of only 0.016, and the study contributes a reproducible,
+time-safe multimodal ED pipeline together with two reusable cautions, calibration
+inflation from a single run and missingness as signal. Future work includes a broader
+survey of conditions as linked resources allow, validation across sites, and prospective
+evaluation with per-subgroup recalibration to the local base rate.
 
 % ─────────────────────────────────────────────────────────────────────
 \section*{Declarations}
