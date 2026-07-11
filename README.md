@@ -17,11 +17,13 @@ Holding a fixed image model constant and adding physiology-only triage vitals by
 | Condition | Label | Image | Fusion | ΔAUROC [95% CI] |
 |---|---|---|---|---|
 | Pneumonia | Radiographic (CheXpert) | 0.743 | 0.746 | +0.003 [−0.005, +0.011], DeLong p=0.49 |
-| Pneumonia | Clinical (ICD J12–J18) | 0.784 | 0.808 | +0.024 [+0.010, +0.039], DeLong p=0.0015 |
+| Pneumonia | Clinical (ICD J12–J18) | 0.784 | 0.808 | +0.024 [+0.009, +0.039], DeLong p=0.0015 |
 | Heart failure | Radiographic (Edema) | 0.909 | 0.909 | +0.000 [−0.002, +0.002] |
 | Heart failure | Clinical (ICD I50) | 0.858 | 0.878 | +0.021 [+0.001, +0.044] |
 
-The dissociation is tested directly with an interaction test (clinical Δ minus radiographic Δ, resampled on the same patients): pneumonia +0.022 [+0.007, +0.036] (p=0.002), heart failure +0.021 [+0.000, +0.044]. Mechanism: fever and triage acuity carry the clinical signal that the radiograph does not encode, and a pairwise decomposition shows the vitals are redundant for the radiographic label (fix/break ratio 1.1) but complementary for the clinical label (1.71). The clinical gain holds across all five image seeds, survives narrowing or widening the ICD code set (+0.026 to +0.035, all p<0.001), and is not demographic.
+The dissociation is tested directly with an interaction test (clinical Δ minus radiographic Δ, resampled on the same patients): pneumonia +0.021 [+0.007, +0.036] (p=0.002), heart failure +0.021 [+0.000, +0.044] (directionally consistent but underpowered, 54 clinical positives). Mechanism: fever and triage acuity carry clinical signal a radiographic-trained model does not capture, and a pairwise decomposition shows the vitals are redundant for the radiographic label (fix/break ratio 1.1) but complementary for the clinical label (1.71). The clinical gain holds across all five image seeds and survives narrowing or widening the ICD code set (unchanged to +0.035, all p<0.001).
+
+The effect is real but **modest and redundancy-bound**: an image model retrained on the clinical label reaches AUROC 0.806 on its own, and with the full 14-finding radiographic profile as a fair fixed image baseline the clinical gain shrinks to +0.026 while the radiographic label stays neutral (+0.005). So the label, not the modality, drives the contrast; triage is one route to signal the radiographic-trained model leaves unextracted, and retraining the image is another.
 
 Scripts: `scripts/analysis/` (`clinical_label_dissociation.py`, `multicondition_dissociation.py`, `dissociation_significance.py`, `flagship_interaction.py`, `mechanism_complementarity.py`, `chief_complaint_enrichment.py`, `label_robustness.py`, `fairness_utility.py`). Artifacts: `artifacts/evaluation/clinical_label/`.
 

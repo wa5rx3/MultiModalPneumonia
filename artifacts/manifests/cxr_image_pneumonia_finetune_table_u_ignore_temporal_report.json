@@ -1,19 +1,19 @@
 {
-  "rows": 9154,
-  "subjects": 7722,
-  "studies": 9154,
+  "rows": 16993,
+  "subjects": 12667,
+  "studies": 16993,
   "positives": 4294,
-  "negatives": 4860,
-  "positive_rate": 0.4690845532007865,
+  "negatives": 12699,
+  "positive_rate": 0.2526922850585535,
   "temporal_split_row_counts": {
-    "train": 7144,
-    "test": 1080,
-    "validate": 930
+    "train": 13364,
+    "test": 1951,
+    "validate": 1678
   },
   "temporal_split_subject_counts": {
-    "test": 890,
-    "train": 6045,
-    "validate": 787
+    "test": 1375,
+    "train": 10024,
+    "validate": 1268
   },
   "notes": [
     "Image fine-tuning table is built from the ED temporal cohort plus current binary pneumonia label-policy table.",
