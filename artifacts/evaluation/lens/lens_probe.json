@@ -1,0 +1,40 @@
+{
+  "discharge_diagnosis": {
+    "n_test": 6332,
+    "judgment_pos": 589,
+    "criterion_pos": 816,
+    "perceptual_share_judgment": 0.75,
+    "perceptual_share_criterion": 0.797,
+    "anchoring_index": -0.0473,
+    "anchoring_ci95": [
+      -0.1427,
+      0.0453
+    ],
+    "p_le0": 0.8495,
+    "coef_share_judgment": 0.562,
+    "coef_share_criterion": 0.658,
+    "judgment_perc_contrib": 0.0992,
+    "judgment_phys_contrib": 0.0331,
+    "criterion_perc_contrib": 0.0953,
+    "criterion_phys_contrib": 0.0242
+  },
+  "culture_confirmed": {
+    "n_test": 6332,
+    "judgment_pos": 589,
+    "criterion_pos": 252,
+    "perceptual_share_judgment": 0.75,
+    "perceptual_share_criterion": 0.862,
+    "anchoring_index": -0.1122,
+    "anchoring_ci95": [
+      -0.2501,
+      0.0512
+    ],
+    "p_le0": 0.9045,
+    "coef_share_judgment": 0.562,
+    "coef_share_criterion": 0.615,
+    "judgment_perc_contrib": 0.0992,
+    "judgment_phys_contrib": 0.0331,
+    "criterion_perc_contrib": 0.1001,
+    "criterion_phys_contrib": 0.016
+  }
+}
