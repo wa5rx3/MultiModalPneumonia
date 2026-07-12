@@ -54,6 +54,15 @@ metlay2019idsa.
   confirmed from the arXiv abstract page. Cited for the complementarity framing and as the
   gap we fill (it uses ICD labels and never contrasts label provenance).
 
+## Added for the reviewer-response revision (verified via web, 2026-07)
+- **elsharief2025medmod** — MedMod: Multimodal Benchmark for Medical Prediction Tasks with EHR
+  and Chest X-Ray Scans. Elsharief, Shurrab, Al Jorf, Lechuga Lopez, Geras, Shamout. Machine
+  Learning for Healthcare (MLHC) 2025, PMLR v287, pp. 781--803. Authors/venue/pages confirmed from
+  the PMLR proceedings page (proceedings.mlr.press/v287/elsharief25a). Nearest prior work: it
+  benchmarks EHR+CXR fusion on MIMIC across both clinical-condition and radiological-finding tasks,
+  so it holds both label types but reports them as separate tasks, not as a controlled same-model
+  contrast with an interaction test. Cited and distinguished.
+
 ## Methodological-rigor set (verified via web, 2026-07)
 All venue/volume/year/authors confirmed from publisher or indexing pages this session.
 - **huang2020fusion** — Fusion of Medical Imaging and EHR Using Deep Learning: A Systematic

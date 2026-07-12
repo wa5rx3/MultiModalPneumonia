@@ -257,10 +257,15 @@ et al.~\citep{lee2024multimodal} fuse CXR and EHR to screen for acute heart fail
 in the ED (AUROC 0.89), again a task whose label is not encoded in the image. A recent
 benchmark, CareBench, sharpens the pattern, reporting that EHR and CXR fusion helps most
 for phenotypes that need complementary information from both sources~\citep{yin2026multimodal}.
-These studies vary the task and the architecture; what none of them isolates is the target
-label. Our contribution is to hold the patients, features and image model fixed and change
-only the label, from the radiographic reading to the clinical diagnosis, and to show that
-this single change flips the conclusion.
+Closest of all, the MedMod benchmark evaluates EHR and CXR fusion on MIMIC across several
+targets that include both clinical conditions and radiological findings~\citep{elsharief2025medmod};
+it therefore holds the same two label types we contrast, but it reports each as a separate
+benchmark task rather than as a controlled head-to-head, and it does not test whether the label
+choice changes the fusion conclusion for a single fixed model. These studies vary the task and
+the architecture; what none of them isolates is the target label. Our contribution is to hold
+the patients, features and image model fixed and change only the label, from the radiographic
+reading to the clinical diagnosis, with an interaction test and the base-rate and
+coding-propensity controls below, and to show that this single change flips the conclusion.
 
 The premise that the label matters rests on a documented discrepancy. VisualCheXbert
 reports that radiologists labelling free-text reports disagree substantially with
@@ -634,6 +639,19 @@ clinical $\Delta$ $0.027\pm0.002$, radiographic $\Delta$ $0.004\pm0.001$), it is
 the code set is narrowed to exclude aspiration or widened to add influenza ($\Delta$ from
 $+0.026$ to $+0.035$, all $p<0.001$), and it is not demographic: race alone predicts neither
 label above chance (AUROC 0.52) and adds no fusion gain.
+
+Three further controls rule out the most likely confounds. The two labels differ in base rate
+(radiographic 45\%, clinical 19\%), so we subsampled the radiographic positives to a 19\%
+prevalence and recomputed its fusion delta: it stayed at $+0.003$ (95\% CI $[-0.005,+0.012]$),
+unchanged, so the interaction is not an artefact of prevalence. Because the ICD label is a
+coded diagnosis, the gain could reflect documentation propensity rather than physiology, and
+triage acuity is an administrative severity score. It is not the driver: acuity alone
+contributes nothing to the fusion gain ($-0.001$, ns), and dropping acuity from the triage
+features leaves a significant $+0.017$ ($p{=}0.004$), so the physiological vitals, not the
+acuity score, carry the effect. Finally, restricting to admitted patients, among whom coding is
+near universal, preserves the gain ($+0.023$, 95\% CI $[0.005,0.042]$, $p{=}0.006$), and it also
+holds within the high-acuity stratum ($+0.026$), so it is not a proxy for who gets admitted or
+worked up.
 
 \begin{figure*}[t]
 \centering
