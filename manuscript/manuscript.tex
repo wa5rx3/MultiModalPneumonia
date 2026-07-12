@@ -102,9 +102,11 @@ appears for heart failure, though with only 54 clinical positives it is directio
 consistent rather than firmly powered.
 A pairwise decomposition shows the vitals are redundant for the radiographic sign but
 complementary for the clinical diagnosis, and the gain is carried by fever and triage
-acuity, signals the radiograph does not contain. The dissociation is present across all
-five image seeds, survives changes to the diagnosis code set, and is not explained by
-demographics. Two cautions from the same cohort: a calibration advantage that looked
+acuity, physiology a radiographically-trained model does not extract, though an image model
+retrained on the clinical label recovers a comparable amount, so the two are substitutes. The
+dissociation holds across all five image seeds, survives changes to the diagnosis code set, a
+prevalence match and an admitted-only control, and is not explained by demographics or by the
+administrative acuity score. Two cautions from the same cohort: a calibration advantage that looked
 large in one run (ECE 0.040 vs 0.067) shrinks to $\Delta$ECE $-0.013\pm0.016$ across
 seeds, and a fusion model can lean on which measurements are missing rather than on their
 values.
