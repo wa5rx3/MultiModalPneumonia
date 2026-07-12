@@ -1073,6 +1073,15 @@ net benefit than the triage-only baselines and the treat-all/treat-none referenc
 across the clinically relevant threshold range, with the image and multimodal curves
 essentially overlapping.
 
+Because the dissociation makes the clinical label the one where fusion helps, we also report
+utility there. At a high-sensitivity operating point (0.80 sensitivity fixed on validation),
+adding triage raises the positive predictive value from 0.32 to 0.36 at the observed clinical
+prevalence of 19\%, and from 0.095 to 0.113 at a 5\% ED base rate; decision-curve net benefit is
+modestly higher for fusion across the clinically relevant thresholds (for example 0.096 versus
+0.080 at a 0.20 threshold). The gains are real but small, in line with the modest AUROC change:
+at low base rates most flagged patients are still false positives, so the clinical value of the
+fusion is incremental rather than decisive.
+
 \begin{table}[t]
 \centering
 \caption{Operating points at fixed sensitivity (mean over 5 seeds).}
@@ -1429,7 +1438,11 @@ institution (MIMIC) and are retrospective. The external validation confirms that
 image model generalises to NIH, but it is limited to imaging: to our knowledge no
 public dataset links ED triage, or early labs, to the chest radiograph, so the fusion
 models themselves cannot yet be validated externally, and building such a linked
-multi-site resource is an important community need. The clinical label has its own
+multi-site resource is an important community need. The equivalence margin and the small
+confirmatory family were fixed before the analyses but were not formally preregistered; we
+therefore report the full set of secondary and exploratory analyses transparently and treat the
+$\pm0.05$ margin, which is generous, as an upper bound rather than a target, reading the minimal
+detectable effect (0.029) alongside it. The clinical label has its own
 caveat: an ICD diagnosis assigned during the encounter may be informed in part by the
 radiograph. This works against our result rather than for it, since image information in the
 label raises the image-only baseline and leaves less room for triage to add, so it shrinks
