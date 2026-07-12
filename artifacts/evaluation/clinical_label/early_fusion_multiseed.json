@@ -1,0 +1,36 @@
+{
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1000
+  ],
+  "fixed_radiographic_image_on_clinical": 0.784,
+  "fixed_image_plus_triage_late_fusion": 0.808,
+  "image_retrained_on_clinical": {
+    "mean": 0.7925,
+    "sd": 0.01,
+    "values": [
+      0.8065,
+      0.7938,
+      0.7986,
+      0.7865,
+      0.7772
+    ]
+  },
+  "concat_retrained_on_clinical": {
+    "mean": 0.7969,
+    "sd": 0.0089,
+    "values": [
+      0.799,
+      0.7968,
+      0.7824,
+      0.8104,
+      0.7957
+    ]
+  },
+  "concat_minus_retrained_image": 0.0043,
+  "triage_marginal_on_fixed_model": 0.024,
+  "triage_marginal_on_retrained_model": 0.0043
+}

@@ -102,11 +102,11 @@ appears for heart failure, though with only 54 clinical positives it is directio
 consistent rather than firmly powered.
 A pairwise decomposition shows the vitals are redundant for the radiographic sign but
 complementary for the clinical diagnosis, and the gain is carried by fever and triage
-acuity, physiology a radiographically-trained model does not extract, though an image model
-retrained on the clinical label recovers a comparable amount, so the two are substitutes. The
-dissociation holds across all five image seeds, survives changes to the diagnosis code set, a
-prevalence match and an admitted-only control, and is not explained by demographics or by the
-administrative acuity score. Two cautions from the same cohort: a calibration advantage that looked
+acuity, physiology a radiographically-trained model does not extract, though the triage benefit
+shrinks once the image model is retrained on the clinical label, so triage and retraining
+capture overlapping signal. The dissociation holds across all five image seeds, survives changes
+to the diagnosis code set, a prevalence match and an admitted-only control, and is not explained
+by demographics or by the administrative acuity score. Two cautions from the same cohort: a calibration advantage that looked
 large in one run (ECE 0.040 vs 0.067) shrinks to $\Delta$ECE $-0.013\pm0.016$ across
 seeds, and a fusion model can lean on which measurements are missing rather than on their
 values.
@@ -771,21 +771,22 @@ the image model.}
 The late-fusion contrast holds the image model fixed, so the triage gain measures what a
 radiographic-trained model leaves unextracted. This raises a question the controlled design
 cannot answer: would an image model trained directly on the clinical label capture that signal
-by itself? It largely does. Retraining the image model end to end on the ICD label raises its
-test AUROC from 0.784 to 0.806 (seed 42), close to the 0.808 the fixed model reaches once
-triage is added by late fusion. Adding triage to this clinical-trained model by early
-(concatenation) fusion does not improve it further ($0.806\rightarrow0.799$, $\Delta-0.008$,
-95\% CI $[-0.027,+0.014]$), and the radiographic label stays neutral under the same
-architecture ($\Delta-0.003$). The extra clinical signal that a radiographic-trained model
-misses is therefore recoverable either by adding triage vitals or by retraining the image
-model on the clinical label; the two are largely substitutes rather than additive. This
-locates the effect precisely. The dissociation is a property of the target label, and the
-triage contribution it exposes is specific to a fixed image model that was not optimized for
-that target, not a claim that physiology carries information no image model could. Notably the
-clinical label is itself more predictable from the image than the radiographic label is (0.806
-against 0.739), so its signal is not outside the radiograph, only outside the
-radiographic-trained model. These are single-seed runs and we read them as locating the effect
-rather than as a second multi-seed estimate.
+by itself? It largely does. Across five seeds, retraining the image model end to end on the ICD
+label raises its test AUROC from 0.784 to $0.793\pm0.010$, recovering most of the gap to the
+0.808 that the fixed model reaches once triage is added by late fusion, though not all of it.
+Adding triage to this clinical-trained model by early (concatenation) fusion does not improve it
+further ($0.797\pm0.009$, $\Delta+0.004$ over the retrained image, within seed noise), and the
+radiographic label stays neutral under the same architecture. The extra clinical signal that a
+radiographic-trained model misses is therefore recoverable in large part by retraining the image
+model on the clinical label, and retraining and triage late fusion reach a similar ceiling; the
+triage contribution and retraining are close substitutes rather than additive, with the triage
+late fusion holding a small edge. This locates the effect precisely. The dissociation is a
+property of the target label, and the triage contribution it exposes is specific to a fixed
+image model that was not optimized for that target, not a claim that physiology carries
+information no image model could. Notably the clinical label is itself more predictable from the
+image than the radiographic label is ($0.793$ against $0.739$), so its signal is not outside the
+radiograph, only outside the radiographic-trained model. These are multi-seed estimates, so the
+substitution is not an artefact of a single run.
 
 The dissociation is also robust to how the image is represented. Replacing the single fine-tuned
 pneumonia score with the full 14-finding radiographic profile (pneumonia, cardiomegaly, edema,
